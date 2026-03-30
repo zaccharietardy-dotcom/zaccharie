@@ -535,51 +535,97 @@ attn_output = F.scaled_dot_product_attention(
           une bombe ? C&apos;est un pipeline en <strong>3 etapes</strong> :
         </p>
 
-        <Diagram title="Pipeline d'entrainement d'un LLM moderne">
-          <pre className="text-center">{`
-  ┌─────────────────────────────────────────────────┐
-  │  ETAPE 1 : PRE-TRAINING                         │
-  │  "Apprendre le langage"                         │
-  │                                                  │
-  │  Donnees : des teraoctets de texte (internet,   │
-  │  livres, Wikipedia, code, forums...)             │
-  │  Objectif : predire le prochain token            │
-  │  Duree : semaines/mois sur des milliers de GPU   │
-  │  Cout : $10M - $100M+                           │
-  │                                                  │
-  │  Resultat : un modele "de base" qui sait         │
-  │  completer du texte, mais ne sait pas dialoguer  │
-  └──────────────────────┬──────────────────────────┘
-                         │
-  ┌──────────────────────▼──────────────────────────┐
-  │  ETAPE 2 : SFT (Supervised Fine-Tuning)         │
-  │  "Apprendre a suivre des instructions"           │
-  │                                                  │
-  │  Donnees : ~100k paires (instruction, reponse)   │
-  │  ecrites ou verifiees par des humains            │
-  │  Objectif : le modele apprend le format          │
-  │  question → reponse utile                        │
-  │  Duree : heures/jours                            │
-  │                                                  │
-  │  Resultat : un modele qui comprend "aide-moi"    │
-  │  et repond de facon structuree                   │
-  └──────────────────────┬──────────────────────────┘
-                         │
-  ┌──────────────────────▼──────────────────────────┐
-  │  ETAPE 3 : RLHF / DPO                           │
-  │  "Apprendre les preferences humaines"            │
-  │                                                  │
-  │  Donnees : des humains comparent 2 reponses      │
-  │  et disent laquelle est meilleure                │
-  │  Objectif : aligner le modele avec ce que les    │
-  │  humains trouvent utile, honnete, et safe        │
-  │  Duree : jours                                   │
-  │                                                  │
-  │  Resultat : ChatGPT, Claude, Gemini — un modele  │
-  │  aligné qui refuse les demandes dangereuses      │
-  └─────────────────────────────────────────────────┘
-`}</pre>
-        </Diagram>
+        {/* Pipeline d'entrainement — styled cards */}
+        <div className="my-8 space-y-3">
+          {[
+            {
+              step: "01",
+              color: "violet",
+              title: "Pre-training",
+              subtitle: "Apprendre le langage",
+              details: [
+                ["Donnees", "Teraoctets de texte (internet, livres, Wikipedia, code, forums...)"],
+                ["Objectif", "Predire le prochain token"],
+                ["Duree", "Semaines/mois sur des milliers de GPU"],
+                ["Cout", "$10M – $100M+"],
+              ],
+              result: "Un modele \"de base\" qui sait completer du texte, mais ne sait pas dialoguer",
+            },
+            {
+              step: "02",
+              color: "cyan",
+              title: "SFT (Supervised Fine-Tuning)",
+              subtitle: "Apprendre a suivre des instructions",
+              details: [
+                ["Donnees", "~100k paires (instruction, reponse) ecrites ou verifiees par des humains"],
+                ["Objectif", "Le modele apprend le format question → reponse utile"],
+                ["Duree", "Heures / jours"],
+              ],
+              result: "Un modele qui comprend \"aide-moi\" et repond de facon structuree",
+            },
+            {
+              step: "03",
+              color: "emerald",
+              title: "RLHF / DPO",
+              subtitle: "Apprendre les preferences humaines",
+              details: [
+                ["Donnees", "Des humains comparent 2 reponses et disent laquelle est meilleure"],
+                ["Objectif", "Aligner le modele avec ce que les humains trouvent utile, honnete, et safe"],
+                ["Duree", "Jours"],
+              ],
+              result: "ChatGPT, Claude, Gemini — un modele aligne qui refuse les demandes dangereuses",
+            },
+          ].map((s, i) => (
+            <div key={s.step}>
+              <div className={`relative overflow-hidden rounded-xl ring-1 ring-foreground/10 bg-card text-card-foreground ${
+                s.color === "violet" ? "border-l-2 border-l-violet-500" :
+                s.color === "cyan" ? "border-l-2 border-l-cyan-500" :
+                "border-l-2 border-l-emerald-500"
+              }`}>
+                <div className="p-5">
+                  <div className="mb-3 flex items-center gap-3">
+                    <span className={`flex h-7 w-7 items-center justify-center rounded-md font-mono text-xs font-bold ${
+                      s.color === "violet" ? "bg-violet-500/10 text-violet-400" :
+                      s.color === "cyan" ? "bg-cyan-500/10 text-cyan-400" :
+                      "bg-emerald-500/10 text-emerald-400"
+                    }`}>
+                      {s.step}
+                    </span>
+                    <div>
+                      <p className="font-semibold">{s.title}</p>
+                      <p className="text-xs text-muted-foreground">{s.subtitle}</p>
+                    </div>
+                  </div>
+                  <div className="mb-3 space-y-1.5">
+                    {s.details.map(([label, value]) => (
+                      <div key={label} className="flex gap-2 text-sm">
+                        <span className="shrink-0 font-mono text-[11px] font-medium text-muted-foreground/60 uppercase w-16">{label}</span>
+                        <span className="text-muted-foreground">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className={`rounded-lg p-3 text-sm ${
+                    s.color === "violet" ? "bg-violet-500/5 text-violet-300" :
+                    s.color === "cyan" ? "bg-cyan-500/5 text-cyan-300" :
+                    "bg-emerald-500/5 text-emerald-300"
+                  }`}>
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">Resultat </span>
+                    {s.result}
+                  </div>
+                </div>
+              </div>
+              {i < 2 && (
+                <div className="flex justify-center py-1">
+                  <div className={`h-3 w-px ${
+                    s.color === "violet" ? "bg-violet-500/30" :
+                    s.color === "cyan" ? "bg-cyan-500/30" :
+                    "bg-emerald-500/30"
+                  }`} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
 
         <KeyConcept title="Etape 1 — Pre-training : apprendre le langage">
           <p>
