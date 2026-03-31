@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Nav } from "@/components/nav";
-import "katex/dist/katex.min.css";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,6 +29,9 @@ export default function RootLayout({
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
+      <head>
+        <link rel="stylesheet" href="/katex.min.css" />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Nav />
         <main className="flex-1">{children}</main>
