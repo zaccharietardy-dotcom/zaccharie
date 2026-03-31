@@ -168,6 +168,30 @@ export default function Home() {
               </CardHeader>
             </Card>
           </Link>
+          <Link href="/cours/optimisation-resume">
+            <Card className="group relative transition-colors hover:border-foreground/20 cursor-pointer">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-muted-foreground">
+                    Fiche
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="text-xs text-amber-400 border-amber-400/30"
+                  >
+                    Synthese
+                  </Badge>
+                </div>
+                <CardTitle className="text-lg">
+                  Fiche Resume — Optimisation
+                </CardTitle>
+                <CardDescription>
+                  Tous les theoremes, hypotheses, algorithmes et pieges en une
+                  page.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
         </div>
       </section>
     </div>

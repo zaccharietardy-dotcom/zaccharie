@@ -7,6 +7,7 @@ import { Agents } from "./agents";
 import { AgentsVocaux } from "./agents-vocaux";
 import { StageSelectra } from "./stage-selectra";
 import { Optimisation } from "./optimisation";
+import { OptimisationResume } from "./optimisation-resume";
 
 const courses: Record<
   string,
@@ -145,6 +146,20 @@ const courses: Record<
       { id: "acceleration", title: "Acceleration des algorithmes d'ordre 1" },
     ],
     Component: Optimisation,
+  },
+  "optimisation-resume": {
+    module: "P3",
+    title: "Optimisation — Fiche Resume",
+    description:
+      "Fiche synthetique : tous les theoremes, hypotheses a verifier, et algorithmes du cours d'optimisation.",
+    sections: [
+      { id: "existence", title: "Theoremes d'existence" },
+      { id: "optimalite", title: "Conditions d'optimalite" },
+      { id: "algorithmes", title: "Algorithmes d'optimisation" },
+      { id: "comparaison", title: "Tableau comparatif" },
+      { id: "pieges", title: "Pieges classiques" },
+    ],
+    Component: OptimisationResume,
   },
 };
 
