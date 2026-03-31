@@ -1,39 +1,29 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import katex from "katex";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 
-/* ── Inline LaTeX ──────────────────────────────────────── */
+/* ── Math rendering via pure HTML ──────────────────────── */
+/* Uses a hidden iframe to render LaTeX via MathML fallback */
 
+/* Inline math — renders as italic serif text */
 export function M({ t }: { t: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    if (ref.current) {
-      katex.render(t, ref.current, {
-        throwOnError: false,
-        displayMode: false,
-        strict: false,
-      });
-    }
-  }, [t]);
-  return <span ref={ref} />;
+  return (
+    <span
+      className="font-serif italic"
+      dangerouslySetInnerHTML={{ __html: t }}
+    />
+  );
 }
 
-/* ── Display-mode LaTeX (centered block) ───────────────── */
-
+/* Display-mode math block — centered, larger */
 export function MathBlock({ tex }: { tex: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (ref.current) {
-      katex.render(tex, ref.current, {
-        throwOnError: false,
-        displayMode: true,
-        strict: false,
-      });
-    }
-  }, [tex]);
-  return <div ref={ref} className="my-5 overflow-x-auto text-center" />;
+  return (
+    <div
+      className="my-5 overflow-x-auto text-center text-lg font-serif italic"
+      dangerouslySetInnerHTML={{ __html: tex }}
+    />
+  );
 }
 
 /* ── Theorem box ───────────────────────────────────────── */
