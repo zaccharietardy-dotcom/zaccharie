@@ -6,6 +6,7 @@ import { RAG } from "./rag";
 import { Agents } from "./agents";
 import { AgentsVocaux } from "./agents-vocaux";
 import { StageSelectra } from "./stage-selectra";
+import { Optimisation } from "./optimisation";
 
 const courses: Record<
   string,
@@ -125,6 +126,25 @@ const courses: Record<
       { id: "entretien", title: "Ce qui impressionne en entretien" },
     ],
     Component: StageSelectra,
+  },
+  optimisation: {
+    module: "P3",
+    title: "Optimisation et Controle",
+    description:
+      "Existence, conditions d'optimalite (Euler, Lagrange, KKT), algorithmes (gradient, Newton, Nesterov). Cours de Gregoire Allaire, Ecole Polytechnique.",
+    sections: [
+      { id: "introduction", title: "Introduction & Motivation" },
+      { id: "existence", title: "Existence de solutions" },
+      { id: "convexite", title: "Convexite" },
+      { id: "euler", title: "Conditions d'optimalite — K convexe" },
+      { id: "cone", title: "Conditions d'optimalite — K non convexe" },
+      { id: "egalite", title: "Contraintes d'egalite & Lagrangien" },
+      { id: "inegalite", title: "Contraintes d'inegalite — KKT" },
+      { id: "gradient", title: "Algorithme du gradient" },
+      { id: "newton", title: "Algorithme de Newton" },
+      { id: "acceleration", title: "Acceleration des algorithmes d'ordre 1" },
+    ],
+    Component: Optimisation,
   },
 };
 

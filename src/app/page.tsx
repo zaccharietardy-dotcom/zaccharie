@@ -134,6 +134,42 @@ export default function Home() {
           })}
         </div>
       </section>
+      {/* Polytechnique — Periode 3 */}
+      <section className="mt-20">
+        <h2 className="mb-2 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          Polytechnique — Periode 3
+        </h2>
+        <p className="mb-8 text-sm text-muted-foreground">
+          Cours de mathematiques appliquees, 2eme annee.
+        </p>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Link href="/cours/optimisation">
+            <Card className="group relative transition-colors hover:border-foreground/20 cursor-pointer">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-muted-foreground">
+                    APM 43035
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="text-xs text-violet-400 border-violet-400/30"
+                  >
+                    Resume
+                  </Badge>
+                </div>
+                <CardTitle className="text-lg">
+                  Optimisation et Controle
+                </CardTitle>
+                <CardDescription>
+                  Existence, convexite, Euler, Lagrange, KKT, gradient, Newton,
+                  Nesterov — par Gregoire Allaire.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
