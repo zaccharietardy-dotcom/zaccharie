@@ -128,3 +128,6 @@
     @apply font-sans;
   }
 }
+
+/* KaTeX — un-layered import after Tailwind means these styles have highest priority */
+@import "katex/dist/katex.min.css";
