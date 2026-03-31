@@ -142,6 +142,62 @@ save(audio, "reponse.mp3")`}</Code>
             fini) est essentiel.
           </p>
         </Warning>
+
+        <KeyConcept title="Comment marche le STT (Speech-to-Text)">
+          <p>
+            Le signal audio brut (une waveform — une suite de valeurs
+            d&apos;amplitude dans le temps) est d&apos;abord converti en{" "}
+            <Term def="Representation 2D du signal audio ou l'axe X est le temps, l'axe Y la frequence, et la couleur/intensite represente l'energie a chaque frequence a chaque instant. C'est comme une 'image' du son.">mel-spectrogramme</Term>.
+            C&apos;est une representation 2D qui ressemble a une image : X = temps,
+            Y = frequence, couleur = intensite. C&apos;est sous cette forme que le
+            reseau de neurones &quot;voit&quot; le son.
+          </p>
+          <p>
+            <strong>Whisper (OpenAI)</strong> utilise une architecture{" "}
+            <strong>Transformer encoder-decoder</strong>. L&apos;encoder traite le
+            spectrogramme et produit des representations internes du son.
+            Le decoder genere ensuite les tokens de texte un par un, de maniere{" "}
+            <Term def="Generation autoreressive — le modele genere un token a la fois, chaque nouveau token etant conditionne par tous les tokens precedents. C'est le meme principe que GPT pour le texte, mais ici l'entree est de l'audio.">autoregressive</Term>{" "}
+            — exactement comme un LLM genere du texte, sauf que l&apos;entree est
+            de l&apos;audio au lieu du texte.
+          </p>
+          <p>
+            Pour choisir les meilleurs mots, Whisper utilise le{" "}
+            <Term def="Au lieu de toujours prendre le token le plus probable a chaque etape, le beam search explore plusieurs hypotheses en parallele (typiquement 5) et garde la sequence globale avec la meilleure probabilite totale.">beam search</Term>{" "}
+            : au lieu de prendre le token le plus probable a chaque etape, il
+            explore plusieurs hypotheses en parallele (typiquement 5 &quot;beams&quot;)
+            et garde la sequence globale la plus probable. Ca evite les erreurs
+            gloutonnes ou un mauvais choix au debut rend tout le reste faux.
+          </p>
+        </KeyConcept>
+
+        <KeyConcept title="Comment marche le TTS (Text-to-Speech)">
+          <p>
+            Le TTS se decompose en deux etapes :
+          </p>
+          <p>
+            <strong>Etape 1 : Texte → mel-spectrogramme.</strong> Un modele
+            (comme VITS, Tacotron, ou un Transformer) convertit les tokens de
+            texte en mel-spectrogramme — la &quot;recette&quot; du son a produire.
+            C&apos;est l&apos;inverse du STT : on part du texte pour generer
+            l&apos;image du son.
+          </p>
+          <p>
+            <strong>Etape 2 : Mel-spectrogramme → waveform (vocoder).</strong> Un{" "}
+            <Term def="Reseau de neurones specialise dans la conversion d'un spectrogramme en signal audio brut. Il genere les echantillons audio un par un (ou par blocs) a 24000+ echantillons/seconde. Exemples : HiFi-GAN, WaveNet.">vocoder neural</Term>{" "}
+            (HiFi-GAN, WaveNet) convertit le spectrogramme en signal audio reel —
+            24000+ echantillons par seconde. C&apos;est cette etape qui donne la
+            qualite &quot;naturelle&quot; a la voix.
+          </p>
+          <p>
+            <strong>Pourquoi le streaming TTS reduit la latence :</strong> au lieu
+            d&apos;attendre que le LLM ait genere toute la phrase, le TTS commence
+            a convertir des que le premier chunk de spectrogramme est pret. Le
+            vocoder genere l&apos;audio du debut pendant que le modele produit
+            encore la fin. L&apos;utilisateur entend les premiers mots alors que la
+            reponse est encore en cours de generation.
+          </p>
+        </KeyConcept>
       </Section>
 
       {/* ============================================================ */}
@@ -293,6 +349,41 @@ with sd.Stream(samplerate=24000, channels=1, callback=callback):
             (irritant). S&apos;il attend trop longtemps → silence genant. Le
             bon reglage depend du contexte : un client qui hesite sur un numero
             PDL a besoin de plus de temps qu&apos;un client qui dit &quot;oui&quot;.
+          </p>
+        </KeyConcept>
+
+        <KeyConcept title="Comment marche la VAD (Voice Activity Detection)">
+          <p>
+            <strong>Approche simple (WebRTC VAD) :</strong> on regarde
+            l&apos;energie du signal — fort = quelqu&apos;un parle, faible =
+            silence. C&apos;est rapide (~1ms) mais bete : un bruit de fond
+            (clavier, ventilateur, TV) declenche des faux positifs.
+          </p>
+          <p>
+            <strong>Approche ML (Silero VAD) :</strong> un petit reseau de
+            neurones (~1MB) entraine sur des milliers d&apos;heures de
+            parole/non-parole. Il traite l&apos;audio par chunks de 30ms et sort
+            une probabilite entre 0 et 1 qu&apos;il y ait de la parole. Bien plus
+            robuste au bruit — il a appris a distinguer une voix humaine d&apos;un
+            aspirateur.
+          </p>
+          <p>
+            <strong>Le vrai probleme : detecter la FIN de parole.</strong> Une
+            pause de 500ms, c&apos;est une hesitation naturelle (&quot;euh...&quot;)
+            ou la fin d&apos;une phrase ? Un seuil fixe (ex: 700ms de silence =
+            fin) marche OK mais coupe les gens ou attend trop. Il n&apos;y a pas
+            de valeur magique — ca depend du debit de parole du client, de la
+            langue, du contexte.
+          </p>
+          <p>
+            <strong>La frontiere : endpointing semantique.</strong> Un petit modele
+            regarde A LA FOIS les features audio (prosodie, intonation descendante)
+            ET le texte transcrit jusque-la pour decider si la personne a fini.
+            Par exemple : &quot;Quel est le prix du...&quot; → probablement pas
+            fini (phrase syntaxiquement incomplete). &quot;Je voudrais changer de
+            fournisseur.&quot; → probablement fini (phrase complete + intonation
+            descendante). C&apos;est ce que font les systemes les plus avances
+            (Gradium, Google Duplex).
           </p>
         </KeyConcept>
 

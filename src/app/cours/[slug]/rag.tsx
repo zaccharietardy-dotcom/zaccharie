@@ -290,6 +290,36 @@ print(f"Meilleur match : '{phrases[best]}' (score: {scores[best]:.3f})")`}</Code
           ]}
         />
 
+        <KeyConcept title="Comment marche la recherche : ANN (Approximate Nearest Neighbors)">
+          <p>
+            Quand tu as 10 documents, tu peux comparer ta question a chaque
+            vecteur un par un (<strong>brute force</strong>). Mais avec des
+            millions de documents, c&apos;est O(n) — beaucoup trop lent.
+            C&apos;est la que les algorithmes ANN entrent en jeu.
+          </p>
+          <p>
+            <strong>HNSW (Hierarchical Navigable Small World) :</strong> on
+            construit un graphe ou les vecteurs similaires sont connectes entre
+            eux. Pour chercher, on part d&apos;un point aleatoire et on saute
+            toujours vers le voisin le plus proche — comme demander son chemin
+            dans une ville : chaque personne te rapproche de ta destination.
+            Complexite : O(log n).
+          </p>
+          <p>
+            <strong>IVF (Inverted File Index) :</strong> on regroupe les
+            vecteurs en clusters (cellules de Voronoi). A la recherche, on ne
+            regarde que les clusters les plus proches de la question. Comme
+            chercher un livre a la bibliotheque — tu vas d&apos;abord au bon
+            rayon, puis tu scannes cette etagere.
+          </p>
+          <p>
+            <strong>Le compromis :</strong> ANN ne garantit pas de trouver LE
+            vecteur le plus proche, mais il en trouve de tres proches beaucoup
+            plus vite. En pratique, la perte de precision est negligeable (recall{" "}
+            {">"} 95%) et le gain de vitesse est enorme (1000x plus rapide).
+          </p>
+        </KeyConcept>
+
         <Warning>
           <p>
             <strong>Pour ton stage :</strong> commence avec un vector store en
@@ -403,6 +433,27 @@ for i, chunk in enumerate(chunks):
           </p>
         </KeyConcept>
 
+        <KeyConcept title="Pourquoi le overlap est crucial">
+          <p>
+            <strong>Sans overlap :</strong> si une phrase importante est coupee
+            entre deux chunks, aucun des deux n&apos;a le contexte complet.
+            L&apos;embedding de chaque chunk rate le sens de la phrase — et ta
+            recherche ne retrouvera jamais ce passage.
+          </p>
+          <p>
+            <strong>Avec overlap :</strong> les tokens partages aux frontieres
+            assurent la continuite. Un overlap de 20% signifie que les derniers
+            20% du chunk N apparaissent comme les premiers 20% du chunk N+1.
+            Le cout : un peu plus de stockage et de vecteurs a indexer, mais
+            la qualite de retrieval augmente nettement.
+          </p>
+          <p>
+            <strong>Analogie :</strong> imagine un livre ou chaque page repete
+            le dernier paragraphe de la page precedente. Tu ne perds jamais le
+            fil quand tu tournes la page.
+          </p>
+        </KeyConcept>
+
         <Quiz
           question="Pour une FAQ Selectra avec des questions-reponses courtes, quelle strategie de chunking ?"
           options={[
@@ -508,6 +559,32 @@ const results = search(queryEmbedding.embedding, indexedChunks, 3);
             ],
           ]}
         />
+
+        <KeyConcept title="Le probleme 'Lost in the Middle'">
+          <p>
+            Des chercheurs ont montre que les LLMs performent moins bien quand
+            l&apos;information pertinente se trouve au <strong>milieu</strong>{" "}
+            de la fenetre de contexte. Ils sont meilleurs quand elle est au{" "}
+            <strong>debut</strong> ou a la <strong>fin</strong>.
+          </p>
+          <p>
+            <strong>En pratique :</strong> quand tu injectes les chunks
+            recuperes dans le prompt, mets les plus pertinents en premier et en
+            dernier. Les chunks moyennement pertinents vont au milieu — la ou
+            le modele fait le moins attention.
+          </p>
+          <p>
+            <strong>Re-ranking :</strong> une technique complementaire. Tu
+            recuperes d&apos;abord un top-100 avec ANN (rapide mais
+            approximatif), puis tu re-classes avec un{" "}
+            <Term def="Modele qui prend en entree la paire (question, document) et donne un score de pertinence. Plus lent qu'un bi-encoder (embedding separe) mais beaucoup plus precis car il voit les deux textes ensemble.">
+              cross-encoder
+            </Term>{" "}
+            (plus lent mais beaucoup plus precis) pour garder le top-5. Ca
+            combine la vitesse de ANN avec la precision d&apos;un modele qui
+            voit question + document ensemble.
+          </p>
+        </KeyConcept>
       </Section>
 
       {/* ============================================================ */}

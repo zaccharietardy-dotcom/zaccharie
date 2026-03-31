@@ -156,6 +156,41 @@ const result = await generateText({
             quelque chose que tu n&apos;as pas prevu.
           </p>
         </Warning>
+
+        <KeyConcept title="Comment le modele decide d'appeler un outil">
+          <p>
+            Pendant le fine-tuning, le modele a vu des <strong>milliers
+            d&apos;exemples</strong> de conversations ou un outil etait appele.
+            Il a appris le pattern : &quot;quand je vois un schema d&apos;outil
+            dans mon contexte + une question du user, parfois je dois generer
+            un bloc <code>tool_use</code> au lieu de texte normal.&quot;
+          </p>
+          <p>
+            Concretement, quand le modele recoit un tool schema dans le system
+            prompt + une question utilisateur, son <Term def="Le mecanisme par lequel le transformer pondere l'importance de chaque token par rapport aux autres. C'est ce qui permet au modele de 'connecter' la question du user a la description de l'outil.">mecanisme
+            d&apos;attention</Term> fait le lien entre la semantique de la
+            question et les descriptions d&apos;outils. Si la question parle de
+            &quot;comparer des offres&quot; et qu&apos;un outil s&apos;appelle{" "}
+            <code>comparerOffres</code> avec une description qui matche, le
+            modele genere un tool call — une sequence de tokens JSON speciale.
+          </p>
+          <p>
+            Point crucial : <strong>c&apos;est un comportement appris, pas
+            hardcode.</strong> Le modele n&apos;a pas de regle &quot;si question
+            X alors outil Y&quot;. Il fait du pattern matching probabiliste.
+            La probabilite d&apos;appeler l&apos;outil A vs l&apos;outil B
+            depend de a quel point la description de l&apos;outil correspond a
+            la requete dans l&apos;espace d&apos;embeddings du modele.
+          </p>
+          <p>
+            C&apos;est aussi pourquoi le modele <strong>hallucine parfois des
+            tool calls</strong> : il fait du pattern matching, pas de la
+            &quot;comprehension&quot;. Si la question est ambigue, il peut
+            appeler le mauvais outil ou inventer des parametres qui n&apos;ont
+            pas de sens. La qualite des descriptions d&apos;outils est ta
+            premiere ligne de defense.
+          </p>
+        </KeyConcept>
       </Section>
 
       {/* ============================================================ */}
@@ -235,6 +270,50 @@ Agent: "Voici les 3 meilleures offres pour votre logement au 12 rue de la Paix..
           initiative</strong>, chacun base sur le resultat du precedent.
           C&apos;est ca la puissance de la boucle agent.
         </p>
+
+        <KeyConcept title="Pourquoi ReAct marche : raisonnement explicite">
+          <p>
+            ReAct = <strong>Reasoning + Acting</strong>. Le modele ecrit son
+            raisonnement (Thought) <em>avant</em> d&apos;agir. C&apos;est le
+            meme mecanisme que le Chain-of-Thought : les tokens de raisonnement
+            deviennent du contexte pour la decision d&apos;action.
+          </p>
+          <p>
+            Pourquoi ca change tout ? Sans raisonnement explicite, le modele
+            doit calculer directement P(bon_outil | question). Avec
+            raisonnement, il calcule P(bon_outil | question +
+            raisonnement_sur_ce_dont_j&apos;ai_besoin). La probabilite
+            conditionnelle est beaucoup plus facile a estimer — tu donnes plus
+            de signal au modele pour prendre la bonne decision.
+          </p>
+          <p>
+            L&apos;observation (le resultat de l&apos;outil) est ensuite
+            reinjectee comme contexte pour l&apos;etape de raisonnement
+            suivante. Chaque iteration enrichit le contexte.
+          </p>
+          <p>
+            <strong>Les modes de failure a connaitre :</strong>
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-6">
+            <li>
+              <strong>Boucles infinies</strong> — le modele appelle le meme
+              outil en boucle sans progresser. Solution : <code>stopWhen:
+              stepCountIs(N)</code>, un max d&apos;etapes obligatoire.
+            </li>
+            <li>
+              <strong>Observations hallucinees</strong> — le modele invente un
+              resultat d&apos;outil au lieu d&apos;attendre la vraie reponse.
+              Solution : un format de sortie structure (JSON avec{" "}
+              <code>tool_use</code>) qui force le SDK a intercepter l&apos;appel.
+            </li>
+            <li>
+              <strong>Accumulation de tokens</strong> — chaque iteration ajoute
+              des tokens au contexte (raisonnement + action + observation). Le
+              cout croit lineairement avec le nombre d&apos;etapes. Un agent a
+              10 etapes coute ~10x plus qu&apos;un seul appel.
+            </li>
+          </ul>
+        </KeyConcept>
       </Section>
 
       {/* ============================================================ */}

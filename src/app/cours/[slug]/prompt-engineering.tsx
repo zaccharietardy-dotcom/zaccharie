@@ -154,6 +154,34 @@ Categorie :"`}</Code>
           </p>
         </Warning>
 
+        <KeyConcept title="Comment ca marche : in-context learning">
+          <p>
+            Attention, le modele n&apos;<strong>apprend</strong> rien des exemples
+            few-shot — aucun poids ne change. Ce qui se passe, c&apos;est que le
+            mecanisme d&apos;<Term def="Mecanisme central du Transformer : chaque token calcule un score de pertinence avec tous les tokens precedents, puis aggrege leurs representations. C'est ce qui permet au modele de 'regarder' n'importe ou dans le contexte.">attention</Term>{" "}
+            detecte un pattern dans le contexte.
+          </p>
+          <p>
+            Chaque exemple few-shot est une paire (input, output). Les couches
+            d&apos;attention repèrent la regularite : &quot;a chaque fois qu&apos;on
+            voit un message, la ligne suivante est une categorie&quot;. Quand le
+            modele arrive au nouveau message, il applique le meme mapping.
+          </p>
+          <p>
+            On appelle ca l&apos;<strong>in-context learning</strong> : le modele
+            utilise la fenetre de contexte comme une memoire de travail temporaire.
+            Pas de gradient, pas de mise a jour — juste du pattern-matching via
+            l&apos;attention.
+          </p>
+          <p>
+            <strong>Pourquoi c&apos;est limite :</strong> si le pattern est trop
+            complexe ou que les exemples sont trop peu nombreux, le modele retombe
+            sur sa distribution d&apos;entrainement — autrement dit, il &quot;devine&quot;
+            comme en zero-shot. C&apos;est pour ca que 2-5 exemples bien choisis
+            valent mieux que 1 exemple ambigu.
+          </p>
+        </KeyConcept>
+
         <Quiz
           question="Un client dit : 'Votre commercial m'a appele et j'ai souscrit mais je ne recois rien'. Zero-shot ou few-shot pour classifier ?"
           options={[
@@ -234,6 +262,44 @@ Reponse : L'offre A est la moins chere (1584€/an vs 1776€/an)." ← CORRECT`
             etape est un point de controle.
           </p>
         </Analogy>
+
+        <KeyConcept title="Pourquoi ca marche : le mecanisme interne">
+          <p>
+            Un Transformer genere les tokens <strong>un par un</strong> (autoregressif).
+            Chaque nouveau token depend de TOUS les tokens precedents.
+          </p>
+          <p>
+            <strong>Sans CoT :</strong> le modele doit compresser tout le
+            raisonnement dans la probabilite d&apos;un SEUL token suivant (la
+            reponse). C&apos;est comme faire un calcul complexe de tete sans rien
+            ecrire.
+          </p>
+          <p>
+            <strong>Avec CoT :</strong> chaque token intermediaire (etape de
+            raisonnement) devient partie du contexte pour le token suivant. Le
+            modele obtient effectivement plus de &quot;temps de calcul&quot; —
+            chaque token genere agit comme une couche de traitement
+            supplementaire.
+          </p>
+          <p>
+            Formellement : sans CoT, le modele calcule P(reponse | question).
+            Avec CoT, il calcule P(etape₁ | question) × P(etape₂ | question,
+            etape₁) × ... × P(reponse | question, etape₁, ..., etapeₙ). Cette
+            chaine de probabilites conditionnelles est beaucoup plus facile a
+            modeliser.
+          </p>
+          <p>
+            C&apos;est pourquoi le CoT aide surtout sur les taches de maths et
+            de logique : elles requierent un raisonnement sequentiel qui ne peut
+            pas etre parallelise en un seul forward pass.
+          </p>
+          <p>
+            <em>
+              Reference : Wei et al., &quot;Chain-of-Thought Prompting Elicits
+              Reasoning in Large Language Models&quot; (2022).
+            </em>
+          </p>
+        </KeyConcept>
 
         <Warning>
           <p>
@@ -343,6 +409,29 @@ pour finaliser la souscription.`}</Code>
             </p>
           </Step>
         </Steps>
+
+        <KeyConcept title="Pourquoi les system prompts marchent">
+          <p>
+            Pendant l&apos;entrainement (instruction tuning, RLHF), le modele
+            apprend a traiter les tokens en position &quot;system&quot; comme des
+            instructions prioritaires. Techniquement, ces tokens sont traites par
+            l&apos;attention exactement comme les autres — mais le modele a ete
+            entraine a leur donner un poids eleve.
+          </p>
+          <p>
+            Concretement : les tokens du system prompt recoivent des{" "}
+            <strong>scores d&apos;attention eleves</strong> de la part de tous les
+            tokens generes ensuite. C&apos;est comme si chaque mot produit par le
+            modele &quot;regardait&quot; en priorite les instructions du system
+            prompt pour decider quoi dire.
+          </p>
+          <p>
+            C&apos;est pour ca qu&apos;un system prompt bien structure (Role →
+            Contexte → Tache → Contraintes → Format) fonctionne mieux qu&apos;un
+            prompt vague : il donne au mecanisme d&apos;attention des ancres
+            claires a suivre tout au long de la generation.
+          </p>
+        </KeyConcept>
 
         <Warning>
           <p>
