@@ -235,9 +235,31 @@ export function OptimisationResume() {
         </Algo>
 
         <Algo name="Gradient conjugue (ordre 1 accelere)">
-          <p>Directions de descente conjuguees par rapport a la hessienne.</p>
-          <p>Converge en <strong>au plus N iterations</strong> pour un probleme quadratique en dim N.</p>
-          <Hyp items={["Memes que gradient"]} />
+          <p><strong>Idee :</strong> au lieu de descendre selon <F>−J&apos;(u<sup>n</sup>)</F>, on choisit une direction <F>d<sup>n</sup></F> qui est <strong>conjuguee</strong> aux precedentes par rapport a la hessienne.</p>
+          <p className="text-center font-serif italic text-base my-2">
+            u<sup>n+1</sup> = u<sup>n</sup> + ρ<sub>n</sub> d<sup>n</sup>
+          </p>
+          <p>ou <F>ρ<sub>n</sub></F> est le pas optimal dans la direction <F>d<sup>n</sup></F>, et :</p>
+          <p className="text-center font-serif italic text-base my-2">
+            d<sup>0</sup> = −J&apos;(u<sup>0</sup>)
+          </p>
+          <p className="text-center font-serif italic text-base my-2">
+            d<sup>n+1</sup> = −J&apos;(u<sup>n+1</sup>) + β<sub>n</sub> d<sup>n</sup>
+          </p>
+          <p>avec <F>β<sub>n</sub></F> choisi pour que les directions soient <strong>conjuguees</strong> :
+            <F> ⟨d<sup>i</sup>, J&apos;&apos;(u) d<sup>j</sup>⟩ = 0</F> pour <F>i ≠ j</F>.
+          </p>
+          <p><strong>Propriete cle :</strong> pour <F>J(u) = ½Au·u − b·u</F> quadratique en dim <F>N</F>,
+            le gradient conjugue converge en <strong>au plus N iterations</strong> (exact !).
+          </p>
+          <Hyp items={[
+            "J α-convexe, J' L-Lipschitz",
+            "Convergence exacte en N etapes pour J quadratique",
+            "Pas besoin de calculer la hessienne (contrairement a Newton)",
+          ]} />
+          <p className="mt-2">
+            <strong>Vitesse :</strong> γ ≈ 1 − 2√(α/L), meme amelioration que Nesterov.
+          </p>
         </Algo>
       </Section>
 

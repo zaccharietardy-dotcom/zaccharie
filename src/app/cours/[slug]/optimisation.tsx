@@ -815,9 +815,29 @@ export function Optimisation() {
 
         <Def title="Gradient conjugue">
           <p>
-            Directions de descente conjuguees par rapport a la hessienne.
-            Converge en au plus <F>N</F> iterations pour un probleme quadratique
-            en dimension <F>N</F>.
+            <strong>Idee :</strong> au lieu de descendre selon <F>−J&apos;(u<sup>n</sup>)</F>,
+            on choisit une direction <F>d<sup>n</sup></F> conjuguee aux precedentes
+            par rapport a la hessienne.
+          </p>
+          <Eq>
+            u<sup>n+1</sup> = u<sup>n</sup> + ρ<sub>n</sub> d<sup>n</sup>
+          </Eq>
+          <p>
+            avec <F>ρ<sub>n</sub></F> le pas optimal dans la direction <F>d<sup>n</sup></F>, et :
+          </p>
+          <Eq>
+            d⁰ = −J&apos;(u⁰), &nbsp;&nbsp;
+            d<sup>n+1</sup> = −J&apos;(u<sup>n+1</sup>) + β<sub>n</sub> d<sup>n</sup>
+          </Eq>
+          <p>
+            ou <F>β<sub>n</sub></F> est choisi pour que{" "}
+            <F>⟨d<sup>i</sup>, J&apos;&apos;(u) d<sup>j</sup>⟩ = 0</F> si <F>i ≠ j</F>{" "}
+            (<strong>conjugaison</strong>).
+          </p>
+          <p>
+            <strong>Propriete remarquable :</strong> pour <F>J(u) = ½Au·u − b·u</F>{" "}
+            quadratique en dim <F>N</F>, l&apos;algorithme converge en{" "}
+            <strong>au plus N iterations</strong> (exact !). Pas besoin de la hessienne.
           </p>
         </Def>
 
