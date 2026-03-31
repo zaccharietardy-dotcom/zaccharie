@@ -263,35 +263,72 @@ Reponse : L'offre A est la moins chere (1584€/an vs 1776€/an)." ← CORRECT`
           </p>
         </Analogy>
 
-        <KeyConcept title="Pourquoi ca marche : le mecanisme interne">
+        <KeyConcept title="Concretement, comment ca marche dans le modele ?">
           <p>
-            Un Transformer genere les tokens <strong>un par un</strong> (autoregressif).
-            Chaque nouveau token depend de TOUS les tokens precedents.
+            Un LLM ne &quot;reflechit&quot; pas. Il n&apos;a pas de voix
+            interieure. Il genere du texte <strong>token par token</strong>, de
+            gauche a droite. Chaque nouveau token est calcule en fonction de TOUS
+            les tokens precedents. C&apos;est ca la cle.
           </p>
           <p>
-            <strong>Sans CoT :</strong> le modele doit compresser tout le
-            raisonnement dans la probabilite d&apos;un SEUL token suivant (la
-            reponse). C&apos;est comme faire un calcul complexe de tete sans rien
-            ecrire.
+            <strong>Sans CoT</strong> — le modele voit &quot;Quelle offre est la
+            moins chere ?&quot; et doit directement produire &quot;Offre A&quot;.
+            Toute la reflexion doit tenir dans{" "}
+            <strong>un seul forward pass</strong> du reseau de neurones.
+            C&apos;est comme te demander de calculer 8000×0.18 + 12×12 vs
+            8000×0.21 + 8×12 <strong>de tete, sans ecrire</strong>.
           </p>
           <p>
-            <strong>Avec CoT :</strong> chaque token intermediaire (etape de
-            raisonnement) devient partie du contexte pour le token suivant. Le
-            modele obtient effectivement plus de &quot;temps de calcul&quot; —
-            chaque token genere agit comme une couche de traitement
-            supplementaire.
+            <strong>Avec CoT</strong> — le modele genere &quot;Etape 1 : Offre A
+            = 8000 × 0.18 = 1440...&quot;. Ces tokens deviennent du{" "}
+            <strong>contexte</strong> pour la suite. Quand il genere le token
+            suivant, il a deja &quot;1440&quot; dans sa memoire. C&apos;est comme
+            ecrire sur un brouillon : chaque ligne ecrite t&apos;aide pour la
+            suivante.
           </p>
           <p>
-            Formellement : sans CoT, le modele calcule P(reponse | question).
-            Avec CoT, il calcule P(etape₁ | question) × P(etape₂ | question,
-            etape₁) × ... × P(reponse | question, etape₁, ..., etapeₙ). Cette
-            chaine de probabilites conditionnelles est beaucoup plus facile a
-            modeliser.
+            Concretement, voici ce qui se passe token par token :
+          </p>
+          <ol className="list-decimal pl-6 space-y-1">
+            <li>
+              Il genere le token <code>&quot;Etape&quot;</code> (probabilite
+              conditionnelle sur le prompt)
+            </li>
+            <li>
+              Il genere <code>&quot;1&quot;</code> (conditionne sur prompt +
+              &quot;Etape&quot;)
+            </li>
+            <li>
+              Il genere <code>&quot;:&quot;</code> (conditionne sur tout ce qui
+              precede)
+            </li>
+            <li>
+              Il genere <code>&quot;8000&quot;</code>,{" "}
+              <code>&quot;×&quot;</code>, <code>&quot;0.18&quot;</code>,{" "}
+              <code>&quot;=&quot;</code>, <code>&quot;1440&quot;</code>...
+            </li>
+            <li>
+              Quand il arrive a &quot;Comparaison&quot;, il a{" "}
+              <strong>deja</strong> &quot;1584&quot; et &quot;1776&quot; dans son
+              contexte → la comparaison devient triviale
+            </li>
+          </ol>
+          <p>
+            <strong>Chaque token genere est un pas de calcul
+            supplementaire.</strong> Plus il genere de tokens intermediaires, plus
+            il a de &quot;temps de reflexion&quot;. C&apos;est exactement pour ca
+            que les modeles de raisonnement (o1, o3) generent beaucoup de tokens
+            caches avant de repondre — ils s&apos;achetent du temps de calcul.
           </p>
           <p>
-            C&apos;est pourquoi le CoT aide surtout sur les taches de maths et
-            de logique : elles requierent un raisonnement sequentiel qui ne peut
-            pas etre parallelise en un seul forward pass.
+            Formellement : sans CoT, le modele calcule{" "}
+            <code>P(reponse | question)</code>. Avec CoT, il decompose en{" "}
+            <code>
+              P(etape₁ | question) × P(etape₂ | question, etape₁) × ... ×
+              P(reponse | tout)
+            </code>
+            . La chaine de probabilites conditionnelles est beaucoup plus facile
+            a modeliser que le saut direct.
           </p>
           <p>
             <em>
