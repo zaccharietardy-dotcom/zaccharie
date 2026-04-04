@@ -7,12 +7,12 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
+import { SvgDiagram, Box, Arrow, Label, GroupBox } from "@/components/svg-diagrams";
 
 export function RAG() {
   return (
@@ -52,25 +52,22 @@ export function RAG() {
           generation augmentee par la recuperation. Le principe est simple :
         </p>
 
-        <Diagram title="Pipeline RAG">
-          <pre className="text-center">{`
-  Question de l'utilisateur
-           |
-  [ 1. Retrieval ]
-  Chercher les documents pertinents
-  dans une base de connaissances
-           |
-  [ 2. Augmentation ]
-  Injecter ces documents dans le
-  prompt du LLM comme contexte
-           |
-  [ 3. Generation ]
-  Le LLM repond en se basant sur
-  les documents fournis
-           |
-  Reponse sourcee et fiable
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={600} height={340} title="Pipeline RAG">
+          {/* Question */}
+          <Box x={190} y={10} w={220} h={36} label="Question utilisateur" color="cyan" />
+          <Arrow x1={300} y1={46} x2={300} y2={72} />
+          {/* Retrieval */}
+          <Box x={150} y={72} w={300} h={44} label="1. Retrieval" sublabel="Chercher les documents pertinents" color="accent" />
+          <Arrow x1={300} y1={116} x2={300} y2={148} />
+          {/* Augmentation */}
+          <Box x={150} y={148} w={300} h={44} label="2. Augmentation" sublabel="Injecter dans le prompt comme contexte" color="violet" />
+          <Arrow x1={300} y1={192} x2={300} y2={224} />
+          {/* Generation */}
+          <Box x={150} y={224} w={300} h={44} label="3. Generation" sublabel="Le LLM repond avec les documents" color="amber" />
+          <Arrow x1={300} y1={268} x2={300} y2={296} />
+          {/* Output */}
+          <Box x={175} y={296} w={250} h={36} label="Reponse sourcee et fiable" color="default" />
+        </SvgDiagram>
 
         <ComparisonTable
           headers={["Approche", "Principe", "Quand l'utiliser"]}
@@ -247,37 +244,34 @@ print(f"Meilleur match : '{phrases[best]}' (score: {scores[best]:.3f})")`}</Code
           </Step>
         </Steps>
 
-        <Diagram title="Architecture RAG complete">
-          <pre className="text-center">{`
-   INDEXATION (offline, une fois)
-   ─────────────────────────────
-   Documents PDF/HTML/TXT
-          |
-   [ Chunking ]  → morceaux de ~500 tokens
-          |
-   [ Embedding model ]  → vecteurs
-          |
-   [ Vector Store ]  → stockage indexe
-
-
-   REQUETE (a chaque question)
-   ──────────────────────────
-   "Comment changer de fournisseur ?"
-          |
-   [ Embedding model ]  → vecteur de la question
-          |
-   [ Vector Store: top-K search ]
-          |
-   3-5 chunks pertinents retrouves
-          |
-   [ Prompt = system + chunks + question ]
-          |
-   [ LLM ]
-          |
-   "Pour changer de fournisseur, voici les etapes..."
-   (avec citations des sources)
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={700} height={460} title="Architecture RAG complete">
+          {/* ---- INDEXATION side ---- */}
+          <GroupBox x={20} y={10} w={300} h={280} label="Indexation (offline)" color="accent" />
+          <Box x={60} y={36} w={220} h={36} label="Documents" sublabel="PDF / HTML / TXT" color="default" />
+          <Arrow x1={170} y1={72} x2={170} y2={98} />
+          <Box x={60} y={98} w={220} h={36} label="Chunking" sublabel="~500 tokens / chunk" color="accent" />
+          <Arrow x1={170} y1={134} x2={170} y2={160} />
+          <Box x={60} y={160} w={220} h={36} label="Embedding model" sublabel="texte -> vecteur" color="cyan" />
+          <Arrow x1={170} y1={196} x2={170} y2={222} />
+          <Box x={60} y={222} w={220} h={40} label="Vector Store" sublabel="stockage indexe" color="violet" />
+          {/* ---- REQUETE side ---- */}
+          <GroupBox x={370} y={10} w={310} h={440} label="Requete (a chaque question)" color="violet" />
+          <Box x={400} y={36} w={250} h={36} label="Question utilisateur" color="cyan" />
+          <Arrow x1={525} y1={72} x2={525} y2={98} />
+          <Box x={400} y={98} w={250} h={36} label="Embedding model" sublabel="question -> vecteur" color="cyan" />
+          <Arrow x1={525} y1={134} x2={525} y2={160} />
+          <Box x={400} y={160} w={250} h={40} label="Vector Store" sublabel="top-K search" color="violet" />
+          {/* Arrow from indexed store to query store */}
+          <Arrow x1={280} y1={242} x2={400} y2={180} dashed label="index" color="#8b5cf6" />
+          <Arrow x1={525} y1={200} x2={525} y2={230} />
+          <Label x={525} y={240} text="3-5 chunks pertinents" size={10} color="#a1a1aa" />
+          <Arrow x1={525} y1={250} x2={525} y2={276} />
+          <Box x={390} y={276} w={270} h={40} label="Prompt" sublabel="system + chunks + question" color="amber" />
+          <Arrow x1={525} y1={316} x2={525} y2={346} />
+          <Box x={430} y={346} w={190} h={36} label="LLM" color="violet" />
+          <Arrow x1={525} y1={382} x2={525} y2={410} />
+          <Box x={390} y={410} w={270} h={30} label="Reponse avec sources" color="accent" />
+        </SvgDiagram>
 
         <ComparisonTable
           headers={["Vector store", "Type", "Avantage", "Usage"]}
@@ -687,28 +681,29 @@ Reponds en citant les sources.\`
           Comment le RAG s&apos;integre dans l&apos;agent vocal Selectra ?
         </p>
 
-        <Diagram title="Agent vocal + RAG">
-          <pre className="text-center">{`
-  Client : "C'est quoi les tarifs chez TotalEnergies ?"
-                    |
-         [ Agent vocal (LLM) ]
-                    |
-         Besoin d'info factuelle → RAG
-                    |
-     [ Vector search: "tarifs TotalEnergies" ]
-                    |
-     Documents retrouves :
-     - "TotalEnergies Essentielle : 0.19€/kWh, abo 12€/mois"
-     - "TotalEnergies Verte : 0.21€/kWh, abo 13€/mois"
-                    |
-         [ LLM + contexte RAG ]
-                    |
-  Agent : "TotalEnergies propose deux offres principales :
-           l'offre Essentielle a 0.19€ le kilowatt-heure
-           et l'offre Verte a 0.21€. Voulez-vous que je
-           compare avec d'autres fournisseurs ?"
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={700} height={400} title="Agent vocal + RAG">
+          {/* Client question */}
+          <Box x={170} y={10} w={360} h={36} label='"Les tarifs chez TotalEnergies ?"' color="cyan" />
+          <Label x={130} y={28} text="Client" size={11} color="#06b6d4" anchor="end" />
+          <Arrow x1={350} y1={46} x2={350} y2={72} />
+          {/* Agent vocal */}
+          <Box x={220} y={72} w={260} h={36} label="Agent vocal (LLM)" color="violet" />
+          <Arrow x1={350} y1={108} x2={350} y2={130} label="besoin info factuelle" />
+          {/* Vector search */}
+          <Box x={170} y={140} w={360} h={40} label="Vector search" sublabel='"tarifs TotalEnergies"' color="accent" />
+          <Arrow x1={350} y1={180} x2={350} y2={210} />
+          {/* Retrieved docs */}
+          <GroupBox x={120} y={210} w={460} h={60} label="Documents retrouves" color="default" />
+          <Label x={350} y={234} text="Essentielle: 0.19EUR/kWh, abo 12EUR/mois" size={10} color="#a1a1aa" />
+          <Label x={350} y={250} text="Verte: 0.21EUR/kWh, abo 13EUR/mois" size={10} color="#a1a1aa" />
+          <Arrow x1={350} y1={274} x2={350} y2={300} />
+          {/* LLM + RAG context */}
+          <Box x={210} y={300} w={280} h={36} label="LLM + contexte RAG" color="violet" />
+          <Arrow x1={350} y1={336} x2={350} y2={360} />
+          {/* Agent response */}
+          <Box x={130} y={360} w={440} h={30} label="Reponse avec tarifs precis et sources" color="amber" />
+          <Label x={95} y={375} text="Agent" size={11} color="#f59e0b" anchor="end" />
+        </SvgDiagram>
 
         <p>
           En pratique, l&apos;agent vocal Selectra utiliserait le RAG pour :
@@ -830,34 +825,45 @@ Reponds en citant les sources.\`
           leurs amis — en quelques sauts, tu trouves.
         </p>
 
-        <Diagram title="Structure HNSW — graphe multi-couches">
-          <pre className="text-center">{`
-  Layer 2 (peu de noeuds, connexions longues)
-  ────────────────────────────────────────────
-      A ─────────────────────── F
-      │                         │
-      │    (sauts rapides       │
-      │     pour se rapprocher  │
-      │     de la zone cible)   │
-
-  Layer 1 (plus de noeuds, connexions moyennes)
-  ────────────────────────────────────────────
-      A ──── C ──── E ──── F ──── H
-      │      │             │
-      B      D             G
-
-  Layer 0 (tous les noeuds, connexions courtes)
-  ────────────────────────────────────────────
-      A─B─C─D─E─F─G─H─I─J─K─L─M─N─O─P
-      │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │
-      (chaque noeud connecte a ses voisins
-       les plus proches dans l'espace vectoriel)
-
-  RECHERCHE : on entre par le haut (Layer 2),
-  on descend couche par couche en se rapprochant
-  du vecteur cible a chaque etape.
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={660} height={380} title="Structure HNSW -- graphe multi-couches">
+          {/* ---- Layer 2 ---- */}
+          <GroupBox x={40} y={10} w={580} h={80} label="Layer 2 (peu de noeuds, sauts longs)" color="violet" />
+          <Box x={80} y={40} w={60} h={30} label="A" color="violet" />
+          <Box x={480} y={40} w={60} h={30} label="F" color="violet" />
+          <Arrow x1={140} y1={55} x2={480} y2={55} dashed color="#8b5cf6" />
+          {/* ---- Layer 1 ---- */}
+          <GroupBox x={40} y={110} w={580} h={80} label="Layer 1 (plus de noeuds, connexions moyennes)" color="cyan" />
+          <Box x={60} y={140} w={50} h={28} label="A" color="cyan" />
+          <Box x={170} y={140} w={50} h={28} label="C" color="cyan" />
+          <Box x={280} y={140} w={50} h={28} label="E" color="cyan" />
+          <Box x={390} y={140} w={50} h={28} label="F" color="cyan" />
+          <Box x={500} y={140} w={50} h={28} label="H" color="cyan" />
+          <Arrow x1={110} y1={154} x2={170} y2={154} />
+          <Arrow x1={220} y1={154} x2={280} y2={154} />
+          <Arrow x1={330} y1={154} x2={390} y2={154} />
+          <Arrow x1={440} y1={154} x2={500} y2={154} />
+          {/* ---- Layer 0 ---- */}
+          <GroupBox x={40} y={210} w={580} h={90} label="Layer 0 (tous les noeuds, connexions courtes)" color="accent" />
+          <Box x={50} y={240} w={40} h={24} label="A" color="accent" />
+          <Box x={100} y={240} w={40} h={24} label="B" color="accent" />
+          <Box x={150} y={240} w={40} h={24} label="C" color="accent" />
+          <Box x={200} y={240} w={40} h={24} label="D" color="accent" />
+          <Box x={250} y={240} w={40} h={24} label="E" color="accent" />
+          <Box x={300} y={240} w={40} h={24} label="F" color="accent" />
+          <Box x={350} y={240} w={40} h={24} label="G" color="accent" />
+          <Box x={400} y={240} w={40} h={24} label="H" color="accent" />
+          <Box x={450} y={240} w={40} h={24} label="I" color="accent" />
+          <Box x={500} y={240} w={40} h={24} label="J" color="accent" />
+          <Box x={550} y={240} w={40} h={24} label="K" color="accent" />
+          {/* Descent arrows between layers */}
+          <Arrow x1={110} y1={90} x2={85} y2={140} dashed color="#a1a1aa" />
+          <Arrow x1={510} y1={90} x2={415} y2={140} dashed color="#a1a1aa" />
+          <Arrow x1={85} y1={168} x2={70} y2={240} dashed color="#a1a1aa" />
+          <Arrow x1={415} y1={168} x2={320} y2={240} dashed color="#a1a1aa" />
+          {/* Caption */}
+          <Label x={330} y={330} text="Recherche : entrer par Layer 2, descendre couche par couche" size={11} color="#a1a1aa" />
+          <Label x={330} y={350} text="en se rapprochant du vecteur cible a chaque etape" size={11} color="#a1a1aa" />
+        </SvgDiagram>
 
         <Steps>
           <Step number="1" title="Construction du graphe">

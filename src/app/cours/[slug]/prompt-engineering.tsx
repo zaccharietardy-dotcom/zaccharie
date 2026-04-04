@@ -7,12 +7,12 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
+import { SvgDiagram, Box, Arrow, Label } from "@/components/svg-diagrams";
 
 export function PromptEngineering() {
   return (
@@ -564,26 +564,26 @@ console.log(result.object);
 //   urgence: "normale"
 // }`}</Code>
 
-        <Diagram title="Pipeline d'extraction structuree">
-          <pre className="text-center">{`
-  Transcript d'appel (texte brut)
-           |
-    [ LLM + schema Zod ]
-           |
-    JSON structure type-safe
-           |
-    ┌──────────────────┐
-    │ intent: "..."     │
-    │ adresse: "..."    │
-    │ PDL: "..."        │
-    │ conso: 6000       │
-    └──────────────────┘
-           |
-    [ Outil de comparaison ]
-           |
-    Top 3 offres
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={600} height={380} title="Pipeline d'extraction structuree">
+          {/* Input */}
+          <Box x={170} y={10} w={260} h={36} label="Transcript d'appel" sublabel="texte brut" color="cyan" />
+          <Arrow x1={300} y1={46} x2={300} y2={76} />
+          {/* LLM + Zod */}
+          <Box x={170} y={76} w={260} h={36} label="LLM + schema Zod" color="violet" />
+          <Arrow x1={300} y1={112} x2={300} y2={142} />
+          {/* JSON structured output */}
+          <Box x={150} y={142} w={300} h={100} label="JSON type-safe" color="accent" />
+          <Label x={300} y={174} text='intent: "nouveau_logement"' size={10} color="#a1a1aa" />
+          <Label x={300} y={192} text='adresse: "12 rue de la Paix"' size={10} color="#a1a1aa" />
+          <Label x={300} y={210} text='PDL: "09876543210"' size={10} color="#a1a1aa" />
+          <Label x={300} y={228} text="conso: 6000" size={10} color="#a1a1aa" />
+          <Arrow x1={300} y1={242} x2={300} y2={276} />
+          {/* Comparison tool */}
+          <Box x={150} y={276} w={300} h={36} label="Outil de comparaison" color="amber" />
+          <Arrow x1={300} y1={312} x2={300} y2={340} />
+          {/* Output */}
+          <Box x={200} y={340} w={200} h={30} label="Top 3 offres" color="rose" />
+        </SvgDiagram>
 
         <Warning>
           <p>

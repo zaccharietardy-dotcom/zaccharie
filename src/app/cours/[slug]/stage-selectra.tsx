@@ -7,12 +7,18 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
+import {
+  SvgDiagram,
+  Box,
+  Arrow,
+  Label,
+  GroupBox,
+} from "@/components/svg-diagrams";
 
 export function StageSelectra() {
   return (
@@ -130,31 +136,30 @@ export function StageSelectra() {
           devient du script sans que personne s&apos;en rende compte.
         </p>
 
-        <Diagram title="Pipeline de compliance automatisee">
-          <pre className="text-center">{`
-  Appel termine (Vonage)
-        |
-  [ Whisper / Gladia STT ]
-        |
-  Transcript texte
-        |
-  [ LLM — scoring sur rubrique ]
-        |
-  ┌──────────────────────────────────┐
-  │  Score de conformite             │
-  │                                  │
-  │  ✅ Disclosure Selectra : OUI    │
-  │  ✅ Comparaison ≥2 offres : OUI │
-  │  ❌ Fausse promesse prix : OUI  │ ← ALERTE
-  │  ✅ Droit de retractation : OUI │
-  │  ⚠️  Pression excessive : MAYBE │
-  │                                  │
-  │  Score global : 3/5 — FLAG       │
-  └──────────────────────────────────┘
-        |
-  → Dashboard QA + alerte Slack/email
-`}</pre>
-        </Diagram>
+        <SvgDiagram title="Pipeline de compliance automatisee" width={650} height={460}>
+          <Label x={325} y={18} text="Appel termine (Vonage)" size={12} weight="bold" color="#e4e4e7" />
+          <Arrow x1={325} y1={30} x2={325} y2={50} />
+
+          <Box x={175} y={50} w={300} h={45} label="STT" sublabel="Whisper / Gladia" color="cyan" />
+          <Arrow x1={325} y1={95} x2={325} y2={115} label="Transcript texte" />
+
+          <Box x={175} y={125} w={300} h={45} label="LLM" sublabel="Scoring sur rubrique" color="violet" />
+          <Arrow x1={325} y1={170} x2={325} y2={195} />
+
+          {/* Score card */}
+          <Box x={130} y={195} w={390} h={170} label="Score de conformite" color="amber" />
+          <Label x={215} y={235} text="Disclosure Selectra : OUI" size={10} color="#10b981" anchor="start" />
+          <Label x={215} y={255} text="Comparaison >=2 offres : OUI" size={10} color="#10b981" anchor="start" />
+          <Label x={215} y={275} text="Fausse promesse prix : OUI" size={10} color="#f43f5e" anchor="start" />
+          <Label x={490} y={275} text="ALERTE" size={10} color="#f43f5e" anchor="start" />
+          <Label x={215} y={295} text="Droit de retractation : OUI" size={10} color="#10b981" anchor="start" />
+          <Label x={215} y={315} text="Pression excessive : MAYBE" size={10} color="#f59e0b" anchor="start" />
+          <Label x={325} y={345} text="Score global : 3/5 — FLAG" size={11} weight="bold" color="#f59e0b" />
+
+          <Arrow x1={325} y1={365} x2={325} y2={395} />
+
+          <Box x={150} y={395} w={350} h={40} label="Dashboard QA + alerte Slack/email" color="accent" />
+        </SvgDiagram>
 
         <Code language="python — scoring LLM d'un transcript">{`from anthropic import Anthropic
 
@@ -246,21 +251,20 @@ features = {
           en 3 questions capture un trafic enorme.
         </p>
 
-        <Diagram title="Chatbot d'eligibilite">
-          <pre className="text-center">{`
-  User : "J'ai un DPE E, est-ce que j'ai droit a MaPrimeRenov ?"
-                    |
-              [ LLM + contexte reglementaire ]
-                    |
-  "Oui, avec un DPE E vous etes eligible a
-   MaPrimeRenov parcours accompagne.
-   Pour un T3 avec un revenu < 23 541€/an :
-   - MaPrimeRenov : jusqu'a 63 000€
-   - Eco-PTZ : jusqu'a 50 000€
-   - CEE : variable selon travaux
-   Voulez-vous qu'on estime pour vos travaux ?"
-`}</pre>
-        </Diagram>
+        <SvgDiagram title="Chatbot d'eligibilite" width={650} height={330}>
+          <Box x={75} y={10} w={500} h={40} label="User: &quot;J'ai un DPE E, droit a MaPrimeRenov ?&quot;" color="default" />
+          <Arrow x1={325} y1={50} x2={325} y2={80} />
+
+          <Box x={175} y={80} w={300} h={45} label="LLM" sublabel="+ contexte reglementaire" color="violet" />
+          <Arrow x1={325} y1={125} x2={325} y2={155} />
+
+          <Box x={75} y={155} w={500} h={145} label="Reponse" color="accent" />
+          <Label x={325} y={195} text="DPE E → eligible MaPrimeRenov parcours accompagne" size={10} />
+          <Label x={325} y={218} text="Pour un T3, revenu < 23 541 EUR/an :" size={10} color="#e4e4e7" />
+          <Label x={200} y={240} text="MaPrimeRenov : jusqu'a 63 000 EUR" size={10} anchor="start" color="#10b981" />
+          <Label x={200} y={258} text="Eco-PTZ : jusqu'a 50 000 EUR" size={10} anchor="start" color="#10b981" />
+          <Label x={200} y={276} text="CEE : variable selon travaux" size={10} anchor="start" color="#10b981" />
+        </SvgDiagram>
 
         <ComparisonTable
           headers={["Avantage", "Detail"]}
@@ -327,21 +331,32 @@ features = [
           AI Overview apparait.
         </p>
 
-        <Diagram title="La menace AI Overview">
-          <pre className="text-center">{`
-  AVANT (2024)
-  User : "meilleur fournisseur electricite 2026"
-       → Google affiche 10 liens bleus
-       → Selectra est #1 → clic → appel → commission
+        <SvgDiagram title="La menace AI Overview" width={700} height={310}>
+          {/* Left: AVANT */}
+          <Label x={175} y={20} text="AVANT (2024)" size={12} weight="bold" color="#10b981" />
 
-  MAINTENANT (2026)
-  User : "meilleur fournisseur electricite 2026"
-       → Google AI Overview repond directement
-       → "Selon nos sources, les meilleurs fournisseurs sont..."
-       → L'utilisateur a sa reponse SANS cliquer
-       → Selectra perd le trafic → perd le revenue
-`}</pre>
-        </Diagram>
+          <Box x={55} y={45} w={240} h={35} label="&quot;meilleur fournisseur 2026&quot;" color="default" />
+          <Arrow x1={175} y1={80} x2={175} y2={100} />
+          <Box x={55} y={100} w={240} h={35} label="Google: 10 liens bleus" color="default" />
+          <Arrow x1={175} y1={135} x2={175} y2={155} />
+          <Box x={55} y={155} w={240} h={35} label="Selectra #1 → clic" color="accent" />
+          <Arrow x1={175} y1={190} x2={175} y2={210} />
+          <Box x={55} y={210} w={240} h={35} label="Appel → Commission" color="accent" />
+
+          {/* Divider */}
+          <line x1={350} y1={10} x2={350} y2={290} stroke="#27272a" strokeWidth={1} strokeDasharray="4,4" />
+
+          {/* Right: MAINTENANT */}
+          <Label x={525} y={20} text="MAINTENANT (2026)" size={12} weight="bold" color="#f43f5e" />
+
+          <Box x={405} y={45} w={240} h={35} label="&quot;meilleur fournisseur 2026&quot;" color="default" />
+          <Arrow x1={525} y1={80} x2={525} y2={100} />
+          <Box x={405} y={100} w={240} h={55} label="Google AI Overview" sublabel="repond directement" color="rose" />
+          <Arrow x1={525} y1={155} x2={525} y2={175} />
+          <Box x={405} y={175} w={240} h={35} label="User a sa reponse SANS clic" color="rose" />
+          <Arrow x1={525} y1={210} x2={525} y2={230} />
+          <Box x={405} y={230} w={240} h={40} label="Selectra perd le trafic" sublabel="→ perd le revenue" color="rose" />
+        </SvgDiagram>
 
         <p>Le projet :</p>
 
@@ -385,64 +400,42 @@ features = [
           </p>
         </KeyConcept>
 
-        <Diagram title="Architecture detaillee de l'agent vocal">
-          <pre className="text-center">{`
-  ┌───────────────────────────────────────────────────────────┐
-  │                     TELEPHONIE                           │
-  │  Numero Vonage → SIP trunk → WebSocket audio stream      │
-  └────────────────────────┬──────────────────────────────────┘
-                           │ audio PCM 16kHz
-  ┌────────────────────────▼──────────────────────────────────┐
-  │                  ORCHESTRATEUR                            │
-  │  (Vapi / LiveKit Agents / custom Python)                  │
-  │                                                           │
-  │  ┌─────────┐   ┌──────────────┐   ┌───────────────────┐  │
-  │  │  VAD    │   │    STT       │   │     TTS           │  │
-  │  │ Silero  │   │  Gladia      │   │  Voxtral TTS      │  │
-  │  │         │   │  Solaria     │   │  (Mistral, open)  │  │
-  │  │ detect  │   │  <103ms      │   │  90ms first audio │  │
-  │  │ silence │   │  streaming   │   │  voice clone 3s   │  │
-  │  └────┬────┘   └──────┬───────┘   └────────▲──────────┘  │
-  │       │               │ texte              │ texte       │
-  │       │         ┌─────▼────────────────────┤             │
-  │       │         │    LLM (Claude/GPT)      │             │
-  │       │         │    via AI Gateway        │             │
-  │       │         │                          │             │
-  │       │         │  System prompt :         │             │
-  │       │         │  - Role : agent qualif   │             │
-  │       │         │  - Process : 5 etapes    │             │
-  │       │         │  - Guardrails            │             │
-  │       │         │                          │             │
-  │       │         │  Tools :                 │             │
-  │       │         │  ┌──────────────────┐    │             │
-  │       │         │  │ chercherPDL()    │    │             │
-  │       │         │  │ adresse → PDL    │    │             │
-  │       │         │  ├──────────────────┤    │             │
-  │       │         │  │ comparerOffres() │    │             │
-  │       │         │  │ CP+conso → top 3 │    │             │
-  │       │         │  ├──────────────────┤    │             │
-  │       │         │  │ lookupDossier()  │    │             │
-  │       │         │  │ n° → statut      │    │             │
-  │       │         │  ├──────────────────┤    │             │
-  │       │         │  │ transferer()     │    │             │
-  │       │         │  │ fiche → humain   │    │             │
-  │       │         │  └──────────────────┘    │             │
-  │       │         │                          │             │
-  │       │         │  RAG :                   │             │
-  │       │         │  - FAQ (200+ Q/R)        │             │
-  │       │         │  - Tarifs actuels         │             │
-  │       │         │  - Scripts qualification  │             │
-  │       │         └──────────────────────────┘             │
-  └──────────────────────────────────────────────────────────┘
-                           │
-  ┌────────────────────────▼──────────────────────────────────┐
-  │                   BACKEND                                 │
-  │  Zoho CRM (fiche client) ← API webhook                  │
-  │  Dashboard (conversations temps reel) ← WebSocket        │
-  │  Vonage (transfert SIP vers commercial) ← API            │
-  └──────────────────────────────────────────────────────────┘
-`}</pre>
-        </Diagram>
+        <SvgDiagram title="Architecture detaillee de l'agent vocal" width={680} height={530}>
+          {/* Telephonie layer */}
+          <Box x={40} y={10} w={600} h={55} label="TELEPHONIE" sublabel="Vonage → SIP trunk → WebSocket audio (PCM 16kHz)" color="rose" />
+          <Arrow x1={340} y1={65} x2={340} y2={90} label="audio PCM 16kHz" />
+
+          {/* Orchestrateur group */}
+          <GroupBox x={40} y={90} w={600} h={300} label="ORCHESTRATEUR (Vapi / LiveKit / custom Python)" color="default" />
+
+          {/* VAD / STT / TTS row */}
+          <Box x={60} y={120} w={130} h={55} label="VAD" sublabel="Silero, detect silence" color="amber" />
+          <Box x={210} y={120} w={150} h={55} label="STT" sublabel="Gladia Solaria <103ms" color="cyan" />
+          <Box x={490} y={120} w={130} h={55} label="TTS" sublabel="Voxtral 90ms, clone" color="accent" />
+
+          {/* Arrows */}
+          <Arrow x1={285} y1={175} x2={285} y2={210} label="texte" />
+          <Arrow x1={460} y1={260} x2={490} y2={175} label="texte" />
+
+          {/* LLM box */}
+          <Box x={170} y={210} w={300} h={165} label="LLM (Claude/GPT)" sublabel="via AI Gateway" color="violet" />
+
+          {/* LLM internal details */}
+          <Label x={320} y={265} text="System prompt: agent qualif" size={9} />
+          <Label x={320} y={282} text="Process: 5 etapes + guardrails" size={9} />
+
+          <Label x={320} y={306} text="Tools:" size={9} color="#e4e4e7" />
+          <Label x={240} y={322} text="chercherPDL()  comparerOffres()" size={9} anchor="start" />
+          <Label x={240} y={338} text="lookupDossier()  transferer()" size={9} anchor="start" />
+
+          <Label x={320} y={358} text="RAG: FAQ 200+ Q/R, tarifs, scripts" size={9} />
+
+          {/* Arrow to backend */}
+          <Arrow x1={340} y1={390} x2={340} y2={425} />
+
+          {/* Backend layer */}
+          <Box x={40} y={425} w={600} h={70} label="BACKEND" sublabel="Zoho CRM (webhook) + Dashboard (WebSocket) + Vonage (transfert SIP)" color="default" />
+        </SvgDiagram>
 
         <p>
           Le flow d&apos;un appel type :
@@ -614,44 +607,37 @@ vapi  = 2 * 0.05      # Vapi orchestration : 0.05€/min    = 0.100€
           le remplacer.
         </p>
 
-        <Diagram title="Agent assist — ce que voit le commercial">
-          <pre className="text-center">{`
-  ┌──────────────────────────────────────────────────┐
-  │  ECRAN DU COMMERCIAL (pendant l'appel)           │
-  │                                                  │
-  │  ┌─ Transcript live ────────────────────────┐    │
-  │  │ Client: "Je suis chez EDF, mon compteur  │    │
-  │  │ c'est le 09234... et je paye 120€/mois"  │    │
-  │  └──────────────────────────────────────────┘    │
-  │                                                  │
-  │  ┌─ Infos extraites auto ──────────────────┐    │
-  │  │ Fournisseur : EDF                        │    │
-  │  │ PDL : 09234567890123                     │    │
-  │  │ Budget mensuel : 120€ → ~8640 kWh/an     │    │
-  │  │ Intent : changement_fournisseur          │    │
-  │  └──────────────────────────────────────────┘    │
-  │                                                  │
-  │  ┌─ Suggestions IA ────────────────────────┐    │
-  │  │ 🟢 OHM Energie    : 98€/mois (-18%)    │    │
-  │  │ 🟡 Mint Energie   : 101€/mois (-16%)   │    │
-  │  │ 🔵 TotalEnergies  : 105€/mois (-12%)   │    │
-  │  │                                          │    │
-  │  │ 💡 "Le client paie 22€ de plus que la   │    │
-  │  │     meilleure offre. Forte economie."    │    │
-  │  └──────────────────────────────────────────┘    │
-  │                                                  │
-  │  ┌─ Compliance ────────────────────────────┐    │
-  │  │ ✅ Selectra mentionne                    │    │
-  │  │ ⚠️  Droit retractation : PAS ENCORE DIT │    │
-  │  │ ✅ Pas de fausse promesse               │    │
-  │  └──────────────────────────────────────────┘    │
-  │                                                  │
-  │  ┌─ Sentiment ─────────────────────────────┐    │
-  │  │ 😊 Client positif — bonne dynamique     │    │
-  │  └──────────────────────────────────────────┘    │
-  └──────────────────────────────────────────────────┘
-`}</pre>
-        </Diagram>
+        <SvgDiagram title="Agent assist — ce que voit le commercial" width={650} height={480}>
+          {/* Outer frame */}
+          <GroupBox x={20} y={10} w={610} h={460} label="ECRAN DU COMMERCIAL (pendant l'appel)" color="default" />
+
+          {/* Transcript live */}
+          <Box x={40} y={40} w={570} h={60} label="Transcript live" color="cyan" />
+          <Label x={325} y={78} text="Client: &quot;Je suis chez EDF, mon compteur 09234... 120 EUR/mois&quot;" size={9} />
+
+          {/* Infos extraites */}
+          <Box x={40} y={115} w={570} h={80} label="Infos extraites auto" color="violet" />
+          <Label x={60} y={150} text="Fournisseur: EDF" size={10} anchor="start" />
+          <Label x={250} y={150} text="PDL: 09234567890123" size={10} anchor="start" />
+          <Label x={60} y={170} text="Budget: 120 EUR/mois → ~8640 kWh/an" size={10} anchor="start" />
+          <Label x={400} y={170} text="Intent: changement" size={10} anchor="start" />
+
+          {/* Suggestions IA */}
+          <Box x={40} y={210} w={570} h={105} label="Suggestions IA" color="accent" />
+          <Label x={60} y={248} text="OHM Energie : 98 EUR/mois (-18%)" size={10} anchor="start" color="#10b981" />
+          <Label x={60} y={268} text="Mint Energie : 101 EUR/mois (-16%)" size={10} anchor="start" color="#f59e0b" />
+          <Label x={60} y={288} text="TotalEnergies : 105 EUR/mois (-12%)" size={10} anchor="start" color="#06b6d4" />
+          <Label x={400} y={268} text="Economie: 22 EUR/mois" size={10} anchor="start" color="#10b981" />
+
+          {/* Compliance */}
+          <Box x={40} y={330} w={570} h={60} label="Compliance" color="amber" />
+          <Label x={60} y={365} text="Selectra mentionne: OUI" size={10} anchor="start" color="#10b981" />
+          <Label x={260} y={365} text="Retractation: PAS DIT" size={10} anchor="start" color="#f59e0b" />
+          <Label x={460} y={365} text="Fausse promesse: NON" size={10} anchor="start" color="#10b981" />
+
+          {/* Sentiment */}
+          <Box x={40} y={405} w={570} h={40} label="Sentiment: Client positif — bonne dynamique" color="accent" />
+        </SvgDiagram>
 
         <ComparisonTable
           headers={["Fonctionnalite", "Tech", "Valeur"]}

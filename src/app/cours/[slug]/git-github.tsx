@@ -36,14 +36,14 @@ export function GitGithub() {
           la <Term def="Zone de preparation avant un commit">staging area</Term> (index),
           et le <Term def="L'historique permanent des snapshots">repository</Term>.
         </p>
-        <SvgDiagram width={660} height={130} title="Les 3 zones de Git">
-          <Box x={20} y={35} w={170} h={60} label="Working Directory" sublabel="edit files" color="default" />
-          <Box x={245} y={35} w={170} h={60} label="Staging Area" sublabel="(index)" color="amber" />
-          <Box x={470} y={35} w={170} h={60} label="Repository" sublabel="(.git)" color="accent" />
-          <Arrow x1={190} y1={55} x2={245} y2={55} label="git add" />
-          <Arrow x1={415} y1={55} x2={470} y2={55} label="git commit" />
-          <Arrow x1={245} y1={80} x2={190} y2={80} label="git restore" dashed />
-          <Label x={555} y={115} text="git log" size={10} />
+        <SvgDiagram width={700} height={180} title="Les 3 zones de Git">
+          <Box x={30} y={50} w={180} h={70} label="Working Dir" sublabel="tes fichiers" color="default" />
+          <Box x={260} y={50} w={180} h={70} label="Staging Area" sublabel="index" color="amber" />
+          <Box x={490} y={50} w={180} h={70} label="Repository" sublabel=".git" color="accent" />
+          <Arrow x1={210} y1={75} x2={260} y2={75} label="git add" />
+          <Arrow x1={440} y1={75} x2={490} y2={75} label="git commit" />
+          <Arrow x1={260} y1={100} x2={210} y2={100} label="git restore" dashed />
+          <Label x={580} y={150} text="git log" size={11} color="#10b981" />
         </SvgDiagram>
         <Code language="bash — les commandes de base">{`# Initialiser un repo
 git init

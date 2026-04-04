@@ -7,12 +7,12 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
+import { SvgDiagram, Box, Arrow, Label, GroupBox } from "@/components/svg-diagrams";
 
 export function FondationsLLM() {
   return (
@@ -340,28 +340,25 @@ print(f"dot(roi, banane) = {np.dot(a, c):.3f}")   # → -0.31`}</Code>
           &quot;canape&quot;.
         </p>
 
-        <Diagram title="Mecanisme d'attention simplifie">
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex gap-3 text-zinc-500">
-              <span>Le</span>
-              <span className="text-emerald-400 font-bold">chat</span>
-              <span>dort</span>
-              <span>sur</span>
-              <span>le</span>
-              <span>canape</span>
-              <span>car</span>
-              <span className="text-amber-400 font-bold">il</span>
-              <span>est</span>
-              <span>fatigue</span>
-            </div>
-            <div className="text-zinc-600">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr;&uarr;&uarr;&uarr;&uarr;&uarr;&uarr;&uarr;&nbsp;forte attention&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&uarr; regard
-            </div>
-            <p className="text-xs text-zinc-500">
-              &quot;il&quot; donne un poids fort a &quot;chat&quot; (0.72) et faible a &quot;canape&quot; (0.03)
-            </p>
-          </div>
-        </Diagram>
+        <SvgDiagram width={660} height={160} title="Mecanisme d'attention simplifie">
+          {/* Tokens */}
+          <Label x={66} y={30} text="Le" size={13} color="#a1a1aa" />
+          <Label x={132} y={30} text="chat" size={13} color="#10b981" weight="bold" />
+          <Label x={198} y={30} text="dort" size={13} color="#a1a1aa" />
+          <Label x={264} y={30} text="sur" size={13} color="#a1a1aa" />
+          <Label x={330} y={30} text="le" size={13} color="#a1a1aa" />
+          <Label x={396} y={30} text="canape" size={13} color="#a1a1aa" />
+          <Label x={462} y={30} text="car" size={13} color="#a1a1aa" />
+          <Label x={528} y={30} text="il" size={13} color="#f59e0b" weight="bold" />
+          <Label x={572} y={30} text="est" size={13} color="#a1a1aa" />
+          <Label x={622} y={30} text="fatigue" size={13} color="#a1a1aa" />
+          {/* Attention arrow from "il" to "chat" */}
+          <Arrow x1={528} y1={42} x2={132} y2={42} label="forte attention (0.72)" color="#10b981" />
+          {/* Weak arrow from "il" to "canape" */}
+          <Arrow x1={528} y1={56} x2={396} y2={56} label="faible (0.03)" dashed color="#a1a1aa" />
+          {/* Caption */}
+          <Label x={330} y={130} text={'"il" regarde surtout "chat" pour savoir a quoi il se refere'} size={11} color="#a1a1aa" />
+        </SvgDiagram>
 
         <p>
           En pratique, le Transformer utilise du <strong>multi-head attention</strong> :
@@ -477,37 +474,36 @@ attn_output = F.scaled_dot_product_attention(
           </Step>
         </Steps>
 
-        <Diagram title="Pipeline simplifie d'un LLM">
-          <pre className="text-center">{`
-  "Bonjour, je"
-       |
-  [ Tokenizer ]
-       |
-  [82, 4521, 29]
-       |
-  [ Embedding + Position ]
-       |
-  [ 0.21, -0.3, ... ] x 3 tokens
-       |
-  ┌──────────────────────┐
-  │  Transformer Layer 1 │ ← attention + feed-forward
-  │  Transformer Layer 2 │
-  │        ...           │
-  │  Transformer Layer N │
-  └──────────────────────┘
-       |
-  [ Projection → vocabulaire ]
-       |
-  "cherche" (probabilite: 0.12)
-  "veux"    (probabilite: 0.08)
-  "suis"    (probabilite: 0.07)
-       |
-  [ Sampling ] → "cherche"
-       |
-  Output: "Bonjour, je cherche"
-  → on recommence avec cette nouvelle sequence
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={660} height={520} title="Pipeline simplifie d'un LLM">
+          {/* Input */}
+          <Label x={330} y={20} text={'"Bonjour, je"'} size={13} color="#e4e4e7" weight="bold" />
+          <Arrow x1={330} y1={32} x2={330} y2={48} />
+          {/* Tokenizer */}
+          <Box x={245} y={48} w={170} h={36} label="Tokenizer" color="default" />
+          <Arrow x1={330} y1={84} x2={330} y2={108} />
+          <Label x={330} y={100} text="[82, 4521, 29]" size={10} color="#a1a1aa" />
+          {/* Embedding */}
+          <Box x={215} y={112} w={230} h={36} label="Embedding + Position" color="cyan" />
+          <Arrow x1={330} y1={148} x2={330} y2={176} />
+          {/* Transformer stack */}
+          <GroupBox x={195} y={180} w={270} h={120} label="Transformer x N" color="accent" />
+          <Box x={215} y={196} w={230} h={30} label="Self-Attention" color="accent" />
+          <Arrow x1={330} y1={226} x2={330} y2={238} />
+          <Box x={215} y={238} w={230} h={30} label="Feed-Forward" color="accent" />
+          <Label x={490} y={210} text="x N layers" size={10} color="#10b981" anchor="start" />
+          <Arrow x1={330} y1={300} x2={330} y2={328} />
+          {/* Projection */}
+          <Box x={205} y={328} w={250} h={36} label="Projection -> vocab" color="violet" />
+          <Arrow x1={330} y1={364} x2={330} y2={392} />
+          {/* Probabilities */}
+          <Label x={330} y={398} text={'"cherche" 0.12 | "veux" 0.08 | "suis" 0.07'} size={10} color="#a1a1aa" />
+          <Arrow x1={330} y1={410} x2={330} y2={434} />
+          {/* Sampling */}
+          <Box x={255} y={434} w={150} h={36} label="Sampling" color="amber" />
+          <Arrow x1={330} y1={470} x2={330} y2={494} />
+          {/* Output */}
+          <Label x={330} y={504} text={'"Bonjour, je cherche" -> on recommence'} size={11} color="#e4e4e7" weight="bold" />
+        </SvgDiagram>
 
         <KeyConcept title="Autoregressive generation">
           <p>

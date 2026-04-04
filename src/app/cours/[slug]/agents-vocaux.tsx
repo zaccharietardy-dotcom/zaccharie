@@ -7,12 +7,18 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
+import {
+  SvgDiagram,
+  Box,
+  Arrow,
+  Label,
+  GroupBox,
+} from "@/components/svg-diagrams";
 
 export function AgentsVocaux() {
   return (
@@ -60,37 +66,33 @@ export function AgentsVocaux() {
           vocal suit ce pipeline en cascade :
         </p>
 
-        <Diagram title="Pipeline vocal classique (cascade)">
-          <pre className="text-center">{`
-  Client parle (audio)
-        |
-  ┌─────────────────┐
-  │   STT           │  Speech-to-Text
-  │   (Deepgram,    │  Audio → Texte
-  │    Gladia,      │  ~100-300ms
-  │    Whisper)      │
-  └────────┬────────┘
-           |
-  ┌────────▼────────┐
-  │   LLM           │  Raisonnement
-  │   (Claude, GPT) │  Texte → Texte
-  │                  │  ~200-1000ms
-  │   + Tool calling │
-  └────────┬────────┘
-           |
-  ┌────────▼────────┐
-  │   TTS           │  Text-to-Speech
-  │   (ElevenLabs,  │  Texte → Audio
-  │    Voxtral,     │  ~100-300ms
-  │    OpenAI TTS)  │
-  └────────┬────────┘
-           |
-  Agent parle (audio)
+        <SvgDiagram title="Pipeline vocal classique (cascade)" width={650} height={460}>
+          <Label x={325} y={20} text="Client parle (audio)" size={12} weight="bold" color="#e4e4e7" />
+          <Arrow x1={325} y1={32} x2={325} y2={50} />
 
-  LATENCE TOTALE : 400ms - 1.6s
-  (acceptable si < 1s, perceptible si > 1.5s)
-`}</pre>
-        </Diagram>
+          <Box x={200} y={50} w={250} h={65} label="STT" sublabel="Deepgram, Gladia, Whisper" color="cyan" />
+          <Label x={490} y={68} text="Speech-to-Text" size={10} anchor="start" />
+          <Label x={490} y={83} text="Audio → Texte" size={10} anchor="start" />
+          <Label x={490} y={98} text="~100-300ms" size={10} anchor="start" />
+          <Arrow x1={325} y1={115} x2={325} y2={145} />
+
+          <Box x={200} y={145} w={250} h={65} label="LLM" sublabel="Claude, GPT + Tool calling" color="violet" />
+          <Label x={490} y={163} text="Raisonnement" size={10} anchor="start" />
+          <Label x={490} y={178} text="Texte → Texte" size={10} anchor="start" />
+          <Label x={490} y={193} text="~200-1000ms" size={10} anchor="start" />
+          <Arrow x1={325} y1={210} x2={325} y2={240} />
+
+          <Box x={200} y={240} w={250} h={65} label="TTS" sublabel="ElevenLabs, Voxtral, OpenAI" color="accent" />
+          <Label x={490} y={258} text="Text-to-Speech" size={10} anchor="start" />
+          <Label x={490} y={273} text="Texte → Audio" size={10} anchor="start" />
+          <Label x={490} y={288} text="~100-300ms" size={10} anchor="start" />
+          <Arrow x1={325} y1={305} x2={325} y2={335} />
+
+          <Label x={325} y={350} text="Agent parle (audio)" size={12} weight="bold" color="#e4e4e7" />
+
+          <Label x={325} y={395} text="LATENCE TOTALE : 400ms - 1.6s" size={12} weight="bold" color="#f59e0b" />
+          <Label x={325} y={415} text="(acceptable si < 1s, perceptible si > 1.5s)" size={10} />
+        </SvgDiagram>
 
         <Code language="python — STT avec Whisper (OpenAI) en 5 lignes">{`import whisper  # pip install openai-whisper
 
@@ -224,24 +226,42 @@ save(audio, "reponse.mp3")`}</Code>
           </p>
         </KeyConcept>
 
-        <Diagram title="Pipeline classique vs Speech-to-Speech">
-          <pre className="text-center">{`
-  CLASSIQUE (cascade)              SPEECH-TO-SPEECH (Moshi)
-  ───────────────────              ──────────────────────────
+        <SvgDiagram title="Pipeline classique vs Speech-to-Speech" width={700} height={300}>
+          {/* Left side: Classique */}
+          <Label x={175} y={20} text="CLASSIQUE (cascade)" size={12} weight="bold" color="#e4e4e7" />
+          <Label x={40} y={60} text="Audio" size={11} anchor="start" color="#e4e4e7" />
+          <Arrow x1={78} y1={60} x2={105} y2={60} />
+          <Box x={105} y={42} w={80} h={36} label="STT" color="cyan" />
+          <Label x={145} y={90} text="100ms" size={9} />
+          <Arrow x1={185} y1={60} x2={210} y2={60} />
+          <Box x={210} y={42} w={80} h={36} label="LLM" color="violet" />
+          <Label x={250} y={90} text="500ms" size={9} />
+          <Arrow x1={290} y1={60} x2={315} y2={60} />
+          <Box x={315} y={42} w={80} h={36} label="TTS" color="accent" />
+          <Label x={355} y={90} text="200ms" size={9} />
 
-  Audio ──▶ STT ──▶ LLM ──▶ TTS   Audio ──▶ ┌────────────┐ ──▶ Audio
-           100ms   500ms   200ms              │   MOSHI    │
-           ─────────────────────              │ (un seul   │
-           Total: ~800ms+                     │  modele)   │
-                                              └────────────┘
-           Demi-duplex:                       Total: ~200ms
-           L'un parle, l'autre
-           ecoute. Pas les deux.              Full-duplex:
-                                              Ecoute ET parle en
-                                              meme temps. Peut
-                                              s'interrompre.
-`}</pre>
-        </Diagram>
+          <Label x={175} y={125} text="Total: ~800ms+" size={11} weight="bold" color="#f43f5e" />
+          <Label x={175} y={150} text="Demi-duplex:" size={10} color="#e4e4e7" />
+          <Label x={175} y={168} text="L'un parle, l'autre ecoute." size={10} />
+          <Label x={175} y={186} text="Pas les deux." size={10} />
+
+          {/* Divider */}
+          <line x1={395} y1={10} x2={395} y2={280} stroke="#27272a" strokeWidth={1} strokeDasharray="4,4" />
+
+          {/* Right side: Moshi S2S */}
+          <Label x={550} y={20} text="SPEECH-TO-SPEECH (Moshi)" size={12} weight="bold" color="#e4e4e7" />
+          <Label x={430} y={80} text="Audio" size={11} anchor="start" color="#e4e4e7" />
+          <Arrow x1={468} y1={80} x2={495} y2={80} />
+          <Box x={495} y={55} w={130} h={50} label="MOSHI" sublabel="(un seul modele)" color="amber" />
+          <Arrow x1={625} y1={80} x2={655} y2={80} />
+          <Label x={660} y={80} text="Audio" size={11} anchor="start" color="#e4e4e7" />
+
+          <Label x={550} y={135} text="Total: ~200ms" size={11} weight="bold" color="#10b981" />
+          <Label x={550} y={165} text="Full-duplex:" size={10} color="#e4e4e7" />
+          <Label x={550} y={183} text="Ecoute ET parle en" size={10} />
+          <Label x={550} y={201} text="meme temps. Peut" size={10} />
+          <Label x={550} y={219} text="s'interrompre." size={10} />
+        </SvgDiagram>
 
         <p>Comment ca marche techniquement ?</p>
 
@@ -569,48 +589,36 @@ const vadConfig = {
         number="07"
         title="Architecture complete : l'agent vocal Selectra"
       >
-        <Diagram title="Architecture de production">
-          <pre className="text-center">{`
-  ┌─────────────────────────────────────────────────────┐
-  │                TELEPHONIE                           │
-  │  Numero entrant → SIP trunk → WebSocket             │
-  │  (Twilio, Vonage, ou Vapi integre)                  │
-  └──────────────────────┬──────────────────────────────┘
-                         │ audio stream
-  ┌──────────────────────▼──────────────────────────────┐
-  │              ORCHESTRATEUR VOCAL                     │
-  │  (LiveKit Agents ou Vapi)                           │
-  │                                                      │
-  │  ┌──────────┐  ┌───────────┐  ┌──────────────────┐ │
-  │  │   VAD    │  │   STT     │  │    TTS           │ │
-  │  │ (silence │  │ (Gladia   │  │ (Voxtral TTS     │ │
-  │  │  detect) │  │  Solaria) │  │  ou ElevenLabs)  │ │
-  │  └──────────┘  └─────┬─────┘  └────────▲─────────┘ │
-  │                      │ texte            │ texte     │
-  │                ┌─────▼─────────────────┐│           │
-  │                │      LLM + AGENT      ││           │
-  │                │  (Claude via AI SDK)   ├┘           │
-  │                │                        │            │
-  │                │  Tools:                │            │
-  │                │  - chercherPDL()       │            │
-  │                │  - comparerOffres()    │            │
-  │                │  - transfererHumain()  │            │
-  │                │                        │            │
-  │                │  RAG:                  │            │
-  │                │  - FAQ Selectra        │            │
-  │                │  - Tarifs actuels      │            │
-  │                └────────────────────────┘            │
-  └─────────────────────────────────────────────────────┘
-                         │
-  ┌──────────────────────▼──────────────────────────────┐
-  │              BACKEND (Next.js)                       │
-  │  - API routes pour les tools                        │
-  │  - Base de donnees (fiches client)                  │
-  │  - Dashboard temps reel (WebSocket)                 │
-  │  - CRM integration                                 │
-  └─────────────────────────────────────────────────────┘
-`}</pre>
-        </Diagram>
+        <SvgDiagram title="Architecture de production" width={680} height={480}>
+          {/* Telephonie layer */}
+          <Box x={40} y={10} w={600} h={55} label="TELEPHONIE" sublabel="Numero entrant → SIP trunk → WebSocket (Twilio, Vonage, Vapi)" color="rose" />
+          <Arrow x1={340} y1={65} x2={340} y2={90} label="audio stream" />
+
+          {/* Orchestrateur group */}
+          <GroupBox x={40} y={90} w={600} h={260} label="ORCHESTRATEUR VOCAL (LiveKit Agents ou Vapi)" color="default" />
+
+          {/* VAD / STT / TTS row */}
+          <Box x={60} y={120} w={130} h={50} label="VAD" sublabel="(silence detect)" color="amber" />
+          <Box x={210} y={120} w={130} h={50} label="STT" sublabel="Gladia Solaria" color="cyan" />
+          <Box x={490} y={120} w={130} h={50} label="TTS" sublabel="Voxtral / ElevenLabs" color="accent" />
+
+          {/* Arrows from STT down and from LLM up to TTS */}
+          <Arrow x1={275} y1={170} x2={275} y2={200} label="texte" />
+          <Arrow x1={440} y1={240} x2={490} y2={170} label="texte" />
+
+          {/* LLM + Agent box */}
+          <Box x={170} y={200} w={280} h={135} label="LLM + AGENT" sublabel="Claude via AI SDK" color="violet" />
+          <Label x={315} y={260} text="Tools: chercherPDL()" size={10} />
+          <Label x={315} y={276} text="comparerOffres()" size={10} />
+          <Label x={315} y={292} text="transfererHumain()" size={10} />
+          <Label x={315} y={312} text="RAG: FAQ + Tarifs" size={10} />
+
+          {/* Arrow to backend */}
+          <Arrow x1={340} y1={350} x2={340} y2={380} />
+
+          {/* Backend layer */}
+          <Box x={40} y={380} w={600} h={65} label="BACKEND (Next.js)" sublabel="API routes, DB, Dashboard temps reel, CRM integration" color="default" />
+        </SvgDiagram>
 
         <p>
           Ce schema, c&apos;est exactement ce qu&apos;on a construit module par
@@ -862,37 +870,54 @@ for ts in speech_timestamps:
           </p>
         </KeyConcept>
 
-        <Diagram title="Streaming audio bidirectionnel (WebSocket)">
-          <pre className="text-center">{`
-  CLIENT (navigateur/telephone)           SERVEUR (agent vocal)
-  ─────────────────────────────           ────────────────────────
-       │                                       │
-       │══ WebSocket connection ══════════════│
-       │    (reste ouvert pendant tout        │
-       │     l'appel, pas de reconnexion)     │
-       │                                       │
-       │── audio frame (20ms, 640 bytes) ────▶│
-       │── audio frame (20ms, 640 bytes) ────▶│──▶ VAD: parole detectee
-       │── audio frame (20ms, 640 bytes) ────▶│──▶ STT accumule...
-       │── audio frame (20ms, 640 bytes) ────▶│──▶ STT: "Bonjour je"
-       │── audio frame (20ms, 640 bytes) ────▶│──▶ STT: "Bonjour je veux"
-       │── silence (20ms) ───────────────────▶│
-       │── silence (20ms) ───────────────────▶│──▶ VAD: 700ms silence
-       │                                       │──▶ STT final: "Bonjour
-       │                                       │     je veux changer"
-       │                                       │──▶ LLM commence a generer
-       │                                       │
-       │◀── audio frame TTS (20ms) ───────────│◀── TTS stream mot par mot
-       │◀── audio frame TTS (20ms) ───────────│
-       │◀── audio frame TTS (20ms) ───────────│
-       │     (l'agent parle pendant que        │
-       │      le LLM continue a generer)      │
-       │                                       │
-       │── audio frame (barge-in!) ──────────▶│──▶ Client interrompt !
-       │                                       │──▶ STOP TTS, ecouter
-       │                                       │
-`}</pre>
-        </Diagram>
+        <SvgDiagram title="Streaming audio bidirectionnel (WebSocket)" width={700} height={460}>
+          {/* Headers */}
+          <Label x={120} y={20} text="CLIENT" size={12} weight="bold" color="#e4e4e7" />
+          <Label x={120} y={36} text="(navigateur/telephone)" size={9} />
+          <Label x={560} y={20} text="SERVEUR" size={12} weight="bold" color="#e4e4e7" />
+          <Label x={560} y={36} text="(agent vocal)" size={9} />
+
+          {/* Vertical lines */}
+          <line x1={120} y1={50} x2={120} y2={440} stroke="#27272a" strokeWidth={1.5} />
+          <line x1={560} y1={50} x2={560} y2={440} stroke="#27272a" strokeWidth={1.5} />
+
+          {/* WebSocket connection */}
+          <line x1={120} y1={60} x2={560} y2={60} stroke="#8b5cf6" strokeWidth={2} strokeDasharray="6,3" />
+          <Label x={340} y={53} text="WebSocket connection (reste ouvert)" size={9} color="#8b5cf6" />
+
+          {/* Audio frames going right */}
+          <Arrow x1={125} y1={90} x2={555} y2={90} color="#06b6d4" />
+          <Label x={340} y={83} text="audio frame (20ms, 640 bytes)" size={9} color="#06b6d4" />
+          <Arrow x1={125} y1={110} x2={555} y2={110} color="#06b6d4" />
+          <Label x={610} y={110} text="VAD: parole" size={8} anchor="start" />
+          <Arrow x1={125} y1={130} x2={555} y2={130} color="#06b6d4" />
+          <Label x={610} y={130} text="STT accumule" size={8} anchor="start" />
+          <Arrow x1={125} y1={150} x2={555} y2={150} color="#06b6d4" />
+          <Label x={610} y={150} text={'STT: "Bonjour je"'} size={8} anchor="start" />
+          <Arrow x1={125} y1={170} x2={555} y2={170} color="#06b6d4" />
+          <Label x={610} y={170} text={'STT: "...je veux"'} size={8} anchor="start" />
+
+          {/* Silence */}
+          <Arrow x1={125} y1={200} x2={555} y2={200} color="#a1a1aa" dashed />
+          <Label x={340} y={193} text="silence (20ms)" size={9} />
+          <Arrow x1={125} y1={220} x2={555} y2={220} color="#a1a1aa" dashed />
+          <Label x={610} y={210} text="VAD: 700ms silence" size={8} anchor="start" />
+          <Label x={610} y={230} text="STT final + LLM" size={8} anchor="start" />
+
+          {/* TTS frames going left */}
+          <Arrow x1={555} y1={270} x2={125} y2={270} color="#10b981" />
+          <Label x={340} y={263} text="audio frame TTS (20ms)" size={9} color="#10b981" />
+          <Label x={610} y={270} text="TTS stream" size={8} anchor="start" />
+          <Arrow x1={555} y1={290} x2={125} y2={290} color="#10b981" />
+          <Arrow x1={555} y1={310} x2={125} y2={310} color="#10b981" />
+          <Label x={340} y={333} text="(agent parle pendant que le LLM genere)" size={9} />
+
+          {/* Barge-in */}
+          <Arrow x1={125} y1={370} x2={555} y2={370} color="#f43f5e" />
+          <Label x={340} y={363} text="audio frame (barge-in!)" size={9} color="#f43f5e" />
+          <Label x={610} y={370} text="STOP TTS!" size={8} anchor="start" color="#f43f5e" />
+          <Label x={610} y={388} text="Client interrompt" size={8} anchor="start" color="#f43f5e" />
+        </SvgDiagram>
 
         <p>
           Les details techniques qui comptent :
@@ -1030,62 +1055,37 @@ function calculateRMS(pcmBuffer: Buffer): number {
           </p>
         </KeyConcept>
 
-        <Diagram title="Comment Mimi compresse l'audio">
-          <pre className="text-center">{`
-  Audio brut 24kHz
-  ─────────────────
-  24 000 echantillons/seconde
-  Chaque echantillon = un nombre float32
-  → 768 kbits/s (beaucoup trop pour un Transformer)
+        <SvgDiagram title="Comment Mimi compresse l'audio" width={680} height={560}>
+          {/* Audio brut */}
+          <Label x={340} y={18} text="Audio brut 24kHz" size={12} weight="bold" color="#e4e4e7" />
+          <Label x={340} y={36} text="24 000 echantillons/s — 768 kbits/s" size={10} />
+          <Arrow x1={340} y1={48} x2={340} y2={70} />
 
-          │
-          ▼
+          {/* Encodeur */}
+          <Box x={140} y={70} w={400} h={70} label="ENCODEUR (CNN convolutif)" sublabel="24000 Hz → downsample x1920 = 12.5 frames/s" color="cyan" />
+          <Label x={340} y={125} text="Chaque frame = vecteur 256 dimensions" size={9} />
+          <Arrow x1={340} y1={140} x2={340} y2={165} />
 
-  ┌──────────────────────────────┐
-  │  ENCODEUR (CNN convolutif)   │
-  │                              │
-  │  24000 Hz → downsample ×1920│
-  │  = 12.5 frames par seconde  │
-  │                              │
-  │  Chaque frame = un vecteur   │
-  │  continu de 256 dimensions   │
-  └──────────┬───────────────────┘
-             │
-             ▼
+          {/* RVQ */}
+          <Box x={140} y={165} w={400} h={50} label="RVQ — Residual Vector Quantization" sublabel="8 codebooks" color="violet" />
+          {/* Codebook details */}
+          <Label x={340} y={235} text="Codebook 1: token 847 (semantique)" size={10} color="#8b5cf6" />
+          <Label x={340} y={253} text="Codebook 2: token 231 (phonetique)" size={10} color="#8b5cf6" />
+          <Label x={340} y={271} text="Codebook 3: token 1092 (prosodie)" size={10} color="#8b5cf6" />
+          <Label x={340} y={289} text="..." size={10} />
+          <Label x={340} y={307} text="Codebook 8: token 455 (details fins)" size={10} color="#8b5cf6" />
 
-  ┌──────────────────────────────┐
-  │  RVQ — Residual Vector       │
-  │  Quantization (8 codebooks) │
-  │                              │
-  │  Vecteur continu (256d)      │
-  │       │                      │
-  │       ├─▶ Codebook 1: token 847   (semantique — le MOT)
-  │       │   residu = vecteur - code_847
-  │       ├─▶ Codebook 2: token 231   (phonetique)
-  │       │   residu = residu - code_231
-  │       ├─▶ Codebook 3: token 1092  (prosodie)
-  │       │   ...                      │
-  │       └─▶ Codebook 8: token 455   (details fins)
-  │                              │
-  │  8 tokens par frame          │
-  │  = 100 tokens/seconde total  │
-  └──────────┬───────────────────┘
-             │
-             ▼
+          <Label x={340} y={335} text="8 tokens/frame = 100 tokens/s total" size={10} weight="bold" color="#e4e4e7" />
+          <Arrow x1={340} y1={348} x2={340} y2={375} />
 
-  ┌──────────────────────────────┐
-  │  DECODEUR (CNN inverse)      │
-  │                              │
-  │  Tokens → vecteurs           │
-  │  → upsample ×1920           │
-  │  → audio reconstruit 24kHz  │
-  └──────────────────────────────┘
+          {/* Decodeur */}
+          <Box x={140} y={375} w={400} h={70} label="DECODEUR (CNN inverse)" sublabel="Tokens → vecteurs → upsample x1920 → audio 24kHz" color="accent" />
 
-  Compression : 24000 Hz → 12.5 Hz = ×1920
-  Debit : ~1.1 kbps (vs 768 kbps original)
-  Qualite : quasi-transparente (on entend pas la difference)
-`}</pre>
-        </Diagram>
+          {/* Stats */}
+          <Label x={340} y={475} text="Compression: x1920" size={11} weight="bold" color="#f59e0b" />
+          <Label x={340} y={495} text="Debit: ~1.1 kbps (vs 768 kbps original)" size={10} />
+          <Label x={340} y={515} text="Qualite: quasi-transparente" size={10} />
+        </SvgDiagram>
 
         <Steps>
           <Step number="1" title="L'encodeur CNN (downsample)">

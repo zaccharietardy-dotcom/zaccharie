@@ -7,12 +7,17 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
+import {
+  SvgDiagram,
+  Box,
+  Arrow,
+  Label,
+} from "@/components/svg-diagrams";
 import {
   Def,
   Theorem,
@@ -553,37 +558,45 @@ print(f"Prix du put  : {prix_put:.4f} EUR")`}</Code>
           </p>
         </KeyConcept>
 
-        <Diagram title="Sensibilites d'un call europeen">
-          <div className="flex flex-col gap-4 text-sm">
-            <div className="flex items-center gap-4">
-              <span className="w-20 text-right text-zinc-500">Delta Δ</span>
-              <div className="flex items-center gap-1">
-                <span className="text-zinc-600">0</span>
-                <div className="h-2 w-48 rounded-full bg-gradient-to-r from-zinc-700 via-emerald-500 to-emerald-400" />
-                <span className="text-zinc-600">1</span>
-              </div>
-              <span className="text-zinc-500">OTM → ATM → ITM</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="w-20 text-right text-zinc-500">Gamma Γ</span>
-              <div className="flex items-center gap-1">
-                <span className="text-zinc-600">0</span>
-                <div className="h-2 w-48 rounded-full bg-gradient-to-r from-zinc-700 via-violet-500 to-zinc-700" />
-                <span className="text-zinc-600">0</span>
-              </div>
-              <span className="text-zinc-500">Max au strike (ATM)</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="w-20 text-right text-zinc-500">Theta Θ</span>
-              <div className="flex items-center gap-1">
-                <span className="text-zinc-600">0</span>
-                <div className="h-2 w-48 rounded-full bg-gradient-to-r from-zinc-700 via-red-500 to-zinc-700" />
-                <span className="text-zinc-600">0</span>
-              </div>
-              <span className="text-zinc-500">Decay max ATM (negatif)</span>
-            </div>
-          </div>
-        </Diagram>
+        <SvgDiagram title="Sensibilites d'un call europeen" width={620} height={200}>
+          {/* Delta row */}
+          <Label x={80} y={40} text="Delta Δ" size={12} anchor="end" color="#e4e4e7" />
+          <Label x={95} y={40} text="0" size={10} anchor="start" />
+          <defs>
+            <linearGradient id="grad-delta" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3f3f46" />
+              <stop offset="50%" stopColor="#10b981" />
+              <stop offset="100%" stopColor="#34d399" />
+            </linearGradient>
+            <linearGradient id="grad-gamma" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3f3f46" />
+              <stop offset="50%" stopColor="#8b5cf6" />
+              <stop offset="100%" stopColor="#3f3f46" />
+            </linearGradient>
+            <linearGradient id="grad-theta" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3f3f46" />
+              <stop offset="50%" stopColor="#ef4444" />
+              <stop offset="100%" stopColor="#3f3f46" />
+            </linearGradient>
+          </defs>
+          <rect x={115} y={33} width={240} height={14} rx={7} fill="url(#grad-delta)" />
+          <Label x={365} y={40} text="1" size={10} anchor="start" />
+          <Label x={420} y={40} text="OTM → ATM → ITM" size={10} anchor="start" />
+
+          {/* Gamma row */}
+          <Label x={80} y={95} text="Gamma Γ" size={12} anchor="end" color="#e4e4e7" />
+          <Label x={95} y={95} text="0" size={10} anchor="start" />
+          <rect x={115} y={88} width={240} height={14} rx={7} fill="url(#grad-gamma)" />
+          <Label x={365} y={95} text="0" size={10} anchor="start" />
+          <Label x={420} y={95} text="Max au strike (ATM)" size={10} anchor="start" />
+
+          {/* Theta row */}
+          <Label x={80} y={150} text="Theta Θ" size={12} anchor="end" color="#e4e4e7" />
+          <Label x={95} y={150} text="0" size={10} anchor="start" />
+          <rect x={115} y={143} width={240} height={14} rx={7} fill="url(#grad-theta)" />
+          <Label x={365} y={150} text="0" size={10} anchor="start" />
+          <Label x={420} y={150} text="Decay max ATM (negatif)" size={10} anchor="start" />
+        </SvgDiagram>
 
         <Code language="python">{`from scipy.stats import norm
 import numpy as np

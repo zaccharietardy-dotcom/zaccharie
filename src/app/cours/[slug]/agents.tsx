@@ -7,12 +7,12 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
+import { SvgDiagram, Box, Arrow, Label, GroupBox } from "@/components/svg-diagrams";
 
 export function Agents() {
   return (
@@ -47,19 +47,28 @@ export function Agents() {
           </p>
         </Analogy>
 
-        <Diagram title="Chatbot vs Agent">
-          <pre className="text-center">{`
-  CHATBOT (sans tools)            AGENT (avec tools)
-  ──────────────────              ─────────────────
-  User → LLM → Texte             User → LLM → "je dois chercher"
-                                              → [appel outil: search]
-                                              → resultats
-                                              → LLM → "je dois calculer"
-                                              → [appel outil: calculate]
-                                              → resultat
-                                              → LLM → Reponse finale
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={700} height={260} title="Chatbot vs Agent">
+          {/* Left side: Chatbot */}
+          <Label x={170} y={20} text="CHATBOT (sans tools)" size={12} color="#e4e4e7" weight="bold" />
+          <Box x={50} y={40} w={120} h={36} label="User" color="cyan" />
+          <Arrow x1={170} y1={58} x2={210} y2={58} />
+          <Box x={210} y={40} w={120} h={36} label="LLM" color="violet" />
+          <Arrow x1={330} y1={58} x2={370} y2={58} />
+          <Box x={370} y={40} w={120} h={36} label="Texte" color="default" />
+          {/* Right side: Agent */}
+          <Label x={440} y={100} text="AGENT (avec tools)" size={12} color="#e4e4e7" weight="bold" />
+          <Box x={50} y={120} w={120} h={36} label="User" color="cyan" />
+          <Arrow x1={170} y1={138} x2={210} y2={138} />
+          <Box x={210} y={120} w={120} h={36} label="LLM" color="violet" />
+          <Arrow x1={330} y1={138} x2={370} y2={138} label="tool call" />
+          <Box x={370} y={120} w={140} h={36} label="search()" color="accent" />
+          <Arrow x1={440} y1={156} x2={440} y2={172} label="resultats" />
+          <Box x={210} y={176} w={120} h={36} label="LLM" color="violet" />
+          <Arrow x1={330} y1={194} x2={370} y2={194} label="tool call" />
+          <Box x={370} y={176} w={140} h={36} label="calculate()" color="accent" />
+          <Arrow x1={440} y1={212} x2={440} y2={228} label="resultat" />
+          <Box x={250} y={228} w={180} h={36} label="Reponse finale" color="amber" />
+        </SvgDiagram>
       </Section>
 
       {/* ============================================================ */}
@@ -208,27 +217,29 @@ const result = await generateText({
           tool call unique et un vrai agent.
         </p>
 
-        <Diagram title="Boucle agent (ReAct pattern)">
-          <pre className="text-center">{`
-          ┌─────────────────────────────┐
-          │                             │
-          ▼                             │
-  [ REFLEXION ]                         │
-  "De quoi ai-je besoin ?"              │
-          |                             │
-  [ ACTION ]                            │
-  Appeler un outil                      │
-          |                             │
-  [ OBSERVATION ]                       │
-  Lire le resultat                      │
-          |                             │
-  Ai-je assez d'info ? ──── NON ────────┘
-          |
-         OUI
-          |
-  [ REPONSE FINALE ]
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={600} height={360} title="Boucle agent (ReAct pattern)">
+          {/* Loop group */}
+          <GroupBox x={100} y={10} w={340} h={250} label="Boucle ReAct" color="violet" />
+          {/* Reflexion */}
+          <Box x={180} y={32} w={180} h={40} label="REFLEXION" sublabel="De quoi ai-je besoin ?" color="violet" />
+          <Arrow x1={270} y1={72} x2={270} y2={100} />
+          {/* Action */}
+          <Box x={180} y={100} w={180} h={40} label="ACTION" sublabel="Appeler un outil" color="accent" />
+          <Arrow x1={270} y1={140} x2={270} y2={168} />
+          {/* Observation */}
+          <Box x={180} y={168} w={180} h={40} label="OBSERVATION" sublabel="Lire le resultat" color="cyan" />
+          <Arrow x1={270} y1={208} x2={270} y2={230} />
+          {/* Decision */}
+          <Label x={270} y={240} text="Assez d'info ?" size={11} color="#e4e4e7" />
+          {/* NON loop back */}
+          <Arrow x1={360} y1={240} x2={460} y2={240} label="NON" color="#f43f5e" />
+          <Arrow x1={460} y1={240} x2={460} y2={52} />
+          <Arrow x1={460} y1={52} x2={360} y2={52} />
+          {/* OUI downward */}
+          <Arrow x1={270} y1={252} x2={270} y2={300} label="OUI" color="#10b981" />
+          {/* Final response */}
+          <Box x={180} y={300} w={180} h={40} label="REPONSE FINALE" color="amber" />
+        </SvgDiagram>
 
         <p>Exemple concret pour Selectra :</p>
 
@@ -430,29 +441,21 @@ const result = await selectraAgent.generate({
           </p>
         </KeyConcept>
 
-        <Diagram title="Architecture MCP">
-          <pre className="text-center">{`
-  ┌──────────────┐     ┌──────────────────┐
-  │  Ton Agent   │────▶│ MCP Server: CRM  │
-  │  (AI SDK)    │     │ - getClient()    │
-  │              │     │ - updateFiche()  │
-  │              │     └──────────────────┘
-  │              │
-  │              │     ┌──────────────────┐
-  │              │────▶│ MCP Server: Slack│
-  │              │     │ - sendMessage()  │
-  │              │     │ - getChannel()   │
-  │              │     └──────────────────┘
-  │              │
-  │              │     ┌──────────────────┐
-  │              │────▶│ MCP Server: Vercel│
-  │              │     │ - listDeploys()  │
-  └──────────────┘     └──────────────────┘
-
-  L'agent peut utiliser les outils de
-  TOUS les serveurs connectes.
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={660} height={280} title="Architecture MCP">
+          {/* Agent box */}
+          <Box x={40} y={50} w={180} h={160} label="Ton Agent" sublabel="(AI SDK)" color="violet" />
+          {/* MCP Server: CRM */}
+          <Box x={380} y={30} w={220} h={50} label="MCP Server: CRM" sublabel="getClient() / updateFiche()" color="accent" />
+          <Arrow x1={220} y1={80} x2={380} y2={55} label="" />
+          {/* MCP Server: Slack */}
+          <Box x={380} y={105} w={220} h={50} label="MCP Server: Slack" sublabel="sendMessage() / getChannel()" color="cyan" />
+          <Arrow x1={220} y1={130} x2={380} y2={130} label="" />
+          {/* MCP Server: Vercel */}
+          <Box x={380} y={180} w={220} h={50} label="MCP Server: Vercel" sublabel="listDeploys()" color="amber" />
+          <Arrow x1={220} y1={180} x2={380} y2={205} label="" />
+          {/* Caption */}
+          <Label x={330} y={260} text="L'agent peut utiliser les outils de TOUS les serveurs connectes" size={11} color="#a1a1aa" />
+        </SvgDiagram>
 
         <Analogy>
           <p>
@@ -689,28 +692,26 @@ const result = await selectraAgent.generate({
           </Step>
         </Steps>
 
-        <Diagram title="Flux complet du tool calling">
-          <pre className="text-center">{`
-  TON CODE (SDK)                         API LLM
-  ─────────────                          ───────
-       │                                    │
-       │── POST /messages ─────────────────▶│
-       │   (tools[] + messages[])           │
-       │                                    │
-       │◀── { tool_use: comparerOffres } ──│
-       │    stop_reason: "tool_use"         │
-       │                                    │
-  [execute comparerOffres()]                │
-       │                                    │
-       │── POST /messages ─────────────────▶│
-       │   (+ tool_result dans messages)    │
-       │                                    │
-       │◀── { text: "Voici les offres..." }│
-       │    stop_reason: "end_turn"         │
-       │                                    │
-  [afficher la reponse au user]             │
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={700} height={380} title="Flux complet du tool calling">
+          {/* Column headers */}
+          <Label x={160} y={20} text="TON CODE (SDK)" size={13} color="#e4e4e7" weight="bold" />
+          <Label x={540} y={20} text="API LLM" size={13} color="#e4e4e7" weight="bold" />
+          {/* Vertical lines */}
+          <line x1={160} y1={35} x2={160} y2={360} stroke="#27272a" strokeWidth={1.5} strokeDasharray="4,4" />
+          <line x1={540} y1={35} x2={540} y2={360} stroke="#27272a" strokeWidth={1.5} strokeDasharray="4,4" />
+          {/* Step 1: POST /messages */}
+          <Arrow x1={170} y1={60} x2={530} y2={60} label="POST /messages (tools[] + messages[])" color="#06b6d4" />
+          {/* Step 2: tool_use response */}
+          <Arrow x1={530} y1={110} x2={170} y2={110} label='{ tool_use: comparerOffres }  stop: "tool_use"' color="#8b5cf6" />
+          {/* Step 3: Execute tool */}
+          <Box x={70} y={145} w={180} h={36} label="execute comparerOffres()" color="accent" />
+          {/* Step 4: POST with result */}
+          <Arrow x1={170} y1={210} x2={530} y2={210} label="POST /messages (+ tool_result)" color="#06b6d4" />
+          {/* Step 5: Final text response */}
+          <Arrow x1={530} y1={260} x2={170} y2={260} label='{ text: "Voici les offres..." }  stop: "end_turn"' color="#8b5cf6" />
+          {/* Step 6: Display */}
+          <Box x={50} y={295} w={220} h={36} label="Afficher la reponse au user" color="amber" />
+        </SvgDiagram>
 
         <Warning>
           <p>
