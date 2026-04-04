@@ -2,8 +2,11 @@
 
 import {
   Section, Code, KeyConcept, Warning, Analogy, Quiz,
-  Diagram, Term, Steps, Step, ComparisonTable,
+  Term, Steps, Step, ComparisonTable,
 } from "@/components/course-elements";
+import {
+  SvgDiagram, Box, Circle, Arrow, Label,
+} from "@/components/svg-diagrams";
 
 export function GitGithub() {
   return (
@@ -33,14 +36,15 @@ export function GitGithub() {
           la <Term def="Zone de preparation avant un commit">staging area</Term> (index),
           et le <Term def="L'historique permanent des snapshots">repository</Term>.
         </p>
-        <Diagram title="Les 3 zones de Git">
-{`  Working Directory    Staging Area (Index)    Repository (.git)
-  ┌────────────────┐   ┌──────────────────┐   ┌─────────────────┐
-  │  edit files     │──▶│  git add          │──▶│  git commit      │
-  │                 │   │                  │   │                 │
-  │                 │◀──│  git restore      │   │  git log         │
-  └────────────────┘   └──────────────────┘   └─────────────────┘`}
-        </Diagram>
+        <SvgDiagram width={660} height={130} title="Les 3 zones de Git">
+          <Box x={20} y={35} w={170} h={60} label="Working Directory" sublabel="edit files" color="default" />
+          <Box x={245} y={35} w={170} h={60} label="Staging Area" sublabel="(index)" color="amber" />
+          <Box x={470} y={35} w={170} h={60} label="Repository" sublabel="(.git)" color="accent" />
+          <Arrow x1={190} y1={55} x2={245} y2={55} label="git add" />
+          <Arrow x1={415} y1={55} x2={470} y2={55} label="git commit" />
+          <Arrow x1={245} y1={80} x2={190} y2={80} label="git restore" dashed />
+          <Label x={555} y={115} text="git log" size={10} />
+        </SvgDiagram>
         <Code language="bash — les commandes de base">{`# Initialiser un repo
 git init
 
@@ -81,11 +85,25 @@ git log -5                   # les 5 derniers commits`}</Code>
           Une <Term def="Un pointeur mobile vers un commit">branche</Term> est juste un pointeur vers un commit.
           Creer une branche coute quasi rien — c&apos;est pourquoi on en cree une pour chaque feature, bugfix, ou experiment.
         </p>
-        <Diagram title="Branching et merge">
-{`  main:     A───B───C───────F (merge commit)
-                 \\         /
-  feature:        D───E───┘`}
-        </Diagram>
+        <SvgDiagram width={560} height={160} title="Branching et merge">
+          {/* main branch */}
+          <Label x={20} y={50} text="main" size={11} anchor="start" weight="bold" color="#10b981" />
+          <Circle cx={100} cy={50} r={18} label="A" color="accent" />
+          <Circle cx={180} cy={50} r={18} label="B" color="accent" />
+          <Circle cx={260} cy={50} r={18} label="C" color="accent" />
+          <Circle cx={480} cy={50} r={18} label="F" color="cyan" />
+          <Arrow x1={118} y1={50} x2={162} y2={50} />
+          <Arrow x1={198} y1={50} x2={242} y2={50} />
+          <Arrow x1={278} y1={50} x2={462} y2={50} dashed />
+          <Label x={520} y={50} text="merge" size={10} anchor="start" />
+          {/* feature branch */}
+          <Label x={20} y={120} text="feature" size={11} anchor="start" weight="bold" color="#8b5cf6" />
+          <Circle cx={260} cy={120} r={18} label="D" color="violet" />
+          <Circle cx={370} cy={120} r={18} label="E" color="violet" />
+          <Arrow x1={195} y1={62} x2={245} y2={108} />
+          <Arrow x1={278} y1={120} x2={352} y2={120} />
+          <Arrow x1={385} y1={107} x2={465} y2={63} />
+        </SvgDiagram>
         <Code language="bash — gestion des branches">{`# Creer et basculer sur une nouvelle branche
 git switch -c feature/pricing       # methode moderne
 git checkout -b feature/pricing     # ancienne methode (marche toujours)
@@ -244,12 +262,31 @@ git fetch upstream`}</Code>
           Feature flags pour cacher le code pas fini. Utilise par Google, Meta, et les equipes qui
           pratiquent le continuous deployment.
         </KeyConcept>
-        <Diagram title="GitHub Flow">
-{`  main:     A───B───────D───E───────G
-                \\       /       \\   /
-  feat-1:        C─────┘         F─┘
-                PR #1           PR #2`}
-        </Diagram>
+        <SvgDiagram width={620} height={170} title="GitHub Flow">
+          {/* main branch */}
+          <Label x={20} y={45} text="main" size={11} anchor="start" weight="bold" color="#10b981" />
+          <Circle cx={90} cy={45} r={18} label="A" color="accent" />
+          <Circle cx={170} cy={45} r={18} label="B" color="accent" />
+          <Circle cx={330} cy={45} r={18} label="D" color="cyan" />
+          <Circle cx={410} cy={45} r={18} label="E" color="accent" />
+          <Circle cx={560} cy={45} r={18} label="G" color="cyan" />
+          <Arrow x1={108} y1={45} x2={152} y2={45} />
+          <Arrow x1={188} y1={45} x2={312} y2={45} dashed />
+          <Arrow x1={348} y1={45} x2={392} y2={45} />
+          <Arrow x1={428} y1={45} x2={542} y2={45} dashed />
+          {/* feature branches */}
+          <Label x={20} y={120} text="feat" size={11} anchor="start" weight="bold" color="#8b5cf6" />
+          <Circle cx={250} cy={120} r={18} label="C" color="violet" />
+          <Circle cx={490} cy={120} r={18} label="F" color="violet" />
+          {/* fork / merge arrows */}
+          <Arrow x1={185} y1={58} x2={235} y2={108} />
+          <Arrow x1={265} y1={107} x2={315} y2={58} />
+          <Arrow x1={425} y1={58} x2={475} y2={108} />
+          <Arrow x1={505} y1={107} x2={545} y2={58} />
+          {/* PR labels */}
+          <Label x={250} y={155} text="PR #1" size={10} color="#8b5cf6" />
+          <Label x={490} y={155} text="PR #2" size={10} color="#8b5cf6" />
+        </SvgDiagram>
         <Quiz
           question="Ton equipe deploie 10 fois par jour en production. Quel workflow est le plus adapte ?"
           options={[

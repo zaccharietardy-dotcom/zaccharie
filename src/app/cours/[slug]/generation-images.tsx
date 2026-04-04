@@ -2,9 +2,10 @@
 
 import {
   Section, Code, KeyConcept, Warning, Analogy, Quiz,
-  Diagram, Term, Steps, Step, ComparisonTable,
+  Term, Steps, Step, ComparisonTable,
 } from "@/components/course-elements";
 import { Def, Theorem, Proof, Remark } from "@/components/math-elements";
+import { SvgDiagram, Box, Arrow, Label } from "@/components/svg-diagrams";
 
 /* ── Math helpers (pure HTML/CSS) ────────────────────────── */
 
@@ -79,19 +80,17 @@ export function GenerationImages() {
           puis a la reconstruire. Si le bottleneck est suffisamment petit, le
           reseau doit apprendre une representation compacte et utile.
         </p>
-        <Diagram title="Architecture d'un autoencoder">
-          <div className="flex items-center gap-3">
-            <div className="rounded border border-zinc-600 px-3 py-2">x (784)</div>
-            <span>→</span>
-            <div className="rounded border border-blue-500 px-3 py-2">Encoder</div>
-            <span>→</span>
-            <div className="rounded border border-amber-500 px-3 py-2 font-bold">z (32)</div>
-            <span>→</span>
-            <div className="rounded border border-emerald-500 px-3 py-2">Decoder</div>
-            <span>→</span>
-            <div className="rounded border border-zinc-600 px-3 py-2">x&apos; (784)</div>
-          </div>
-        </Diagram>
+        <SvgDiagram width={660} height={80} title="Architecture d'un autoencoder">
+          <Box x={0} y={20} w={100} h={40} label="x" sublabel="784 dims" />
+          <Arrow x1={100} y1={40} x2={140} y2={40} />
+          <Box x={140} y={20} w={120} h={40} label="Encoder" color="cyan" />
+          <Arrow x1={260} y1={40} x2={300} y2={40} />
+          <Box x={300} y={14} w={60} h={52} label="z" sublabel="32" color="amber" />
+          <Arrow x1={360} y1={40} x2={400} y2={40} />
+          <Box x={400} y={20} w={120} h={40} label="Decoder" color="accent" />
+          <Arrow x1={520} y1={40} x2={560} y2={40} />
+          <Box x={560} y={20} w={100} h={40} label="x'" sublabel="784 dims" />
+        </SvgDiagram>
         <Def title="Loss de reconstruction">
           <p>
             L&apos;autoencoder minimise l&apos;erreur entre l&apos;entree
@@ -321,15 +320,31 @@ class DCGANDiscriminator(nn.Module):
           </Step>
           <Step number="3" title="Jusqu'a 1024x1024">4 → 8 → 16 → ... → 1024, chaque transition est lisse.</Step>
         </Steps>
-        <Diagram title="Fade-in du progressive growing">
-          <div className="flex items-center gap-2 text-xs">
-            <div className="rounded border border-emerald-500 px-2 py-1">Couches (16x16)</div>
-            <span>→ α ·</span>
-            <div className="rounded border border-amber-500 px-2 py-1">Nouvelle (32x32)</div>
-            <span>+ (1−α) ·</span>
-            <div className="rounded border border-zinc-500 px-2 py-1">Upscale</div>
-          </div>
-        </Diagram>
+        <SvgDiagram width={700} height={120} title="Fade-in du progressive growing">
+          {/* Existing layers block */}
+          <Box x={10} y={40} w={130} h={40} label="Couches" sublabel="16x16" color="accent" />
+          <Arrow x1={140} y1={60} x2={180} y2={60} />
+          {/* Fork point */}
+          <Label x={195} y={32} text="fork" size={9} />
+          {/* Top path: new layer */}
+          <Arrow x1={195} y1={55} x2={195} y2={20} />
+          <Arrow x1={195} y1={20} x2={240} y2={20} />
+          <Box x={240} y={2} w={150} h={36} label="Nouvelle couche" sublabel="32x32" color="amber" />
+          <Arrow x1={390} y1={20} x2={470} y2={20} />
+          <Label x={430} y={10} text="x alpha" size={10} color="#f59e0b" />
+          {/* Bottom path: upscale shortcut */}
+          <Arrow x1={195} y1={65} x2={195} y2={95} />
+          <Arrow x1={195} y1={95} x2={240} y2={95} />
+          <Box x={240} y={77} w={150} h={36} label="Upscale" sublabel="bilineaire" />
+          <Arrow x1={390} y1={95} x2={470} y2={95} />
+          <Label x={430} y={107} text="x (1-alpha)" size={10} color="#a1a1aa" />
+          {/* Merge */}
+          <Arrow x1={470} y1={20} x2={500} y2={57} />
+          <Arrow x1={470} y1={95} x2={500} y2={63} />
+          <Label x={510} y={45} text="+" size={14} weight="bold" color="#e4e4e7" />
+          <Arrow x1={525} y1={60} x2={560} y2={60} />
+          <Box x={560} y={40} w={120} h={40} label="Sortie" sublabel="32x32" color="violet" />
+        </SvgDiagram>
         <KeyConcept title="Curriculum learning implicite">
           <p>A basse resolution, G et D apprennent la structure globale. Les details fins viennent ensuite. Chaque etape part d&apos;un GAN deja converge — un probleme &quot;facile&quot;.</p>
         </KeyConcept>
@@ -340,27 +355,32 @@ class DCGANDiscriminator(nn.Module):
         <p>
           <Term def="Architecture ou z est transforme en style w par un mapping network, puis injecte via AdaIN a chaque couche.">StyleGAN</Term> (Karras, 2018) : au lieu d&apos;injecter <F>z</F> directement, un <strong>mapping network</strong> (8 FC layers) transforme <F>z → w</F>.
         </p>
-        <Diagram title="Architecture StyleGAN">
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex items-center gap-2">
-              <div className="rounded border border-blue-500 px-2 py-1">z ∈ ℝ⁵¹²</div>
-              <span>→</span>
-              <div className="rounded border border-violet-500 px-2 py-1">Mapping (8 FC)</div>
-              <span>→</span>
-              <div className="rounded border border-amber-500 px-2 py-1">w ∈ W</div>
-            </div>
-            <span className="text-xs text-zinc-500">↓ w injecte via AdaIN a chaque resolution</span>
-            <div className="flex items-center gap-2 text-xs">
-              <div className="rounded border border-zinc-600 px-2 py-1">Const 4x4</div>
-              <span>→</span>
-              <div className="rounded border border-emerald-500 px-2 py-1">Conv+AdaIN+Noise</div>
-              <span>→...→</span>
-              <div className="rounded border border-emerald-500 px-2 py-1">Conv+AdaIN+Noise</div>
-              <span>→</span>
-              <div className="rounded border border-zinc-600 px-2 py-1">1024x1024</div>
-            </div>
-          </div>
-        </Diagram>
+        <SvgDiagram width={700} height={200} title="Architecture StyleGAN">
+          {/* Mapping network (top row) */}
+          <Box x={30} y={15} w={110} h={40} label="z" sublabel="R^512" color="cyan" />
+          <Arrow x1={140} y1={35} x2={185} y2={35} />
+          <Box x={185} y={15} w={150} h={40} label="Mapping" sublabel="8 FC layers" color="violet" />
+          <Arrow x1={335} y1={35} x2={380} y2={35} />
+          <Box x={380} y={15} w={100} h={40} label="w" sublabel="espace W" color="amber" />
+          {/* w injection arrows going down to synthesis blocks */}
+          <Arrow x1={430} y1={55} x2={430} y2={90} label="AdaIN" dashed color="#f59e0b" />
+          <Arrow x1={430} y1={90} x2={230} y2={140} dashed color="#f59e0b" />
+          <Arrow x1={430} y1={90} x2={390} y2={140} dashed color="#f59e0b" />
+          <Arrow x1={430} y1={90} x2={540} y2={140} dashed color="#f59e0b" />
+          {/* Synthesis network (bottom row) */}
+          <Box x={30} y={140} w={100} h={44} label="Const" sublabel="4x4" />
+          <Arrow x1={130} y1={162} x2={170} y2={162} />
+          <Box x={170} y={140} w={120} h={44} label="Conv+AdaIN" sublabel="+Noise (4x4)" color="accent" />
+          <Arrow x1={290} y1={162} x2={330} y2={162} />
+          <Box x={330} y={140} w={120} h={44} label="Conv+AdaIN" sublabel="+Noise (64x64)" color="accent" />
+          <Arrow x1={450} y1={162} x2={490} y2={162} />
+          <Box x={490} y={140} w={120} h={44} label="Conv+AdaIN" sublabel="+Noise (1024)" color="accent" />
+          <Arrow x1={610} y1={162} x2={650} y2={162} />
+          <Label x={672} y={162} text="img" size={11} weight="bold" color="#e4e4e7" />
+          {/* Ellipsis between synthesis blocks */}
+          <Label x={318} y={170} text="..." size={14} color="#a1a1aa" />
+          <Label x={478} y={170} text="..." size={14} color="#a1a1aa" />
+        </SvgDiagram>
         <Def title="Adaptive Instance Normalization (AdaIN)">
           <p>Pour une feature map <F>x</F> et un style <F>y = (y<sub className="text-[0.7em]">s</sub>, y<sub className="text-[0.7em]">b</sub>)</F> :</p>
           <Eq>

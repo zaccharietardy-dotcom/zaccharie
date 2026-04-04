@@ -2,9 +2,10 @@
 
 import {
   Section, Code, KeyConcept, Warning, Analogy, Quiz,
-  Diagram, Term, Steps, Step, ComparisonTable,
+  Term, Steps, Step, ComparisonTable,
 } from "@/components/course-elements";
 import { Def, Theorem, Proof, Remark } from "@/components/math-elements";
+import { SvgDiagram, Box, Arrow, Label, GroupBox } from "@/components/svg-diagrams";
 
 /* ── Math helpers (pure HTML/CSS) ────────────────────────── */
 
@@ -283,17 +284,35 @@ alpha_bar = torch.cumprod(alphas, dim=0)`}</Code>
           Stable Diffusion (Rombach et al., 2022) a democratise la generation
           d&apos;images. Innovation cle : diffusion dans un espace latent compresse.
         </p>
-        <Diagram title="Architecture de Stable Diffusion">
-          {`Texte "un chat astronaute"
-       |
-  [CLIP Text Encoder] ──────────────────┐
-                                         |  cross-attention
-  Bruit z_T ──> [U-Net Denoiser] x N steps ──> z_0 debruite
-                    |     ^                        |
-                    |     |                   [VAE Decoder]
-              timestep embedding                   |
-                                              Image 512x512`}
-        </Diagram>
+        <SvgDiagram width={720} height={260} title="Architecture de Stable Diffusion">
+          {/* CLIP text encoder (top-left) */}
+          <Label x={105} y={18} text={'"un chat astronaute"'} size={10} color="#a1a1aa" />
+          <Arrow x1={105} y1={26} x2={105} y2={42} />
+          <Box x={20} y={42} w={170} h={44} label="CLIP Text" sublabel="Encoder" color="violet" />
+          {/* Cross-attention arrow from CLIP to U-Net */}
+          <Arrow x1={190} y1={64} x2={280} y2={115} label="cross-attention" color="#8b5cf6" />
+          {/* Latent diffusion group */}
+          <GroupBox x={250} y={80} w={230} h={100} label="Latent space (64x64x4)" color="cyan" />
+          {/* Noise input */}
+          <Box x={20} y={115} w={110} h={40} label="Bruit z_T" color="rose" />
+          <Arrow x1={130} y1={135} x2={270} y2={135} />
+          {/* U-Net */}
+          <Box x={270} y={105} w={190} h={55} label="U-Net Denoiser" sublabel="x N steps" color="cyan" />
+          {/* Timestep embedding */}
+          <Label x={365} y={190} text="timestep emb." size={10} color="#a1a1aa" />
+          <Arrow x1={365} y1={183} x2={365} y2={162} />
+          {/* Output from U-Net */}
+          <Arrow x1={460} y1={135} x2={510} y2={135} />
+          <Label x={488} y={122} text="z_0" size={10} color="#06b6d4" />
+          {/* VAE Decoder */}
+          <Box x={510} y={115} w={170} h={44} label="VAE Decoder" color="accent" />
+          <Arrow x1={680} y1={137} x2={710} y2={137} />
+          {/* Final output */}
+          <Label x={712} y={127} text="Image" size={11} weight="bold" color="#e4e4e7" anchor="start" />
+          <Label x={712} y={143} text="512x512" size={10} color="#a1a1aa" anchor="start" />
+          {/* VAE Encoder annotation (bottom) */}
+          <Label x={105} y={215} text="(entrainement : image -> VAE Encoder -> z)" size={9} color="#a1a1aa" />
+        </SvgDiagram>
         <Steps>
           <Step number="1" title="VAE (Variational Autoencoder)">
             Compresse 512x512x3 en latent 64x64x4 (facteur 8x spatial). La

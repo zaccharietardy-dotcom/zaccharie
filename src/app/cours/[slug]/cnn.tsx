@@ -7,13 +7,20 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
 import { Def, Remark } from "@/components/math-elements";
+import {
+  SvgDiagram,
+  Box,
+  Arrow,
+  Label,
+  GroupBox,
+  Circle,
+} from "@/components/svg-diagrams";
 
 /* ── Math helper components ──────────────────────────── */
 
@@ -133,22 +140,78 @@ export function CNN() {
           </Step>
         </Steps>
 
-        <Diagram title="Kernel 3x3 glissant sur une image 5x5 (stride=1, valid)">
-          <pre className="text-center">{`
-  Image 5x5               Kernel 3x3          Feature map 3x3
- ┌───┬───┬───┬───┬───┐   ┌───┬───┬───┐       ┌───┬───┬───┐
- │ 1 │ 0 │ 1 │ 0 │ 1 │   │ 1 │ 0 │ 1 │       │ 4 │ 3 │ 4 │
- ├───┼───┼───┼───┼───┤   ├───┼───┼───┤       ├───┼───┼───┤
- │ 0 │ 1 │ 0 │ 1 │ 0 │   │ 0 │ 1 │ 0 │       │ 2 │ 4 │ 3 │
- ├───┼───┼───┼───┼───┤   ├───┼───┼───┤       ├───┼───┼───┤
- │ 1 │ 0 │ 1 │ 0 │ 1 │   │ 1 │ 0 │ 1 │       │ 4 │ 3 │ 4 │
- ├───┼───┼───┼───┼───┤   └───┴───┴───┘       └───┴───┴───┘
- │ 0 │ 1 │ 0 │ 1 │ 0 │
- ├───┼───┼───┼───┼───┤   Position (0,0):
- │ 1 │ 0 │ 1 │ 0 │ 1 │   1*1+0*0+1*1+0*0+
- └───┴───┴───┴───┴───┘   1*1+0*0+1*1+0*0+1*1 = 4
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={720} height={260} title="Kernel 3x3 glissant sur une image 5x5 (stride=1, valid)">
+          {/* ── Image 5x5 grid ── */}
+          <Label x={100} y={18} text="Image 5x5" size={11} color="#e4e4e7" weight="bold" />
+          {(() => {
+            const ox = 30, oy = 32, s = 34;
+            const vals = [[1,0,1,0,1],[0,1,0,1,0],[1,0,1,0,1],[0,1,0,1,0],[1,0,1,0,1]];
+            return (
+              <g>
+                {vals.flatMap((row, r) =>
+                  row.map((v, c) => (
+                    <g key={`img-${r}-${c}`}>
+                      <rect x={ox + c * s} y={oy + r * s} width={s} height={s} rx={3}
+                        fill={r < 3 && c < 3 ? "#10b98122" : "#18181b"} stroke={r < 3 && c < 3 ? "#10b981" : "#27272a"} strokeWidth={1.2} />
+                      <text x={ox + c * s + s / 2} y={oy + r * s + s / 2} textAnchor="middle"
+                        dominantBaseline="central" fill={r < 3 && c < 3 ? "#10b981" : "#a1a1aa"} fontSize={12} fontFamily="monospace">{v}</text>
+                    </g>
+                  ))
+                )}
+              </g>
+            );
+          })()}
+
+          {/* ── Kernel 3x3 ── */}
+          <Label x={320} y={18} text="Kernel 3x3" size={11} color="#e4e4e7" weight="bold" />
+          {(() => {
+            const ox = 260, oy = 32, s = 34;
+            const vals = [[1,0,1],[0,1,0],[1,0,1]];
+            return (
+              <g>
+                {vals.flatMap((row, r) =>
+                  row.map((v, c) => (
+                    <g key={`kern-${r}-${c}`}>
+                      <rect x={ox + c * s} y={oy + r * s} width={s} height={s} rx={3}
+                        fill="#8b5cf622" stroke="#8b5cf6" strokeWidth={1.2} />
+                      <text x={ox + c * s + s / 2} y={oy + r * s + s / 2} textAnchor="middle"
+                        dominantBaseline="central" fill="#8b5cf6" fontSize={12} fontFamily="monospace">{v}</text>
+                    </g>
+                  ))
+                )}
+              </g>
+            );
+          })()}
+
+          {/* ── Arrow ── */}
+          <Arrow x1={400} y1={85} x2={450} y2={85} color="#a1a1aa" />
+
+          {/* ── Feature map 3x3 ── */}
+          <Label x={530} y={18} text="Feature map 3x3" size={11} color="#e4e4e7" weight="bold" />
+          {(() => {
+            const ox = 470, oy = 32, s = 34;
+            const vals = [[4,3,4],[2,4,3],[4,3,4]];
+            return (
+              <g>
+                {vals.flatMap((row, r) =>
+                  row.map((v, c) => (
+                    <g key={`out-${r}-${c}`}>
+                      <rect x={ox + c * s} y={oy + r * s} width={s} height={s} rx={3}
+                        fill="#06b6d422" stroke="#06b6d4" strokeWidth={1.2} />
+                      <text x={ox + c * s + s / 2} y={oy + r * s + s / 2} textAnchor="middle"
+                        dominantBaseline="central" fill="#06b6d4" fontSize={12} fontFamily="monospace">{v}</text>
+                    </g>
+                  ))
+                )}
+              </g>
+            );
+          })()}
+
+          {/* ── Calculation note ── */}
+          <Label x={260} y={175} text="Position (0,0):" size={10} color="#e4e4e7" anchor="start" weight="bold" />
+          <Label x={260} y={195} text="1*1 + 0*0 + 1*1 + 0*0 + 1*1" size={10} color="#a1a1aa" anchor="start" />
+          <Label x={260} y={212} text="+ 0*0 + 1*1 + 0*0 + 1*1 = 4" size={10} color="#10b981" anchor="start" weight="bold" />
+        </SvgDiagram>
 
         <Remark>
           <p>
@@ -194,21 +257,77 @@ export function CNN() {
           </p>
         </KeyConcept>
 
-        <Diagram title="Max Pooling 2x2, stride 2">
-          <pre className="text-center">{`
-  Feature map 4x4                   Sortie 2x2
-  ┌────┬────┬────┬────┐            ┌────┬────┐
-  │  1 │  3 │  2 │  1 │            │  3 │  3 │
-  ├────┼────┤    │    │     =>     ├────┼────┤
-  │  2 │  0 │  3 │  1 │            │  4 │  5 │
-  ├────┼────┼────┼────┤            └────┴────┘
-  │  4 │  1 │  5 │  2 │
-  ├────┼────┤    │    │    max(1,3,2,0) = 3
-  │  0 │  2 │  1 │  4 │    max(2,1,3,1) = 3
-  └────┴────┴────┴────┘    max(4,1,0,2) = 4
-                            max(5,2,1,4) = 5
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={680} height={250} title="Max Pooling 2x2, stride 2">
+          {/* ── Feature map 4x4 ── */}
+          <Label x={112} y={18} text="Feature map 4x4" size={11} color="#e4e4e7" weight="bold" />
+          {(() => {
+            const ox = 40, oy = 34, s = 38;
+            const vals = [[1,3,2,1],[2,0,3,1],[4,1,5,2],[0,2,1,4]];
+            const poolColors = [
+              [[0,0],[0,1],[1,0],[1,1]], // top-left pool  -> accent
+              [[0,2],[0,3],[1,2],[1,3]], // top-right pool -> violet
+              [[2,0],[2,1],[3,0],[3,1]], // bottom-left    -> cyan
+              [[2,2],[2,3],[3,2],[3,3]], // bottom-right   -> amber
+            ];
+            const colors = ["#10b981","#8b5cf6","#06b6d4","#f59e0b"];
+            const dimColors = ["#10b98122","#8b5cf622","#06b6d422","#f59e0b22"];
+            function poolIdx(r: number, c: number) {
+              for (let p = 0; p < poolColors.length; p++)
+                for (const [pr, pc] of poolColors[p]) if (pr === r && pc === c) return p;
+              return -1;
+            }
+            return (
+              <g>
+                {vals.flatMap((row, r) =>
+                  row.map((v, c) => {
+                    const pi = poolIdx(r, c);
+                    const isMax = [3,3,4,5][pi] === v && [[0,1],[0,2],[2,0],[2,2]].some(([mr,mc]) => mr===r && mc===c);
+                    return (
+                      <g key={`pool-${r}-${c}`}>
+                        <rect x={ox + c * s} y={oy + r * s} width={s} height={s} rx={3}
+                          fill={dimColors[pi]} stroke={colors[pi]} strokeWidth={isMax ? 2 : 1} />
+                        <text x={ox + c * s + s / 2} y={oy + r * s + s / 2} textAnchor="middle"
+                          dominantBaseline="central" fill={colors[pi]} fontSize={13} fontWeight={isMax ? 700 : 400} fontFamily="monospace">{v}</text>
+                      </g>
+                    );
+                  })
+                )}
+              </g>
+            );
+          })()}
+
+          {/* ── Arrow ── */}
+          <Arrow x1={210} y1={110} x2={280} y2={110} label="max" color="#a1a1aa" />
+
+          {/* ── Sortie 2x2 ── */}
+          <Label x={370} y={18} text="Sortie 2x2" size={11} color="#e4e4e7" weight="bold" />
+          {(() => {
+            const ox = 300, oy = 55, s = 46;
+            const vals = [[3,3],[4,5]];
+            const colors = [["#10b981","#8b5cf6"],["#06b6d4","#f59e0b"]];
+            const dimColors = [["#10b98133","#8b5cf633"],["#06b6d433","#f59e0b33"]];
+            return (
+              <g>
+                {vals.flatMap((row, r) =>
+                  row.map((v, c) => (
+                    <g key={`out-${r}-${c}`}>
+                      <rect x={ox + c * s} y={oy + r * s} width={s} height={s} rx={4}
+                        fill={dimColors[r][c]} stroke={colors[r][c]} strokeWidth={1.5} />
+                      <text x={ox + c * s + s / 2} y={oy + r * s + s / 2} textAnchor="middle"
+                        dominantBaseline="central" fill={colors[r][c]} fontSize={14} fontWeight={700} fontFamily="monospace">{v}</text>
+                    </g>
+                  ))
+                )}
+              </g>
+            );
+          })()}
+
+          {/* ── Annotations ── */}
+          <Label x={440} y={78} text="max(1,3,2,0) = 3" size={10} color="#10b981" anchor="start" />
+          <Label x={440} y={96} text="max(2,1,3,1) = 3" size={10} color="#8b5cf6" anchor="start" />
+          <Label x={440} y={114} text="max(4,1,0,2) = 4" size={10} color="#06b6d4" anchor="start" />
+          <Label x={440} y={132} text="max(5,2,1,4) = 5" size={10} color="#f59e0b" anchor="start" />
+        </SvgDiagram>
 
         <Warning>
           <p>
@@ -239,18 +358,35 @@ export function CNN() {
           (couches fully-connected ou GAP + softmax).
         </p>
 
-        <Diagram title="Architecture typique d'un CNN">
-          <pre className="text-center">{`
-  Image           Bloc conv 1        Bloc conv 2         Classificateur
-  ┌─────┐     ┌─────────────┐    ┌─────────────┐    ┌──────────────────┐
-  │     │     │ Conv 3x3    │    │ Conv 3x3    │    │ Flatten          │
-  │ RGB │ --> │ ReLU        │ -->│ ReLU        │ -->│ FC 256           │
-  │     │     │ MaxPool 2x2 │    │ MaxPool 2x2 │    │ ReLU             │
-  └─────┘     └─────────────┘    └─────────────┘    │ FC 10 (classes)  │
-  3x32x32       32x16x16           64x8x8           │ Softmax          │
-                                                     └──────────────────┘
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={760} height={190} title="Architecture typique d'un CNN">
+          {/* Image */}
+          <Box x={10} y={40} w={80} h={70} label="RGB" sublabel="3x32x32" color="default" />
+          <Arrow x1={90} y1={75} x2={130} y2={75} />
+
+          {/* Bloc conv 1 */}
+          <GroupBox x={130} y={10} w={140} h={130} label="Bloc conv 1" color="accent" />
+          <Box x={145} y={30} w={110} h={28} label="Conv 3x3" color="accent" />
+          <Box x={145} y={64} w={110} h={28} label="ReLU" color="accent" />
+          <Box x={145} y={98} w={110} h={28} label="MaxPool 2x2" color="accent" />
+          <Label x={200} y={155} text="32x16x16" size={10} color="#a1a1aa" />
+          <Arrow x1={270} y1={75} x2={310} y2={75} />
+
+          {/* Bloc conv 2 */}
+          <GroupBox x={310} y={10} w={140} h={130} label="Bloc conv 2" color="violet" />
+          <Box x={325} y={30} w={110} h={28} label="Conv 3x3" color="violet" />
+          <Box x={325} y={64} w={110} h={28} label="ReLU" color="violet" />
+          <Box x={325} y={98} w={110} h={28} label="MaxPool 2x2" color="violet" />
+          <Label x={380} y={155} text="64x8x8" size={10} color="#a1a1aa" />
+          <Arrow x1={450} y1={75} x2={490} y2={75} />
+
+          {/* Classificateur */}
+          <GroupBox x={490} y={10} w={150} h={160} label="Classificateur" color="cyan" />
+          <Box x={505} y={30} w={120} h={24} label="Flatten" color="default" />
+          <Box x={505} y={60} w={120} h={24} label="FC 256" color="cyan" />
+          <Box x={505} y={90} w={120} h={24} label="ReLU" color="cyan" />
+          <Box x={505} y={120} w={120} h={24} label="FC 10" color="cyan" />
+          <Box x={505} y={150} w={120} h={24} label="Softmax" color="rose" />
+        </SvgDiagram>
 
         <Remark>
           <p>
@@ -344,21 +480,48 @@ print(f"Parametres : {sum(p.numel() for p in model.parameters()):,}")
           couteuses — c&apos;est le <em>bottleneck</em>.
         </p>
 
-        <Diagram title="Module Inception (simplifie)">
-          <pre className="text-center">{`
-              Input feature map
-         ┌────────┼────────┬──────────┐
-         v        v        v          v
-      Conv 1x1  Conv 1x1  Conv 1x1  MaxPool
-         |        |        |       3x3
-         |     Conv 3x3  Conv 5x5     |
-         |        |        |       Conv 1x1
-         v        v        v          v
-         └────────┴────────┴──────────┘
-                Concatenation
-              Output feature map
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={680} height={340} title="Module Inception (simplifie)">
+          {/* Input */}
+          <Box x={250} y={5} w={160} h={32} label="Input feature map" color="default" />
+
+          {/* Branch lines from input to each branch top */}
+          <Arrow x1={290} y1={37} x2={75} y2={70} />
+          <Arrow x1={310} y1={37} x2={225} y2={70} />
+          <Arrow x1={370} y1={37} x2={395} y2={70} />
+          <Arrow x1={390} y1={37} x2={565} y2={70} />
+
+          {/* Branch 1: Conv 1x1 only */}
+          <Box x={20} y={70} w={110} h={32} label="Conv 1x1" color="accent" />
+
+          {/* Branch 2: Conv 1x1 -> Conv 3x3 */}
+          <Box x={170} y={70} w={110} h={32} label="Conv 1x1" color="violet" />
+          <Arrow x1={225} y1={102} x2={225} y2={125} />
+          <Box x={170} y={125} w={110} h={32} label="Conv 3x3" color="violet" />
+
+          {/* Branch 3: Conv 1x1 -> Conv 5x5 */}
+          <Box x={340} y={70} w={110} h={32} label="Conv 1x1" color="cyan" />
+          <Arrow x1={395} y1={102} x2={395} y2={125} />
+          <Box x={340} y={125} w={110} h={32} label="Conv 5x5" color="cyan" />
+
+          {/* Branch 4: MaxPool -> Conv 1x1 */}
+          <Box x={510} y={70} w={110} h={32} label="MaxPool 3x3" color="amber" />
+          <Arrow x1={565} y1={102} x2={565} y2={125} />
+          <Box x={510} y={125} w={110} h={32} label="Conv 1x1" color="amber" />
+
+          {/* Lines from each branch bottom to concat */}
+          <Arrow x1={75} y1={102} x2={75} y2={220} />
+          <Arrow x1={225} y1={157} x2={225} y2={220} />
+          <Arrow x1={395} y1={157} x2={395} y2={220} />
+          <Arrow x1={565} y1={157} x2={565} y2={220} />
+
+          {/* Concatenation */}
+          <GroupBox x={20} y={220} w={600} h={40} label="" color="rose" />
+          <Label x={320} y={240} text="Concatenation (depth)" size={12} color="#f43f5e" weight="bold" />
+
+          {/* Output */}
+          <Arrow x1={320} y1={260} x2={320} y2={285} />
+          <Box x={240} y={285} w={160} h={32} label="Output feature map" color="default" />
+        </SvgDiagram>
       </Section>
 
       {/* ============================================================ */}
@@ -400,25 +563,42 @@ print(f"Parametres : {sum(p.numel() for p in model.parameters()):,}")
           </p>
         </Def>
 
-        <Diagram title="Bloc residuel">
-          <pre className="text-center">{`
-       x ─────────────────────────┐
-       |                          |
-   ┌───────┐                      |
-   │Conv 3x3│                     |  skip connection
-   │ BN+ReLU│                     |  (identite)
-   ├───────┤                      |
-   │Conv 3x3│                     |
-   │  BN    │                     |
-   └───┬───┘                      |
-       |          +               |
-       └──────── (+) <────────────┘
-                  |
-                ReLU
-                  |
-                  y = F(x) + x
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={440} height={320} title="Bloc residuel">
+          {/* Input x */}
+          <Label x={120} y={20} text="x" size={14} color="#e4e4e7" weight="bold" />
+          <Arrow x1={120} y1={30} x2={120} y2={55} />
+
+          {/* Conv 3x3 + BN + ReLU */}
+          <Box x={50} y={55} w={140} h={36} label="Conv 3x3" sublabel="BN + ReLU" color="violet" />
+          <Arrow x1={120} y1={91} x2={120} y2={120} />
+
+          {/* Conv 3x3 + BN */}
+          <Box x={50} y={120} w={140} h={36} label="Conv 3x3" sublabel="BN" color="violet" />
+          <Arrow x1={120} y1={156} x2={120} y2={195} />
+
+          {/* Skip connection path */}
+          {/* Horizontal from x level to right */}
+          <line x1={120} y1={30} x2={330} y2={30} stroke="#10b981" strokeWidth={1.5} strokeDasharray="6,4" />
+          {/* Down the right side */}
+          <line x1={330} y1={30} x2={330} y2={210} stroke="#10b981" strokeWidth={1.5} strokeDasharray="6,4" />
+          {/* Label on skip */}
+          <Label x={350} y={120} text="skip" size={10} color="#10b981" anchor="start" />
+          <Label x={350} y={136} text="connection" size={10} color="#10b981" anchor="start" />
+          <Label x={350} y={152} text="(identite)" size={9} color="#10b98199" anchor="start" />
+          {/* Arrow from right into the + circle */}
+          <Arrow x1={330} y1={210} x2={155} y2={210} color="#10b981" />
+
+          {/* Addition circle */}
+          <Circle cx={120} cy={210} r={18} label="+" color="accent" />
+
+          {/* ReLU below */}
+          <Arrow x1={120} y1={228} x2={120} y2={255} />
+          <Box x={60} y={255} w={120} h={32} label="ReLU" color="rose" />
+
+          {/* Output */}
+          <Arrow x1={120} y1={287} x2={120} y2={305} />
+          <Label x={120} y={315} text="y = F(x) + x" size={12} color="#e4e4e7" weight="bold" />
+        </SvgDiagram>
 
         <p>
           <strong>Pourquoi ca marche — le gradient flow.</strong> Lors de la
@@ -540,23 +720,59 @@ print(f"Parametres : {sum(p.numel() for p in model.parameters()):,}")
           </p>
         </Def>
 
-        <Diagram title="Architecture ViT">
-          <pre className="text-center">{`
-  Image 224x224          Patches 16x16          Transformer Encoder
-  ┌──────────┐      ┌─┬─┬─┬─┬─┬─┬─ ...       ┌──────────────────┐
-  │          │      │1│2│3│4│5│6│7│            │ Multi-Head       │
-  │          │  --> │ │ │ │ │ │ │ │  ──────>   │ Self-Attention   │
-  │          │      │ │ │ │ │ │ │ │            │       +          │
-  │          │      └─┴─┴─┴─┴─┴─┴─┘            │ Feed-Forward    │
-  └──────────┘      196 patches + [CLS]        │   x L couches   │
-                    + pos. embeddings           └───────┬──────────┘
-                                                        |
-                                                  [CLS] token
-                                                        |
-                                                   MLP Head
-                                                   (classes)
-`}</pre>
-        </Diagram>
+        <SvgDiagram width={740} height={280} title="Architecture ViT">
+          {/* ── Image ── */}
+          <Box x={10} y={50} w={100} h={80} label="Image" sublabel="224x224" color="default" />
+          <Arrow x1={110} y1={90} x2={145} y2={90} />
+
+          {/* ── Patches ── */}
+          <Label x={220} y={25} text="Patches 16x16" size={11} color="#e4e4e7" weight="bold" />
+          {(() => {
+            const ox = 150, oy = 55, w = 20, gap = 3;
+            const labels = ["1","2","3","4","5","6","7","..."];
+            return (
+              <g>
+                {labels.map((l, i) => (
+                  <g key={`p-${i}`}>
+                    <rect x={ox + i * (w + gap)} y={oy} width={w} height={55} rx={3}
+                      fill="#8b5cf622" stroke="#8b5cf6" strokeWidth={1} />
+                    <text x={ox + i * (w + gap) + w / 2} y={oy + 28} textAnchor="middle"
+                      dominantBaseline="central" fill="#8b5cf6" fontSize={9} fontFamily="monospace">{l}</text>
+                  </g>
+                ))}
+                {/* [CLS] token */}
+                <rect x={ox - (w + gap + 2)} y={oy} width={w + 2} height={55} rx={3}
+                  fill="#f43f5e22" stroke="#f43f5e" strokeWidth={1.2} />
+                <text x={ox - (w + gap + 2) + (w + 2) / 2} y={oy + 28} textAnchor="middle"
+                  dominantBaseline="central" fill="#f43f5e" fontSize={7} fontWeight={700} fontFamily="monospace">CLS</text>
+              </g>
+            );
+          })()}
+          <Label x={220} y={125} text="196 patches + [CLS]" size={9} color="#a1a1aa" />
+          <Label x={220} y={140} text="+ pos. embeddings" size={9} color="#a1a1aa" />
+
+          {/* ── Arrow to Transformer ── */}
+          <Arrow x1={340} y1={90} x2={390} y2={90} />
+
+          {/* ── Transformer Encoder ── */}
+          <GroupBox x={390} y={20} w={180} h={160} label="Transformer Encoder" color="accent" />
+          <Box x={410} y={45} w={140} h={36} label="Multi-Head" sublabel="Self-Attention" color="accent" />
+          <Arrow x1={480} y1={81} x2={480} y2={100} />
+          <Box x={410} y={100} w={140} h={36} label="Feed-Forward" sublabel="x L couches" color="accent" />
+          <Label x={480} y={155} text="x L" size={10} color="#10b981" weight="bold" />
+
+          {/* ── Arrow to CLS output ── */}
+          <Arrow x1={570} y1={100} x2={620} y2={100} />
+
+          {/* ── CLS token output ── */}
+          <Box x={620} y={75} w={100} h={30} label="[CLS] token" color="rose" />
+          <Arrow x1={670} y1={105} x2={670} y2={140} />
+
+          {/* ── MLP Head ── */}
+          <Box x={620} y={140} w={100} h={30} label="MLP Head" color="cyan" />
+          <Arrow x1={670} y1={170} x2={670} y2={200} />
+          <Label x={670} y={215} text="Classes" size={11} color="#06b6d4" weight="bold" />
+        </SvgDiagram>
 
         <p>
           Les variantes majeures :

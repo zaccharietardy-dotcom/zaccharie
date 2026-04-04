@@ -7,13 +7,13 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
 import { Def, Theorem, Remark } from "@/components/math-elements";
+import { SvgDiagram, Box, Arrow, Label, Circle, GroupBox } from "@/components/svg-diagrams";
 
 /* ── Local math helpers ─────────────────────────────────── */
 
@@ -258,26 +258,62 @@ out, weights = scaled_dot_product_attention(Q, K, V)
 print(f"Sortie: {out.shape}")       # → (2, 5, 64)
 print(f"Poids:  {weights.shape}")   # → (2, 5, 5)`}</Code>
 
-        <Diagram title="Mecanisme de Self-Attention">
-          <pre>{`
-  Input X (n x d_model)
-       |
-  +---------+---------+---------+
-  |  x W_Q  |  x W_K  |  x W_V  |
-  +---------+---------+---------+
-       Q         K         V
-       |         |         |
-       +----+----+         |
-            |              |
-     QK^T / sqrt(d_k)     |
-            |              |
-        softmax            |
-            |              |
-            +------x-------+
-                   |
-             Sortie (n x d_k)
-          `}</pre>
-        </Diagram>
+        <SvgDiagram width={600} height={420} title="Mecanisme de Self-Attention">
+          {/* Input */}
+          <Box x={210} y={10} w={180} h={36} label="Input X" sublabel="n x d_model" color="default" />
+          <Arrow x1={300} y1={46} x2={300} y2={70} />
+
+          {/* Three projection branches */}
+          {/* Left branch line */}
+          <Arrow x1={300} y1={70} x2={120} y2={90} />
+          {/* Center branch line */}
+          <Arrow x1={300} y1={70} x2={300} y2={90} />
+          {/* Right branch line */}
+          <Arrow x1={300} y1={70} x2={480} y2={90} />
+
+          {/* W_Q, W_K, W_V boxes */}
+          <Box x={60} y={90} w={120} h={36} label="x W_Q" color="accent" />
+          <Box x={240} y={90} w={120} h={36} label="x W_K" color="violet" />
+          <Box x={420} y={90} w={120} h={36} label="x W_V" color="cyan" />
+
+          {/* Q, K, V labels */}
+          <Label x={120} y={148} text="Q" size={14} color="#10b981" weight="bold" />
+          <Label x={300} y={148} text="K" size={14} color="#8b5cf6" weight="bold" />
+          <Label x={480} y={148} text="V" size={14} color="#06b6d4" weight="bold" />
+
+          {/* Arrows from Q and K down to dot product */}
+          <Arrow x1={120} y1={156} x2={120} y2={180} />
+          <Arrow x1={300} y1={156} x2={300} y2={180} />
+
+          {/* Q and K converge to dot product */}
+          <Arrow x1={120} y1={180} x2={210} y2={210} />
+          <Arrow x1={300} y1={180} x2={210} y2={210} />
+
+          {/* Dot product box */}
+          <Box x={130} y={210} w={160} h={40} label="QK^T / sqrt(d_k)" color="amber" />
+
+          {/* Arrow to softmax */}
+          <Arrow x1={210} y1={250} x2={210} y2={280} />
+
+          {/* Softmax box */}
+          <Box x={140} y={280} w={140} h={36} label="softmax" color="rose" />
+
+          {/* Arrow from softmax down to multiply */}
+          <Arrow x1={210} y1={316} x2={300} y2={346} />
+
+          {/* Arrow from V down to multiply */}
+          <Arrow x1={480} y1={156} x2={480} y2={330} />
+          <Arrow x1={480} y1={330} x2={390} y2={346} />
+
+          {/* Multiply circle */}
+          <Circle cx={300} cy={355} r={16} label="x" color="default" />
+
+          {/* Arrow to output */}
+          <Arrow x1={300} y1={371} x2={300} y2={390} />
+
+          {/* Output */}
+          <Box x={210} y={390} w={180} h={36} label="Sortie" sublabel="n x d_k" color="accent" />
+        </SvgDiagram>
       </Section>
 
       {/* ============================================================ */}
@@ -510,27 +546,49 @@ print(f"Parametres: {sum(p.numel() for p in mha.parameters()):,}")  # → 1,048,
           </p>
         </Def>
 
-        <Diagram title="Bloc Encoder (Post-Norm, original)">
-          <pre>{`
-      Input (n x d_model)
-            |
-    +-------+-------+
-    |  Multi-Head    |
-    |  Self-Attention|
-    +-------+-------+
-            |
-        Add & Norm  ←── residual connection
-            |
-    +-------+-------+
-    |   FFN          |
-    | (d_model→4d→d) |
-    +-------+-------+
-            |
-        Add & Norm  ←── residual connection
-            |
-      Output (n x d_model)
-          `}</pre>
-        </Diagram>
+        <SvgDiagram width={500} height={440} title="Bloc Encoder (Post-Norm, original)">
+          {/* Residual group outline */}
+          <GroupBox x={100} y={60} w={300} h={340} label="Bloc Encoder" color="default" />
+
+          {/* Input */}
+          <Box x={175} y={10} w={150} h={34} label="Input" sublabel="n x d_model" color="default" />
+          <Arrow x1={250} y1={44} x2={250} y2={76} />
+
+          {/* Multi-Head Self-Attention */}
+          <Box x={155} y={76} w={190} h={44} label="Multi-Head" sublabel="Self-Attention" color="violet" />
+          <Arrow x1={250} y1={120} x2={250} y2={150} />
+
+          {/* Residual arrow 1 - left side */}
+          <Arrow x1={145} y1={27} x2={115} y2={27} dashed color="#a1a1aa" />
+          <Arrow x1={115} y1={27} x2={115} y2={162} dashed color="#a1a1aa" />
+          <Arrow x1={115} y1={162} x2={175} y2={162} dashed color="#a1a1aa" />
+          <Label x={125} y={100} text="+" size={16} color="#f59e0b" weight="bold" anchor="start" />
+
+          {/* Add & Norm 1 */}
+          <Box x={175} y={150} w={150} h={34} label="Add & Norm" color="amber" />
+          <Arrow x1={250} y1={184} x2={250} y2={218} />
+
+          {/* FFN */}
+          <Box x={155} y={218} w={190} h={44} label="FFN" sublabel="d_model -> 4d -> d" color="cyan" />
+          <Arrow x1={250} y1={262} x2={250} y2={292} />
+
+          {/* Residual arrow 2 - right side */}
+          <Arrow x1={355} y1={170} x2={385} y2={170} dashed color="#a1a1aa" />
+          <Arrow x1={385} y1={170} x2={385} y2={304} dashed color="#a1a1aa" />
+          <Arrow x1={385} y1={304} x2={325} y2={304} dashed color="#a1a1aa" />
+          <Label x={375} y={240} text="+" size={16} color="#f59e0b" weight="bold" anchor="end" />
+
+          {/* Add & Norm 2 */}
+          <Box x={175} y={292} w={150} h={34} label="Add & Norm" color="amber" />
+          <Arrow x1={250} y1={326} x2={250} y2={360} />
+
+          {/* Output */}
+          <Box x={175} y={360} w={150} h={34} label="Output" sublabel="n x d_model" color="default" />
+
+          {/* Residual labels */}
+          <Label x={130} y={140} text="residual" size={9} color="#a1a1aa" anchor="end" />
+          <Label x={400} y={280} text="residual" size={9} color="#a1a1aa" anchor="start" />
+        </SvgDiagram>
 
         <KeyConcept title="Pre-Norm vs Post-Norm">
           <p>
@@ -624,34 +682,61 @@ print(f"Parametres: {sum(p.numel() for p in mha.parameters()):,}")  # → 1,048,
           </p>
         </Def>
 
-        <Diagram title="Bloc Decoder (Transformer original)">
-          <pre>{`
-      Input decale (shifted right)
-            |
-    +----------------+
-    |  Masked Multi-  |
-    |  Head Attention  |
-    +--------+--------+
-             |
-         Add & Norm
-             |
-    +--------+--------+       Sortie Encoder
-    |  Cross-Attention |←─── (K, V viennent
-    |  (Q: decoder,    |      de l'encoder)
-    |   K,V: encoder)  |
-    +--------+--------+
-             |
-         Add & Norm
-             |
-    +--------+--------+
-    |      FFN         |
-    +--------+--------+
-             |
-         Add & Norm
-             |
-        Output (n x d)
-          `}</pre>
-        </Diagram>
+        <SvgDiagram width={600} height={560} title="Bloc Decoder (Transformer original)">
+          {/* Decoder group outline */}
+          <GroupBox x={120} y={60} w={290} h={450} label="Bloc Decoder" color="default" />
+
+          {/* Input */}
+          <Box x={180} y={10} w={170} h={34} label="Input decale" sublabel="shifted right" color="default" />
+          <Arrow x1={265} y1={44} x2={265} y2={76} />
+
+          {/* Masked Multi-Head Attention */}
+          <Box x={160} y={76} w={210} h={44} label="Masked Multi-Head" sublabel="Self-Attention" color="rose" />
+          <Arrow x1={265} y1={120} x2={265} y2={150} />
+
+          {/* Residual 1 */}
+          <Arrow x1={148} y1={27} x2={130} y2={27} dashed color="#a1a1aa" />
+          <Arrow x1={130} y1={27} x2={130} y2={162} dashed color="#a1a1aa" />
+          <Arrow x1={130} y1={162} x2={185} y2={162} dashed color="#a1a1aa" />
+
+          {/* Add & Norm 1 */}
+          <Box x={185} y={150} w={160} h={34} label="Add & Norm" color="amber" />
+          <Arrow x1={265} y1={184} x2={265} y2={218} />
+
+          {/* Cross-Attention */}
+          <Box x={160} y={218} w={210} h={44} label="Cross-Attention" sublabel="Q: decoder, K,V: encoder" color="violet" />
+
+          {/* Encoder output feeding into cross-attention */}
+          <Box x={440} y={218} w={140} h={44} label="Sortie" sublabel="Encoder" color="accent" />
+          <Arrow x1={440} y1={240} x2={370} y2={240} label="K, V" color="#8b5cf6" />
+
+          <Arrow x1={265} y1={262} x2={265} y2={292} />
+
+          {/* Residual 2 */}
+          <Arrow x1={395} y1={170} x2={400} y2={170} dashed color="#a1a1aa" />
+          <Arrow x1={400} y1={170} x2={400} y2={304} dashed color="#a1a1aa" />
+          <Arrow x1={400} y1={304} x2={345} y2={304} dashed color="#a1a1aa" />
+
+          {/* Add & Norm 2 */}
+          <Box x={185} y={292} w={160} h={34} label="Add & Norm" color="amber" />
+          <Arrow x1={265} y1={326} x2={265} y2={360} />
+
+          {/* FFN */}
+          <Box x={175} y={360} w={180} h={40} label="FFN" color="cyan" />
+          <Arrow x1={265} y1={400} x2={265} y2={430} />
+
+          {/* Residual 3 */}
+          <Arrow x1={148} y1={310} x2={136} y2={310} dashed color="#a1a1aa" />
+          <Arrow x1={136} y1={310} x2={136} y2={442} dashed color="#a1a1aa" />
+          <Arrow x1={136} y1={442} x2={185} y2={442} dashed color="#a1a1aa" />
+
+          {/* Add & Norm 3 */}
+          <Box x={185} y={430} w={160} h={34} label="Add & Norm" color="amber" />
+          <Arrow x1={265} y1={464} x2={265} y2={490} />
+
+          {/* Output */}
+          <Box x={190} y={490} w={150} h={34} label="Output" sublabel="n x d" color="default" />
+        </SvgDiagram>
 
         <KeyConcept title="Generation autoregressive">
           <p>
@@ -879,19 +964,43 @@ print(f"Parametres BERT base: {sum(p.numel() for p in model.parameters()):,}")
           </Step>
         </Steps>
 
-        <Diagram title="Architecture ViT">
-          <pre>{`
-  Image (224 x 224 x 3)
-         |
-  Decoupage en patches 16x16
-         |
-  [CLS] + 196 patch embeddings + position embeddings
-         |
-  Transformer Encoder (12 couches)
-         |
-  Token [CLS] → MLP Head → Classe
-          `}</pre>
-        </Diagram>
+        <SvgDiagram width={650} height={400} title="Architecture ViT">
+          {/* Image input */}
+          <Box x={30} y={170} w={100} h={60} label="Image" sublabel="224x224x3" color="default" />
+          <Arrow x1={130} y1={200} x2={160} y2={200} />
+
+          {/* Patch split */}
+          <Box x={160} y={175} w={110} h={50} label="Patches" sublabel="16x16 -> 196" color="rose" />
+          <Arrow x1={270} y1={200} x2={300} y2={200} />
+
+          {/* Linear projection + CLS + pos */}
+          <GroupBox x={300} y={130} w={140} h={140} label="Embeddings" color="violet" />
+          <Box x={310} y={145} w={120} h={30} label="Linear Proj." color="violet" />
+          <Box x={310} y={185} w={120} h={30} label="+ [CLS] token" color="accent" />
+          <Box x={310} y={225} w={120} h={30} label="+ Pos. Emb." color="cyan" />
+
+          <Arrow x1={440} y1={200} x2={470} y2={200} />
+
+          {/* Transformer Encoder */}
+          <Box x={470} y={165} w={100} h={70} label="Transformer" sublabel="Encoder x12" color="amber" />
+          <Arrow x1={570} y1={200} x2={600} y2={200} />
+
+          {/* Output pipeline: [CLS] -> MLP Head -> Class */}
+          {/* Arrow turning down from encoder */}
+          <Arrow x1={600} y1={200} x2={620} y2={200} />
+          <Arrow x1={620} y1={200} x2={620} y2={290} />
+
+          <Box x={505} y={290} w={100} h={36} label="[CLS]" color="accent" />
+          <Arrow x1={505} y1={308} x2={480} y2={308} />
+
+          <Box x={350} y={290} w={130} h={36} label="MLP Head" color="violet" />
+          <Arrow x1={350} y1={308} x2={320} y2={308} />
+
+          <Box x={200} y={290} w={120} h={36} label="Classe" color="rose" />
+
+          {/* Flow description labels */}
+          <Label x={325} y={370} text="197 tokens (196 patches + [CLS]) traversent le Transformer" size={10} color="#a1a1aa" />
+        </SvgDiagram>
 
         <KeyConcept title="ViT a besoin de beaucoup de donnees">
           <p>

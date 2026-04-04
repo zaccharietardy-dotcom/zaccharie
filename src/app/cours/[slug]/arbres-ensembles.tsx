@@ -7,12 +7,14 @@ import {
   Warning,
   Analogy,
   Quiz,
-  Diagram,
   Term,
   Steps,
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
+import {
+  SvgDiagram, Box, Arrow, Label, GroupBox,
+} from "@/components/svg-diagrams";
 import { Def, Theorem, Proof, Remark } from "@/components/math-elements";
 
 /* ── Math helper components using pure HTML/CSS ────────── */
@@ -357,20 +359,34 @@ print(f"Split: feature {feat}, seuil {thresh}, gain {gain:.3f}")`}</Code>
           </p>
         </Def>
 
-        <Diagram title="Random Forest — decorrelation des arbres">
-          <pre className="text-center">{`
-    Dataset D
-    ┌──────────────────────────────────────┐
-    │  Bootstrap 1    Bootstrap 2    ...   │
-    │  + m features   + m features         │
-    │       │              │               │
-    │    Arbre 1        Arbre 2      Arbre B│
-    │       │              │               │
-    │       └──────┬───────┘               │
-    │         Agregation (vote / moyenne)   │
-    └──────────────────────────────────────┘
-          `}</pre>
-        </Diagram>
+        <SvgDiagram width={580} height={310} title="Random Forest -- decorrelation des arbres">
+          {/* Dataset source */}
+          <Box x={200} y={10} w={180} h={38} label="Dataset D" color="default" />
+          {/* Bootstrap samples */}
+          <GroupBox x={30} y={75} w={520} h={190} label="Echantillons bootstrap + m features" color="accent" />
+          <Box x={55} y={100} w={130} h={36} label="Bootstrap 1" sublabel="m features" color="amber" />
+          <Box x={225} y={100} w={130} h={36} label="Bootstrap 2" sublabel="m features" color="amber" />
+          <Box x={395} y={100} w={130} h={36} label="Bootstrap B" sublabel="m features" color="amber" />
+          {/* Arrows from dataset to bootstraps */}
+          <Arrow x1={260} y1={48} x2={120} y2={100} />
+          <Arrow x1={290} y1={48} x2={290} y2={100} />
+          <Arrow x1={320} y1={48} x2={460} y2={100} />
+          {/* Trees */}
+          <Box x={65} y={170} w={110} h={36} label="Arbre 1" color="violet" />
+          <Box x={235} y={170} w={110} h={36} label="Arbre 2" color="violet" />
+          <Box x={405} y={170} w={110} h={36} label="Arbre B" color="violet" />
+          <Label x={365} y={188} text="..." size={16} weight="bold" />
+          {/* Arrows from bootstraps to trees */}
+          <Arrow x1={120} y1={136} x2={120} y2={170} />
+          <Arrow x1={290} y1={136} x2={290} y2={170} />
+          <Arrow x1={460} y1={136} x2={460} y2={170} />
+          {/* Arrows from trees to aggregation */}
+          <Arrow x1={120} y1={206} x2={255} y2={280} />
+          <Arrow x1={290} y1={206} x2={290} y2={280} />
+          <Arrow x1={460} y1={206} x2={325} y2={280} />
+          {/* Aggregation */}
+          <Box x={185} y={280} w={210} h={22} label="Agregation (vote / moyenne)" color="cyan" rx={4} />
+        </SvgDiagram>
 
         <ComparisonTable
           headers={["Hyperparametre", "Role", "Valeur typique"]}

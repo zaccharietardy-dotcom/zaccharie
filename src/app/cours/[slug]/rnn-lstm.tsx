@@ -14,6 +14,7 @@ import {
   ComparisonTable,
 } from "@/components/course-elements";
 import { Def, Remark } from "@/components/math-elements";
+import { SvgDiagram, Box, Arrow, Label, GroupBox } from "@/components/svg-diagrams";
 
 function F({ children }: { children: React.ReactNode }) {
   return <span className="font-serif italic text-[1.05em]">{children}</span>;
@@ -76,20 +77,45 @@ export function RnnLstm() {
             precedent <Sub sub="t-1"><F>h</F></Sub>, puis produit <Sub sub="t"><F>h</F></Sub>.
           </p>
         </Def>
-        <Diagram title="RNN deroule dans le temps (unfolding)">
-          <pre className="text-center">{`
-  x_1        x_2        x_3        x_4
-   |          |          |          |
-   v          v          v          v
-+------+  +------+  +------+  +------+
-| h_1  |->| h_2  |->| h_3  |->| h_4  |
-+------+  +------+  +------+  +------+
-   |          |          |          |
-   v          v          v          v
-  y_1        y_2        y_3        y_4
+        <SvgDiagram width={620} height={240} title="RNN deroule dans le temps (unfolding)">
+          {/* Input labels x_1 .. x_4 */}
+          <Label x={100} y={20} text="x_1" color="#10b981" size={13} weight="bold" />
+          <Label x={240} y={20} text="x_2" color="#10b981" size={13} weight="bold" />
+          <Label x={380} y={20} text="x_3" color="#10b981" size={13} weight="bold" />
+          <Label x={520} y={20} text="x_4" color="#10b981" size={13} weight="bold" />
 
- Meme cellule reutilisee. Poids W_hh, W_xh, W_hy partages.`}</pre>
-        </Diagram>
+          {/* Arrows from inputs to hidden boxes */}
+          <Arrow x1={100} y1={32} x2={100} y2={70} color="#10b981" />
+          <Arrow x1={240} y1={32} x2={240} y2={70} color="#10b981" />
+          <Arrow x1={380} y1={32} x2={380} y2={70} color="#10b981" />
+          <Arrow x1={520} y1={32} x2={520} y2={70} color="#10b981" />
+
+          {/* Hidden state boxes h_1 .. h_4 */}
+          <Box x={40} y={70} w={120} h={44} label="h_1" color="violet" />
+          <Box x={180} y={70} w={120} h={44} label="h_2" color="violet" />
+          <Box x={320} y={70} w={120} h={44} label="h_3" color="violet" />
+          <Box x={460} y={70} w={120} h={44} label="h_4" color="violet" />
+
+          {/* Horizontal arrows between hidden states */}
+          <Arrow x1={160} y1={92} x2={180} y2={92} label="W_hh" color="#8b5cf6" />
+          <Arrow x1={300} y1={92} x2={320} y2={92} label="W_hh" color="#8b5cf6" />
+          <Arrow x1={440} y1={92} x2={460} y2={92} label="W_hh" color="#8b5cf6" />
+
+          {/* Arrows from hidden to outputs */}
+          <Arrow x1={100} y1={114} x2={100} y2={155} color="#06b6d4" />
+          <Arrow x1={240} y1={114} x2={240} y2={155} color="#06b6d4" />
+          <Arrow x1={380} y1={114} x2={380} y2={155} color="#06b6d4" />
+          <Arrow x1={520} y1={114} x2={520} y2={155} color="#06b6d4" />
+
+          {/* Output labels y_1 .. y_4 */}
+          <Label x={100} y={172} text="y_1" color="#06b6d4" size={13} weight="bold" />
+          <Label x={240} y={172} text="y_2" color="#06b6d4" size={13} weight="bold" />
+          <Label x={380} y={172} text="y_3" color="#06b6d4" size={13} weight="bold" />
+          <Label x={520} y={172} text="y_4" color="#06b6d4" size={13} weight="bold" />
+
+          {/* Caption */}
+          <Label x={310} y={215} text="Meme cellule reutilisee. Poids W_hh, W_xh, W_hy partages." size={10} />
+        </SvgDiagram>
         <Eq>
           <Sub sub="t"><F>h</F></Sub> = tanh(<Sub sub="hh"><F>W</F></Sub> <Sub sub="t-1"><F>h</F></Sub> + <Sub sub="xh"><F>W</F></Sub> <Sub sub="t"><F>x</F></Sub> + <Sub sub="h"><F>b</F></Sub>)
         </Eq>
@@ -188,16 +214,62 @@ class RNNFromScratch(nn.Module):
           </Term>{" "}
           (<Sub sub="t"><F>C</F></Sub>) controle par trois portes.
         </p>
-        <Diagram title="Cellule LSTM">
-          <pre className="text-center">{`
-  C_{t-1} ───[x forget]───[+ input]──── C_t
-                 |             |
-              f_t (sig)   i_t * c~_t
-                 |          |     |
-  x_t, h_{t-1} ─┤── sigmoid ┤  tanh
-                 |           |
-                 └── o_t (sig) ── h_t = o_t * tanh(C_t)`}</pre>
-        </Diagram>
+        <SvgDiagram width={700} height={370} title="Cellule LSTM">
+          {/* ── Cell state highway ── */}
+          <Label x={20} y={40} text="C_t-1" size={12} color="#f59e0b" anchor="start" weight="bold" />
+          <Arrow x1={72} y1={40} x2={168} y2={40} color="#f59e0b" />
+          {/* Forget gate multiply */}
+          <Box x={168} y={20} w={64} h={40} label="x" sublabel="forget" color="rose" />
+          <Arrow x1={232} y1={40} x2={348} y2={40} color="#f59e0b" />
+          {/* Input gate add */}
+          <Box x={348} y={20} w={64} h={40} label="+" sublabel="input" color="accent" />
+          <Arrow x1={412} y1={40} x2={660} y2={40} color="#f59e0b" />
+          <Label x={675} y={40} text="C_t" size={12} color="#f59e0b" anchor="start" weight="bold" />
+
+          {/* ── Inputs label ── */}
+          <GroupBox x={25} y={145} w={120} h={50} label="inputs" color="default" />
+          <Label x={85} y={163} text="x_t" size={11} color="#e4e4e7" />
+          <Label x={85} y={180} text="h_t-1" size={11} color="#e4e4e7" />
+
+          {/* ── Forget gate ── */}
+          <Box x={168} y={120} w={64} h={36} label="f_t" sublabel="sig" color="rose" />
+          <Arrow x1={85} y1={195} x2={185} y2={156} color="#a1a1aa" dashed />
+          {/* f_t up to the multiply node */}
+          <Arrow x1={200} y1={120} x2={200} y2={60} color="#f43f5e" />
+
+          {/* ── Input gate ── */}
+          <Box x={280} y={120} w={64} h={36} label="i_t" sublabel="sig" color="accent" />
+          <Arrow x1={85} y1={195} x2={297} y2={156} color="#a1a1aa" dashed />
+
+          {/* ── Cell candidate ── */}
+          <Box x={280} y={200} w={64} h={36} label="c~_t" sublabel="tanh" color="cyan" />
+          <Arrow x1={85} y1={195} x2={297} y2={218} color="#a1a1aa" dashed />
+
+          {/* i_t * c~_t multiply node */}
+          <Box x={370} y={160} w={40} h={30} label="*" color="default" rx={15} />
+          <Arrow x1={344} y1={138} x2={370} y2={168} color="#10b981" />
+          <Arrow x1={344} y1={218} x2={370} y2={183} color="#06b6d4" />
+          {/* result goes up to + node */}
+          <Arrow x1={390} y1={160} x2={380} y2={60} color="#a1a1aa" />
+
+          {/* ── Output gate ── */}
+          <Box x={460} y={120} w={64} h={36} label="o_t" sublabel="sig" color="violet" />
+          <Arrow x1={85} y1={195} x2={477} y2={156} color="#a1a1aa" dashed />
+
+          {/* tanh of C_t */}
+          <Box x={530} y={200} w={64} h={36} label="tanh" color="amber" />
+          {/* C_t line branches down to tanh */}
+          <Arrow x1={562} y1={40} x2={562} y2={200} color="#f59e0b" dashed />
+
+          {/* o_t * tanh(C_t) multiply node */}
+          <Box x={530} y={280} w={64} h={36} label="*" color="default" rx={15} />
+          <Arrow x1={492} y1={156} x2={540} y2={280} color="#8b5cf6" />
+          <Arrow x1={562} y1={236} x2={562} y2={280} color="#f59e0b" />
+
+          {/* h_t output */}
+          <Arrow x1={562} y1={316} x2={562} y2={350} color="#8b5cf6" />
+          <Label x={562} y={362} text="h_t" size={13} color="#8b5cf6" weight="bold" />
+        </SvgDiagram>
         <Eq><Sub sub="t"><F>f</F></Sub> = sigma(<Sub sub="f"><F>W</F></Sub>[<Sub sub="t-1"><F>h</F></Sub>, <Sub sub="t"><F>x</F></Sub>] + <Sub sub="f"><F>b</F></Sub>)  — forget gate</Eq>
         <Eq><Sub sub="t"><F>i</F></Sub> = sigma(<Sub sub="i"><F>W</F></Sub>[<Sub sub="t-1"><F>h</F></Sub>, <Sub sub="t"><F>x</F></Sub>] + <Sub sub="i"><F>b</F></Sub>)  — input gate</Eq>
         <Eq><Sub sub="t"><F>c~</F></Sub> = tanh(<Sub sub="c"><F>W</F></Sub>[<Sub sub="t-1"><F>h</F></Sub>, <Sub sub="t"><F>x</F></Sub>] + <Sub sub="c"><F>b</F></Sub>)  — candidat</Eq>
@@ -276,14 +348,46 @@ class RNNFromScratch(nn.Module):
             Sortie = 2 * hidden_size.
           </p>
         </Def>
-        <Diagram title="Bi-LSTM">
-          <pre className="text-center">{`
-  Forward :   h1 --> h2 --> h3 --> h4
-              |      |      |      |
-         x_1    x_2    x_3    x_4
-              |      |      |      |
-  Backward:   h1 <-- h2 <-- h3 <-- h4`}</pre>
-        </Diagram>
+        <SvgDiagram width={620} height={250} title="Bi-LSTM">
+          {/* ── Forward path (top) ── */}
+          <GroupBox x={25} y={10} w={570} h={60} label="forward" color="accent" />
+          <Box x={40} y={22} w={100} h={36} label="h1 fwd" color="accent" />
+          <Box x={180} y={22} w={100} h={36} label="h2 fwd" color="accent" />
+          <Box x={320} y={22} w={100} h={36} label="h3 fwd" color="accent" />
+          <Box x={460} y={22} w={100} h={36} label="h4 fwd" color="accent" />
+          <Arrow x1={140} y1={40} x2={180} y2={40} color="#10b981" />
+          <Arrow x1={280} y1={40} x2={320} y2={40} color="#10b981" />
+          <Arrow x1={420} y1={40} x2={460} y2={40} color="#10b981" />
+
+          {/* ── Input labels ── */}
+          <Arrow x1={90} y1={96} x2={90} y2={58} color="#a1a1aa" />
+          <Arrow x1={230} y1={96} x2={230} y2={58} color="#a1a1aa" />
+          <Arrow x1={370} y1={96} x2={370} y2={58} color="#a1a1aa" />
+          <Arrow x1={510} y1={96} x2={510} y2={58} color="#a1a1aa" />
+
+          <Label x={90} y={112} text="x_1" size={13} weight="bold" />
+          <Label x={230} y={112} text="x_2" size={13} weight="bold" />
+          <Label x={370} y={112} text="x_3" size={13} weight="bold" />
+          <Label x={510} y={112} text="x_4" size={13} weight="bold" />
+
+          <Arrow x1={90} y1={128} x2={90} y2={152} color="#a1a1aa" />
+          <Arrow x1={230} y1={128} x2={230} y2={152} color="#a1a1aa" />
+          <Arrow x1={370} y1={128} x2={370} y2={152} color="#a1a1aa" />
+          <Arrow x1={510} y1={128} x2={510} y2={152} color="#a1a1aa" />
+
+          {/* ── Backward path (bottom) ── */}
+          <GroupBox x={25} y={142} w={570} h={60} label="backward" color="violet" />
+          <Box x={40} y={154} w={100} h={36} label="h1 bwd" color="violet" />
+          <Box x={180} y={154} w={100} h={36} label="h2 bwd" color="violet" />
+          <Box x={320} y={154} w={100} h={36} label="h3 bwd" color="violet" />
+          <Box x={460} y={154} w={100} h={36} label="h4 bwd" color="violet" />
+          <Arrow x1={460} y1={172} x2={420} y2={172} color="#8b5cf6" />
+          <Arrow x1={320} y1={172} x2={280} y2={172} color="#8b5cf6" />
+          <Arrow x1={180} y1={172} x2={140} y2={172} color="#8b5cf6" />
+
+          {/* ── Concatenation label ── */}
+          <Label x={310} y={232} text="h_t = [h_t fwd ; h_t bwd]   sortie = 2 * hidden_size" size={10} />
+        </SvgDiagram>
         <p>
           On peut empiler 2-3 couches (Deep RNN). Au-dela, le gain est marginal.
         </p>
