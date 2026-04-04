@@ -9,14 +9,6 @@ import {
 
 const projects = [
   {
-    slug: "sf-presentation",
-    title: "The Loneliness Machine",
-    description:
-      "AI Companions as Symptom, Not Cure. Presentation anglais sur la SF, les robots et l'IA — Her, Blade Runner 2049, Black Mirror.",
-    tags: ["English", "Science Fiction", "AI Ethics", "Presentation"],
-    status: "demo" as const,
-  },
-  {
     slug: "deblurring",
     title: "Deblurring de plaques d'immatriculation",
     description:

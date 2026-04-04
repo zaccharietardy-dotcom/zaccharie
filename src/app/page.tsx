@@ -23,13 +23,6 @@ const projects = [
     href: "/projets/deblurring",
   },
   {
-    title: "The Loneliness Machine",
-    description:
-      "Presentation sur les compagnons IA comme symptome, pas remede. Her, Blade Runner 2049, Black Mirror.",
-    tags: ["AI Ethics", "English", "Science Fiction"],
-    href: "/projets/sf-presentation",
-  },
-  {
     title: "Planificateur de voyage IA",
     description:
       "Pipeline deterministe en 12 etapes : parsing intent, ancrage transport, scheduling, contrats. Gemini Flash + Google Places.",
