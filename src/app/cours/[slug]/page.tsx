@@ -8,6 +8,14 @@ import { AgentsVocaux } from "./agents-vocaux";
 import { StageSelectra } from "./stage-selectra";
 import { Optimisation } from "./optimisation";
 import { OptimisationResume } from "./optimisation-resume";
+import { ArbresEnsembles } from "./arbres-ensembles";
+import { FinanceQuantitative } from "./finance-quantitative";
+import { RnnLstm } from "./rnn-lstm";
+import { CNN } from "./cnn";
+import { TransformersDeep } from "./transformers-deep";
+import { GenerationImages } from "./generation-images";
+import { DiffusionModels } from "./diffusion-models";
+import { GitGithub } from "./git-github";
 
 const courses: Record<
   string,
@@ -160,6 +168,165 @@ const courses: Record<
       { id: "pieges", title: "Pieges classiques" },
     ],
     Component: OptimisationResume,
+  },
+  "arbres-ensembles": {
+    module: "ML",
+    title: "Arbres de Decision & Methodes d'Ensemble",
+    description:
+      "Decision trees, Random Forests, XGBoost, LightGBM, CatBoost — theorie mathematique complete et applications en finance. Les rois du tabulaire.",
+    sections: [
+      { id: "pourquoi", title: "Pourquoi ce module" },
+      { id: "arbres-decision", title: "Arbres de decision — CART" },
+      { id: "bagging", title: "Bagging & Bootstrap" },
+      { id: "random-forests", title: "Random Forests" },
+      { id: "gradient-boosting", title: "Gradient Boosting — theorie complete" },
+      { id: "xgboost", title: "XGBoost — eXtreme Gradient Boosting" },
+      { id: "lightgbm-catboost", title: "LightGBM & CatBoost" },
+      { id: "finance", title: "Applications en finance" },
+      { id: "papiers-recents", title: "Papiers recents (2024-2025)" },
+      { id: "feature-importance", title: "Feature importance et interpretabilite" },
+      { id: "quiz-final", title: "Quiz final" },
+    ],
+    Component: ArbresEnsembles,
+  },
+  cnn: {
+    module: "ML",
+    title: "Reseaux de Neurones Convolutifs (CNN)",
+    description:
+      "Des premiers filtres de LeNet aux Vision Transformers. Convolutions, pooling, ResNet, EfficientNet, ViT, transfer learning — theorie et code PyTorch.",
+    sections: [
+      { id: "pourquoi", title: "Pourquoi les CNN" },
+      { id: "convolution", title: "L'operation de convolution" },
+      { id: "pooling", title: "Pooling et Feature Maps" },
+      { id: "architecture", title: "Architecture d'un CNN" },
+      { id: "architectures", title: "Les grandes architectures" },
+      { id: "resnet", title: "ResNet et les connexions residuelles" },
+      { id: "efficientnet", title: "EfficientNet et compound scaling" },
+      { id: "vit", title: "Vision Transformers (ViT)" },
+      { id: "transfer-learning", title: "Transfer learning" },
+      { id: "quiz-final", title: "Quiz final" },
+    ],
+    Component: CNN,
+  },
+  "transformers-deep": {
+    module: "ML",
+    title: "Transformers — Architecture en profondeur",
+    description:
+      "Self-attention, multi-head, positional encoding, encoder/decoder, BERT, GPT, ViT — theorie mathematique complete et implementation PyTorch from scratch.",
+    sections: [
+      { id: "pourquoi", title: "Pourquoi les Transformers" },
+      { id: "self-attention", title: "Self-Attention — les maths" },
+      { id: "multi-head", title: "Multi-Head Attention" },
+      { id: "positional-encoding", title: "Positional Encoding" },
+      { id: "encoder", title: "Architecture Encoder" },
+      { id: "decoder", title: "Architecture Decoder" },
+      { id: "bert", title: "BERT" },
+      { id: "gpt", title: "GPT" },
+      { id: "vision-transformers", title: "Vision Transformers" },
+      { id: "implementation", title: "Implementer un Transformer from scratch" },
+      { id: "quiz-final", title: "Quiz final" },
+    ],
+    Component: TransformersDeep,
+  },
+  "finance-quantitative": {
+    module: "ML",
+    title: "Finance Quantitative",
+    description:
+      "Mouvement brownien, calcul stochastique, Black-Scholes, Greeks, Monte Carlo, risk management. Niveau Polytechnique, exercices style Heard on the Street.",
+    sections: [
+      { id: "pourquoi", title: "Pourquoi la finance quantitative" },
+      { id: "brownien", title: "Mouvement brownien" },
+      { id: "ito", title: "Calcul stochastique — Integrale d'Ito" },
+      { id: "black-scholes", title: "Le modele de Black-Scholes" },
+      { id: "greeks", title: "Les Greeks" },
+      { id: "pricing", title: "Pricing d'options — mesure risque-neutre" },
+      { id: "monte-carlo", title: "Methodes de Monte Carlo" },
+      { id: "taux", title: "Modeles de taux d'interet" },
+      { id: "risk", title: "Risk management — VaR et au-dela" },
+      { id: "exercices", title: "Exercices style 'Heard on the Street'" },
+      { id: "quiz", title: "Quiz final" },
+    ],
+    Component: FinanceQuantitative,
+  },
+  "rnn-lstm": {
+    module: "ML",
+    title: "RNN, LSTM & GRU",
+    description:
+      "Reseaux recurrents, vanishing gradient, LSTM, GRU, Bi-LSTM. Applications series temporelles et NLP. Papier 'Were RNNs All We Needed?' (2024).",
+    sections: [
+      { id: "sequentiel", title: "Pourquoi les modeles sequentiels ?" },
+      { id: "rnn-vanilla", title: "Le RNN vanilla" },
+      { id: "vanishing", title: "Le probleme du vanishing gradient" },
+      { id: "lstm", title: "LSTM — Long Short-Term Memory" },
+      { id: "gru", title: "GRU — Gated Recurrent Unit" },
+      { id: "bi-lstm", title: "Bi-LSTM & Deep RNNs" },
+      { id: "applications", title: "Applications pratiques" },
+      { id: "min-lstm", title: "'Were RNNs All We Needed?' (2024)" },
+      { id: "hybrides", title: "Architectures hybrides modernes" },
+      { id: "quiz", title: "Quiz final" },
+    ],
+    Component: RnnLstm,
+  },
+  "generation-images": {
+    module: "ML",
+    title: "Generation d'Images — GANs & VAE",
+    description:
+      "Autoencoders, VAE (ELBO, reparametrization trick), GAN, DCGAN, ProGAN, StyleGAN. Maths detaillees et code PyTorch.",
+    sections: [
+      { id: "pourquoi", title: "Pourquoi la generation d'images ?" },
+      { id: "autoencoders", title: "Autoencoders" },
+      { id: "vae", title: "VAE — Variational Autoencoders" },
+      { id: "gan", title: "GAN — le jeu min-max" },
+      { id: "entrainement", title: "Entrainer un GAN — instabilite et astuces" },
+      { id: "dcgan", title: "DCGAN — l'architecture convolutionnelle" },
+      { id: "progan", title: "ProGAN — progressive growing" },
+      { id: "stylegan", title: "StyleGAN — le generateur qui a tout change" },
+      { id: "metriques", title: "Metriques d'evaluation" },
+      { id: "limitations", title: "Limitations & transition vers la diffusion" },
+      { id: "quiz", title: "Quiz final" },
+    ],
+    Component: GenerationImages,
+  },
+  "diffusion-models": {
+    module: "ML",
+    title: "Generation d'Images — Modeles de Diffusion",
+    description:
+      "DDPM, score matching, classifier-free guidance, Stable Diffusion, DALL-E, FLUX, Sora. Super-resolution (ESRGAN). Etat de l'art 2026.",
+    sections: [
+      { id: "pourquoi", title: "Pourquoi les modeles de diffusion" },
+      { id: "forward", title: "DDPM — Forward process" },
+      { id: "reverse", title: "DDPM — Reverse process" },
+      { id: "sampling", title: "Sampling et acceleration" },
+      { id: "score-sde", title: "Score matching et SDE" },
+      { id: "cfg", title: "Classifier-Free Guidance" },
+      { id: "stable-diffusion", title: "Stable Diffusion" },
+      { id: "etat-art", title: "L'etat de l'art (2024-2026)" },
+      { id: "super-resolution", title: "Super-resolution et restauration" },
+      { id: "implementation", title: "Implementer un DDPM simple" },
+      { id: "quiz", title: "Quiz final" },
+    ],
+    Component: DiffusionModels,
+  },
+  "git-github": {
+    module: "DEV",
+    title: "Git, GitHub & GitLab",
+    description:
+      "Toutes les commandes et bonnes pratiques pour travailler en equipe. Branches, merge, rebase, PR, CI/CD, workflows entreprise.",
+    sections: [
+      { id: "pourquoi", title: "Pourquoi Git est indispensable" },
+      { id: "fondamentaux", title: "Les fondamentaux — init, add, commit" },
+      { id: "branches", title: "Branches — le coeur du workflow" },
+      { id: "merge-rebase", title: "Merge vs Rebase — le grand debat" },
+      { id: "conflits", title: "Resoudre les conflits comme un pro" },
+      { id: "remote", title: "Remotes — GitHub, GitLab, Bitbucket" },
+      { id: "workflow", title: "Workflows d'equipe en entreprise" },
+      { id: "pr-review", title: "Pull Requests et Code Review" },
+      { id: "ci-cd", title: "CI/CD — automatiser les verifications" },
+      { id: "commandes-avancees", title: "Commandes avancees indispensables" },
+      { id: "gitignore", title: ".gitignore, hooks et bonnes pratiques" },
+      { id: "quiz", title: "Quiz final" },
+    ],
+    Component: GitGithub,
   },
 };
 

@@ -7,62 +7,34 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 
-const modules = [
+const projects = [
   {
-    slug: "fondations-llm",
-    number: "01",
-    title: "Fondations LLM",
+    title: "Prediction de renversement vehiculaire",
     description:
-      "Transformers, tokens, attention, temperature — comprendre comment pensent les modeles.",
-    status: "available" as const,
+      "Deep learning (LSTM + PatchTST) pour predire le risque de rollover de vehicules militaires. 98% recall. Projet DGA.",
+    tags: ["PyTorch", "LSTM", "PatchTST", "XGBoost"],
+    href: "/projets/vdsim",
   },
   {
-    slug: "prompt-engineering",
-    number: "02",
-    title: "Prompt Engineering",
+    title: "Deblurring de plaques d'immatriculation",
     description:
-      "Few-shot, chain-of-thought, structured output — l'art de parler aux LLMs.",
-    status: "available" as const,
+      "Pipeline ML complet : detection YOLO + restauration (NAFNet/LPDGAN) + OCR. Upload une plaque floue, recupere l'image nette.",
+    tags: ["Computer Vision", "GAN", "OCR"],
+    href: "/projets/deblurring",
   },
   {
-    slug: "rag",
-    number: "03",
-    title: "RAG",
+    title: "The Loneliness Machine",
     description:
-      "Embeddings, vector stores, chunking — donner de la memoire aux LLMs.",
-    status: "available" as const,
+      "Presentation sur les compagnons IA comme symptome, pas remede. Her, Blade Runner 2049, Black Mirror.",
+    tags: ["AI Ethics", "English", "Science Fiction"],
+    href: "/projets/sf-presentation",
   },
   {
-    slug: "agents",
-    number: "04",
-    title: "Tool Calling & Agents",
+    title: "Planificateur de voyage IA",
     description:
-      "Function calling, boucle agent, MCP — quand le LLM agit dans le monde reel.",
-    status: "available" as const,
-  },
-  {
-    slug: "agents-vocaux",
-    number: "05",
-    title: "Agents Vocaux",
-    description:
-      "STT, TTS, orchestration temps reel — construire un agent vocal de qualification.",
-    status: "available" as const,
-  },
-  {
-    slug: "stage-selectra",
-    number: "06",
-    title: "Application — Stage Selectra",
-    description:
-      "Comprendre Selectra, 5 projets concrets a proposer, ce qui impressionne en entretien.",
-    status: "available" as const,
-  },
-  {
-    slug: "deblurring",
-    number: "07",
-    title: "Deblurring & Super-Resolution",
-    description:
-      "CNN, GANs, ESRGAN — restaurer des images degradees par machine learning.",
-    status: "coming" as const,
+      "Pipeline deterministe en 12 etapes : parsing intent, ancrage transport, scheduling, contrats. Gemini Flash + Google Places.",
+    tags: ["Next.js", "Gemini", "Pipeline"],
+    href: "https://github.com/zaccharietardy",
   },
 ];
 
@@ -70,128 +42,114 @@ export default function Home() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-20">
       {/* Hero */}
-      <section className="mb-24">
+      <section className="mb-20">
         <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
           Zaccharie Tardy
         </h1>
-        <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-          IA generative, agents vocaux, computer vision.
+        <p className="mb-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+          Eleve ingenieur a l&apos;Ecole Polytechnique. Je travaille sur l&apos;IA
+          generative, les agents vocaux et la computer vision.
         </p>
-      </section>
-
-      {/* Modules */}
-      <section>
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-          Cursus IA Generative
-        </h2>
-        <p className="mb-8 text-sm text-muted-foreground">
-          6 modules, du LLM de base a l&apos;agent vocal en production.
-        </p>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          {modules.map((mod) => {
-            const inner = (
-              <Card
-                key={mod.slug}
-                className={`group relative transition-colors ${
-                  mod.status === "available"
-                    ? "hover:border-foreground/20 cursor-pointer"
-                    : "opacity-50"
-                }`}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs text-muted-foreground">
-                      Module {mod.number}
-                    </span>
-                    {mod.status === "available" ? (
-                      <Badge
-                        variant="outline"
-                        className="text-xs text-emerald-500 border-emerald-500/30"
-                      >
-                        Disponible
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-xs">
-                        Bientot
-                      </Badge>
-                    )}
-                  </div>
-                  <CardTitle className="text-lg">{mod.title}</CardTitle>
-                  <CardDescription>{mod.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            );
-
-            if (mod.status === "available") {
-              return (
-                <Link key={mod.slug} href={`/cours/${mod.slug}`}>
-                  {inner}
-                </Link>
-              );
-            }
-            return <div key={mod.slug}>{inner}</div>;
-          })}
+        <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+          <span className="rounded-md border border-border px-2.5 py-1">Python</span>
+          <span className="rounded-md border border-border px-2.5 py-1">PyTorch</span>
+          <span className="rounded-md border border-border px-2.5 py-1">TypeScript</span>
+          <span className="rounded-md border border-border px-2.5 py-1">Next.js</span>
+          <span className="rounded-md border border-border px-2.5 py-1">LLMs</span>
+          <span className="rounded-md border border-border px-2.5 py-1">Computer Vision</span>
         </div>
       </section>
-      {/* Polytechnique — Periode 3 */}
-      <section className="mt-20">
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-          Polytechnique — Periode 3
-        </h2>
-        <p className="mb-8 text-sm text-muted-foreground">
-          Cours de mathematiques appliquees, 2eme annee.
-        </p>
 
+      {/* Projets */}
+      <section className="mb-20">
+        <h2 className="mb-8 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          Projets
+        </h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Link href="/cours/optimisation">
-            <Card className="group relative transition-colors hover:border-foreground/20 cursor-pointer">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs text-muted-foreground">
-                    APM 43035
-                  </span>
-                  <Badge
-                    variant="outline"
-                    className="text-xs text-violet-400 border-violet-400/30"
-                  >
-                    Resume
-                  </Badge>
-                </div>
-                <CardTitle className="text-lg">
-                  Optimisation et Controle
-                </CardTitle>
-                <CardDescription>
-                  Existence, convexite, Euler, Lagrange, KKT, gradient, Newton,
-                  Nesterov — par Gregoire Allaire.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
-          <Link href="/cours/optimisation-resume">
-            <Card className="group relative transition-colors hover:border-foreground/20 cursor-pointer">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs text-muted-foreground">
-                    Fiche
-                  </span>
-                  <Badge
-                    variant="outline"
-                    className="text-xs text-amber-400 border-amber-400/30"
-                  >
-                    Synthese
-                  </Badge>
-                </div>
-                <CardTitle className="text-lg">
-                  Fiche Resume — Optimisation
-                </CardTitle>
-                <CardDescription>
-                  Tous les theoremes, hypotheses, algorithmes et pieges en une
-                  page.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
+          {projects.map((proj) => (
+            <Link key={proj.title} href={proj.href}>
+              <Card className="group h-full transition-colors hover:border-foreground/20">
+                <CardHeader>
+                  <div className="mb-2 flex flex-wrap gap-1.5">
+                    {proj.tags.map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className="font-mono text-[10px]"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                  <CardTitle className="text-lg">{proj.title}</CardTitle>
+                  <CardDescription>{proj.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Formation */}
+      <section className="mb-20">
+        <h2 className="mb-8 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          Formation
+        </h2>
+        <div className="space-y-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="font-medium">Ecole Polytechnique</p>
+              <p className="text-sm text-muted-foreground">
+                Cycle ingenieur — mathematiques appliquees, informatique
+              </p>
+            </div>
+            <span className="shrink-0 text-sm text-muted-foreground">2024 – 2027</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Cours (lien vers la section protegee) */}
+      <section>
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          Cours &amp; Notes
+        </h2>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Modules de cours sur l&apos;IA, le ML, la finance quantitative et les outils de dev.
+          Acces restreint.
+        </p>
+        <Link
+          href="/cours"
+          className="inline-flex items-center gap-1 text-sm font-medium transition-colors hover:text-foreground text-muted-foreground"
+        >
+          Acceder aux cours &rarr;
+        </Link>
+      </section>
+
+      {/* Contact */}
+      <section className="mt-20 border-t border-border/40 pt-10">
+        <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
+          <a
+            href="mailto:zaccharie.tardy@gmail.com"
+            className="transition-colors hover:text-foreground"
+          >
+            zaccharie.tardy@gmail.com
+          </a>
+          <a
+            href="https://github.com/zaccharietardy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-foreground"
+          >
+            GitHub
+          </a>
+          <a
+            href="https://linkedin.com/in/zaccharietardy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-foreground"
+          >
+            LinkedIn
+          </a>
         </div>
       </section>
     </div>
