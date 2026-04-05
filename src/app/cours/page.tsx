@@ -59,44 +59,64 @@ const sections = [
 
 export default function CoursIndex() {
   return (
-    <div className="mx-auto max-w-5xl px-6 py-20">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight">Cours</h1>
-      <p className="mb-12 text-muted-foreground">
-        Cours et notes personnelles.
-      </p>
+    <div className="mx-auto max-w-4xl px-6 py-32">
+      <header className="mb-24">
+        <Link
+          href="/"
+          className="group mb-12 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <span className="transition-transform group-hover:-translate-x-1">←</span> Retour
+        </Link>
+        <h1 className="mb-6 font-serif text-5xl font-medium tracking-tight italic">
+          Archives
+        </h1>
+        <p className="max-w-xl text-lg text-muted-foreground/80">
+          Cours et notes personnelles.
+        </p>
+      </header>
 
-      {sections.map((section) => (
-        <section key={section.title} className="mb-16">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-            {section.title}
-          </h2>
-          <p className="mb-6 text-sm text-muted-foreground">
-            {section.description}
-          </p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {section.courses.map((course) => (
-              <Link key={course.slug} href={`/cours/${course.slug}`}>
-                <Card className="group h-full transition-colors hover:border-foreground/20 cursor-pointer">
-                  <CardHeader>
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {course.number}
-                    </span>
-                    <CardTitle className="text-lg">{course.title}</CardTitle>
-                    <CardDescription>{course.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </section>
-      ))}
+      <div className="space-y-32">
+        {sections.map((section) => (
+          <section key={section.title}>
+            <div className="mb-12 border-b border-foreground/5 pb-4">
+              <h2 className="font-serif text-2xl font-medium italic text-foreground/90">
+                {section.title}
+              </h2>
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                {section.description}
+              </p>
+            </div>
+            <div className="grid gap-x-12 gap-y-8 sm:grid-cols-2">
+              {section.courses.map((course) => (
+                <Link key={course.slug} href={`/cours/${course.slug}`} className="group block">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-baseline gap-3">
+                      <span className="font-mono text-[10px] text-muted-foreground/30">
+                        {course.number}
+                      </span>
+                      <h3 className="font-serif text-lg font-medium transition-colors group-hover:text-foreground/70">
+                        {course.title}
+                      </h3>
+                    </div>
+                    <p className="pl-8 text-sm leading-relaxed text-muted-foreground/60 transition-colors group-hover:text-muted-foreground/80">
+                      {course.description}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
 
-      <Link
-        href="/"
-        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        &larr; Retour
-      </Link>
+      <footer className="mt-48 flex justify-center border-t border-foreground/5 pt-12">
+        <Link
+          href="/"
+          className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40 transition-colors hover:text-foreground"
+        >
+          Retour
+        </Link>
+      </footer>
     </div>
   );
 }

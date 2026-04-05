@@ -33,109 +33,133 @@ const projects = [
 
 export default function Home() {
   return (
-    <div className="mx-auto max-w-5xl px-6 py-20">
+    <div className="mx-auto max-w-4xl px-6 py-32 sm:py-48">
       {/* Hero */}
-      <section className="mb-20">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
+      <section className="mb-32">
+        <h1 className="mb-6 font-serif text-5xl font-medium tracking-tight sm:text-6xl italic">
           Zaccharie Tardy
         </h1>
-        <p className="mb-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+        <p className="max-w-xl text-lg leading-relaxed text-muted-foreground/80 sm:text-xl">
           Élève ingénieur à l&apos;École Polytechnique, 2e année.
           Deep learning, vision par ordinateur, agents LLM.
         </p>
       </section>
 
       {/* Projets */}
-      <section className="mb-20">
-        <h2 className="mb-8 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-          Projets
+      <section className="mb-32">
+        <h2 className="mb-12 font-serif text-2xl font-medium italic text-muted-foreground/60">
+          Projets sélectionnés
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-12">
           {projects.map((proj) => (
-            <Link key={proj.title} href={proj.href}>
-              <Card className="group h-full transition-colors hover:border-foreground/20">
-                <CardHeader>
-                  <div className="mb-2 flex flex-wrap gap-1.5">
+            <Link key={proj.title} href={proj.href} className="group block">
+              <div className="flex flex-col gap-4 border-b border-foreground/5 pb-12 transition-colors group-hover:border-foreground/10 sm:flex-row sm:items-start sm:justify-between">
+                <div className="max-w-2xl">
+                  <h3 className="mb-3 font-serif text-2xl font-medium transition-colors group-hover:text-foreground/80">
+                    {proj.title}
+                  </h3>
+                  <p className="mb-6 leading-relaxed text-muted-foreground/80">
+                    {proj.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
                     {proj.tags.map((tag) => (
-                      <Badge
+                      <span
                         key={tag}
-                        variant="secondary"
-                        className="font-mono text-[10px]"
+                        className="rounded-full border border-foreground/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/70"
                       >
                         {tag}
-                      </Badge>
+                      </span>
                     ))}
                   </div>
-                  <CardTitle className="text-lg">{proj.title}</CardTitle>
-                  <CardDescription>{proj.description}</CardDescription>
-                </CardHeader>
-              </Card>
+                </div>
+                <div className="hidden pt-2 text-muted-foreground/40 transition-transform group-hover:translate-x-1 group-hover:text-foreground/60 sm:block">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M5 12h14m-7-7 7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
             </Link>
           ))}
         </div>
       </section>
 
       {/* Formation */}
-      <section className="mb-20">
-        <h2 className="mb-8 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+      <section className="mb-32">
+        <h2 className="mb-12 font-serif text-2xl font-medium italic text-muted-foreground/60">
           Formation
         </h2>
-        <div className="space-y-6">
-          <div className="flex items-start justify-between gap-4">
+        <div className="space-y-12">
+          <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-baseline">
             <div>
-              <p className="font-medium">Ecole Polytechnique</p>
-              <p className="text-sm text-muted-foreground">
-                Cycle ingénieur — mathématiques appliquées, informatique
+              <p className="font-serif text-xl font-medium">École Polytechnique</p>
+              <p className="text-muted-foreground/80">
+                Cycle ingénieur — Mathématiques appliquées & Informatique
               </p>
             </div>
-            <span className="shrink-0 text-sm text-muted-foreground">2024 – 2027</span>
+            <span className="font-mono text-sm text-muted-foreground/50">2024 — 2027</span>
           </div>
         </div>
       </section>
 
-      {/* Cours (lien vers la section protegee) */}
-      <section>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-          Cours &amp; Notes
+      {/* Cours & Notes */}
+      <section className="mb-32">
+        <h2 className="mb-6 font-serif text-2xl font-medium italic text-muted-foreground/60">
+          Archives
         </h2>
-        <p className="mb-4 text-sm text-muted-foreground">
-          Notes de cours, accès restreint.
-        </p>
-        <Link
-          href="/cours"
-          className="inline-flex items-center gap-1 text-sm font-medium transition-colors hover:text-foreground text-muted-foreground"
-        >
-          Acceder aux cours &rarr;
-        </Link>
+        <div className="max-w-xl">
+          <p className="mb-8 leading-relaxed text-muted-foreground/80">
+            Notes de cours et ressources techniques. Accès sur mot de passe.
+          </p>
+          <Link
+            href="/cours"
+            className="inline-flex items-center gap-2 border-b border-foreground/20 pb-0.5 text-sm font-medium transition-colors hover:border-foreground hover:text-foreground text-muted-foreground"
+          >
+            Consulter les archives <span className="text-xs">→</span>
+          </Link>
+        </div>
       </section>
 
       {/* Contact */}
-      <section className="mt-20 border-t border-border/40 pt-10">
-        <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
-          <a
-            href="mailto:zaccharie.tardy@gmail.com"
-            className="transition-colors hover:text-foreground"
-          >
-            zaccharie.tardy@gmail.com
-          </a>
-          <a
-            href="https://github.com/zaccharietardy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-colors hover:text-foreground"
-          >
-            GitHub
-          </a>
-          <a
-            href="https://www.linkedin.com/in/zaccharie-tardy/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-colors hover:text-foreground"
-          >
-            LinkedIn
-          </a>
+      <footer className="mt-48 border-t border-foreground/5 pt-12">
+        <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-center">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 font-mono text-xs uppercase tracking-widest text-muted-foreground/60">
+            <a
+              href="mailto:zaccharie.tardy@gmail.com"
+              className="transition-colors hover:text-foreground"
+            >
+              Email
+            </a>
+            <a
+              href="https://github.com/zaccharietardy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-foreground"
+            >
+              GitHub
+            </a>
+            <a
+              href="https://www.linkedin.com/in/zaccharie-tardy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-foreground"
+            >
+              LinkedIn
+            </a>
+          </div>
+          <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/30">
+            © {new Date().getFullYear()} — Paris
+          </p>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

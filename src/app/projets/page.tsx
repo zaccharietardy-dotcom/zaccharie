@@ -28,53 +28,65 @@ const projects = [
 
 export default function ProjetsIndex() {
   return (
-    <div className="mx-auto max-w-5xl px-6 py-20">
-      <Link
-        href="/"
-        className="mb-8 inline-flex items-center text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        &larr; Retour
-      </Link>
+    <div className="mx-auto max-w-4xl px-6 py-32">
+      <header className="mb-20">
+        <Link
+          href="/"
+          className="group mb-12 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <span className="transition-transform group-hover:-translate-x-1">←</span> Retour
+        </Link>
+        <h1 className="mb-6 font-serif text-5xl font-medium tracking-tight italic">
+          Projets
+        </h1>
+        <p className="max-w-xl text-lg text-muted-foreground/80">
+          Projets de recherche et projets personnels.
+        </p>
+      </header>
 
-      <h1 className="mb-2 text-3xl font-bold tracking-tight">Projets</h1>
-      <p className="mb-10 text-muted-foreground">
-        Projets de recherche et projets personnels.
-      </p>
-
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-16">
         {projects.map((proj) => (
-          <Link key={proj.slug} href={`/projets/${proj.slug}`}>
-            <Card className="group h-full transition-colors hover:border-foreground/20">
-              <CardHeader>
-                <div className="mb-2 flex items-center justify-between">
-                  <div className="flex flex-wrap gap-1.5">
+          <Link key={proj.slug} href={`/projets/${proj.slug}`} className="group block">
+            <article className="flex flex-col gap-6 border-b border-foreground/5 pb-16 transition-colors group-hover:border-foreground/10 sm:flex-row sm:items-start sm:justify-between">
+              <div className="max-w-2xl">
+                <div className="mb-4 flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {proj.tags.map((tag) => (
-                      <Badge
+                      <span
                         key={tag}
-                        variant="secondary"
-                        className="font-mono text-[10px]"
+                        className="rounded-full border border-foreground/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/70"
                       >
                         {tag}
-                      </Badge>
+                      </span>
                     ))}
                   </div>
-                  {proj.status === "demo" ? (
-                    <Badge
-                      variant="outline"
-                      className="text-xs text-emerald-500 border-emerald-500/30"
-                    >
-                      Demo live
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-xs">
-                      Termine
-                    </Badge>
-                  )}
+                  <span className="h-1 w-1 rounded-full bg-foreground/10" />
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground/40">
+                    {proj.status === "demo" ? "Démo Live" : "Terminé"}
+                  </span>
                 </div>
-                <CardTitle className="text-lg">{proj.title}</CardTitle>
-                <CardDescription>{proj.description}</CardDescription>
-              </CardHeader>
-            </Card>
+                <h2 className="mb-4 font-serif text-2xl font-medium transition-colors group-hover:text-foreground/80">
+                  {proj.title}
+                </h2>
+                <p className="leading-relaxed text-muted-foreground/80">
+                  {proj.description}
+                </p>
+              </div>
+              <div className="hidden pt-12 text-muted-foreground/40 transition-transform group-hover:translate-x-1 group-hover:text-foreground/60 sm:block">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14m-7-7 7 7-7 7" />
+                </svg>
+              </div>
+            </article>
           </Link>
         ))}
       </div>
