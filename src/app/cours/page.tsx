@@ -62,7 +62,7 @@ export default function CoursIndex() {
     <div className="mx-auto max-w-5xl px-6 py-20">
       <h1 className="mb-2 text-3xl font-bold tracking-tight">Cours</h1>
       <p className="mb-12 text-muted-foreground">
-        Tous les modules disponibles.
+        Ce que j&apos;ai appris, reformule pour que ca rentre.
       </p>
 
       {sections.map((section) => (
@@ -78,17 +78,9 @@ export default function CoursIndex() {
               <Link key={course.slug} href={`/cours/${course.slug}`}>
                 <Card className="group h-full transition-colors hover:border-foreground/20 cursor-pointer">
                   <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {course.number}
-                      </span>
-                      <Badge
-                        variant="outline"
-                        className="text-xs text-emerald-500 border-emerald-500/30"
-                      >
-                        Disponible
-                      </Badge>
-                    </div>
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {course.number}
+                    </span>
                     <CardTitle className="text-lg">{course.title}</CardTitle>
                     <CardDescription>{course.description}</CardDescription>
                   </CardHeader>

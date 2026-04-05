@@ -9,23 +9,23 @@ import {
 
 const projects = [
   {
-    title: "Prediction de renversement vehiculaire",
+    title: "Prediction de retournement vehiculaire",
     description:
-      "Deep learning (LSTM + PatchTST) pour predire le risque de rollover de vehicules militaires. 98% recall. Projet DGA.",
+      "Predire si un vehicule militaire va se retourner 1 a 8 secondes avant que ca arrive. LSTM, PatchTST, Neural ODE. Projet pour la DGA.",
     tags: ["PyTorch", "LSTM", "PatchTST", "XGBoost"],
     href: "/projets/vdsim",
   },
   {
     title: "Deblurring de plaques d'immatriculation",
     description:
-      "Pipeline ML complet : detection YOLO + restauration (NAFNet/LPDGAN) + OCR. Upload une plaque floue, recupere l'image nette.",
+      "Tu uploades une photo de plaque floue, ca te sort l'image nette et les caracteres. YOLO pour detecter, NAFNet pour restaurer, OCR pour lire.",
     tags: ["Computer Vision", "GAN", "OCR"],
     href: "/projets/deblurring",
   },
   {
-    title: "Planificateur de voyage IA",
+    title: "Planificateur de voyage",
     description:
-      "Pipeline deterministe en 12 etapes : parsing intent, ancrage transport, scheduling, contrats. Gemini Flash + Google Places.",
+      "Tu dis ou tu veux aller, ca te genere un planning jour par jour avec transport, hotels, activites. Gemini Flash + Google Places.",
     tags: ["Next.js", "Gemini", "Pipeline"],
     href: "https://naraevoyage.com",
   },
@@ -40,17 +40,10 @@ export default function Home() {
           Zaccharie Tardy
         </h1>
         <p className="mb-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Eleve ingenieur a l&apos;Ecole Polytechnique. Je travaille sur l&apos;IA
-          generative, les agents vocaux et la computer vision.
+          Polytechnique, 2A. Python, PyTorch, TypeScript.
+          En ce moment je fais surtout du deep learning applique (prediction de series temporelles,
+          vision par ordinateur) et des agents LLM.
         </p>
-        <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-          <span className="rounded-md border border-border px-2.5 py-1">Python</span>
-          <span className="rounded-md border border-border px-2.5 py-1">PyTorch</span>
-          <span className="rounded-md border border-border px-2.5 py-1">TypeScript</span>
-          <span className="rounded-md border border-border px-2.5 py-1">Next.js</span>
-          <span className="rounded-md border border-border px-2.5 py-1">LLMs</span>
-          <span className="rounded-md border border-border px-2.5 py-1">Computer Vision</span>
-        </div>
       </section>
 
       {/* Projets */}
@@ -107,8 +100,7 @@ export default function Home() {
           Cours &amp; Notes
         </h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          Modules de cours sur l&apos;IA, le ML, la finance quantitative et les outils de dev.
-          Acces restreint.
+          Notes de cours perso, protegees par mot de passe.
         </p>
         <Link
           href="/cours"

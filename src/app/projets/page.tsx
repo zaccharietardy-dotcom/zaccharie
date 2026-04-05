@@ -12,7 +12,7 @@ const projects = [
     slug: "deblurring",
     title: "Deblurring de plaques d'immatriculation",
     description:
-      "Pipeline ML : detection YOLO + restauration (NAFNet/LPDGAN) + OCR. Upload une plaque floue, recupere l'image nette + les caracteres.",
+      "Tu uploades une photo de plaque floue, ca te sort l'image nette et les caracteres. YOLO + NAFNet + OCR.",
     tags: ["PyTorch", "Computer Vision", "GAN", "OCR"],
     status: "demo" as const,
   },
@@ -20,7 +20,7 @@ const projects = [
     slug: "vdsim",
     title: "Prediction de renversement vehiculaire",
     description:
-      "Deep learning pour predire le risque de rollover de vehicules militaires. LSTM + PatchTST, 98% recall. Projet DGA.",
+      "Predire si un vehicule militaire va se retourner, 1 a 8 secondes avant. LSTM + PatchTST + Neural ODE. Projet DGA.",
     tags: ["PyTorch", "LSTM", "PatchTST", "XGBoost"],
     status: "completed" as const,
   },
@@ -38,7 +38,7 @@ export default function ProjetsIndex() {
 
       <h1 className="mb-2 text-3xl font-bold tracking-tight">Projets</h1>
       <p className="mb-10 text-muted-foreground">
-        Machine learning, computer vision, et IA appliquee.
+        Des trucs que j&apos;ai construits.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2">

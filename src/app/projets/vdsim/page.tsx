@@ -24,12 +24,11 @@ export default function VDSimProject() {
           ))}
         </div>
         <h1 className="mb-3 text-3xl font-bold tracking-tight">
-          Prediction du risque de retournement vehiculaire
+          Prediction de retournement vehiculaire
         </h1>
         <p className="max-w-2xl text-muted-foreground">
-          Systeme de prediction par deep learning du Load Transfer Ratio (LTR) sur un horizon de 1 a 8
-          secondes. Projet pour la Direction Generale de l&apos;Armement (DGA), encadre par Sebastien Aubin (DGA)
-          et Fabien Lionti (VDSim). Equipe de 5 eleves de l&apos;Ecole Polytechnique.
+          On predit si un vehicule militaire va se retourner, 1 a 8 secondes avant que ca arrive.
+          Projet pour la DGA, encadre par Sebastien Aubin. Equipe de 5 de l&apos;X.
         </p>
       </header>
 
