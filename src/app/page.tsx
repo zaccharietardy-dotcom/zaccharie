@@ -27,7 +27,7 @@ const projects = [
     description:
       "Pipeline deterministe en 12 etapes : parsing intent, ancrage transport, scheduling, contrats. Gemini Flash + Google Places.",
     tags: ["Next.js", "Gemini", "Pipeline"],
-    href: "https://github.com/zaccharietardy",
+    href: "https://naraevoyage.com",
   },
 ];
 
