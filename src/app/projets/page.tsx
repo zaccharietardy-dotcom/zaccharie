@@ -1,11 +1,5 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 
 const projects = [
   {
@@ -14,72 +8,65 @@ const projects = [
     description:
       "Restauration d'images de plaques floues : détection YOLO, restauration NAFNet, lecture OCR. En pause.",
     tags: ["PyTorch", "Computer Vision", "GAN", "OCR"],
-    status: "demo" as const,
+    status: "pause" as const,
   },
   {
     slug: "vdsim",
-    title: "Prediction de renversement vehiculaire",
+    title: "Prédiction de retournement véhiculaire",
     description:
       "Prédiction du risque de retournement d'un véhicule militaire, 1 à 8 secondes à l'avance. LSTM, PatchTST, Neural ODE. Projet DGA.",
     tags: ["PyTorch", "LSTM", "PatchTST", "XGBoost"],
-    status: "completed" as const,
+    status: "done" as const,
   },
 ];
 
 export default function ProjetsIndex() {
   return (
-    <div className="mx-auto max-w-4xl px-6 py-32">
-      <header className="mb-20">
-        <Link
-          href="/"
-          className="group mb-12 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <span className="transition-transform group-hover:-translate-x-1">←</span> Retour
-        </Link>
-        <h1 className="mb-6 font-serif text-5xl font-medium tracking-tight italic">
-          Projets
-        </h1>
-        <p className="max-w-xl text-lg text-muted-foreground/80">
+    <div className="mx-auto max-w-4xl px-6 py-24">
+      <div className="mb-16">
+        <h1 className="mb-3 text-3xl font-bold tracking-tight">Projets</h1>
+        <p className="text-muted-foreground">
           Projets de recherche et projets personnels.
         </p>
-      </header>
+      </div>
 
-      <div className="grid gap-8">
+      <div className="space-y-2">
         {projects.map((proj) => (
           <Link key={proj.slug} href={`/projets/${proj.slug}`} className="group block">
-            <article className="relative overflow-hidden rounded-2xl border border-foreground/[0.04] bg-foreground/[0.01] p-10 transition-all duration-300 group-hover:border-foreground/[0.1] group-hover:bg-foreground/[0.02] sm:p-12">
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-                <div className="max-w-2xl">
-                  <div className="mb-6 flex flex-wrap items-center gap-3">
-                    <div className="flex flex-wrap gap-2">
-                      {proj.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-foreground/[0.08] px-2.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground/60"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <span className="h-1 w-1 rounded-full bg-foreground/[0.08]" />
-                    <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground/40">
-                      {proj.status === "demo" ? "Démo Live" : "Terminé"}
-                    </span>
-                  </div>
-                  <h2 className="mb-4 font-serif text-3xl font-medium transition-colors group-hover:text-foreground">
-                    {proj.title}
-                  </h2>
-                  <p className="leading-relaxed text-muted-foreground/70 transition-colors group-hover:text-muted-foreground/90">
-                    {proj.description}
-                  </p>
+            <div className="flex flex-col gap-3 rounded-xl px-5 py-5 transition-colors hover:bg-foreground/[0.03] sm:flex-row sm:items-center sm:justify-between">
+              <div className="max-w-xl">
+                <div className="mb-1 flex items-center gap-3">
+                  <h2 className="text-[15px] font-medium">{proj.title}</h2>
+                  <Badge variant="outline" className="text-[10px] text-muted-foreground/50 border-foreground/10">
+                    {proj.status === "pause" ? "En pause" : "Terminé"}
+                  </Badge>
                 </div>
-                <div className="mt-8 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40 transition-all group-hover:translate-x-2 group-hover:text-foreground/60 sm:mt-2">
-                  Détails <span className="text-xs">→</span>
-                </div>
+                <p className="text-sm leading-relaxed text-muted-foreground/70">
+                  {proj.description}
+                </p>
               </div>
-            </article>
+              <div className="flex flex-wrap gap-1.5 sm:shrink-0">
+                {proj.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-foreground/[0.06] px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground/50"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
           </Link>
         ))}
+      </div>
+
+      <div className="mt-16">
+        <Link
+          href="/"
+          className="text-sm text-muted-foreground/40 transition-colors hover:text-foreground"
+        >
+          &larr; Retour
+        </Link>
       </div>
     </div>
   );

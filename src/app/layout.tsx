@@ -14,9 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zaccharie Tardy — IA & Engineering",
-  description:
-    "Cours interactifs sur l'IA generative, les agents vocaux, et le machine learning.",
+  title: "Zaccharie Tardy",
+  description: "Élève ingénieur, École Polytechnique.",
 };
 
 export default function RootLayout({
