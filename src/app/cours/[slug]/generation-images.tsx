@@ -5,7 +5,7 @@ import {
   Term, Steps, Step, ComparisonTable,
 } from "@/components/course-elements";
 import { Def, Theorem, Proof, Remark } from "@/components/math-elements";
-import { SvgDiagram, Box, Arrow, Label } from "@/components/svg-diagrams";
+import { SvgDiagram, Box, Arrow, Label, Circle, GroupBox } from "@/components/svg-diagrams";
 
 /* ── Math helpers (pure HTML/CSS) ────────────────────────── */
 
@@ -218,6 +218,45 @@ def vae_loss(recon_x, x, mu, logvar):
         <Remark>
           <p>L&apos;equilibre de Nash est un point selle (min pour <F>G</F>, max pour <F>D</F>). En pratique, cet equilibre est extremement difficile a atteindre.</p>
         </Remark>
+
+        <SvgDiagram width={700} height={320} title="Boucle adversariale du GAN">
+          {/* Noise input */}
+          <Box x={20} y={120} w={100} h={40} label="z ~ N(0,1)" sublabel="bruit" color="default" />
+          <Arrow x1={120} y1={140} x2={160} y2={140} label="" color="#a1a1aa" />
+
+          {/* Generator */}
+          <Box x={160} y={110} w={130} h={60} label="Generator G" sublabel="reseau de neurones" color="violet" />
+          <Arrow x1={290} y1={140} x2={340} y2={140} label="G(z)" color="#8b5cf6" />
+
+          {/* Fake image */}
+          <Box x={340} y={120} w={110} h={40} label="fausse image" color="violet" />
+          <Arrow x1={450} y1={140} x2={490} y2={140} color="#8b5cf6" />
+
+          {/* Discriminator */}
+          <Box x={490} y={100} w={140} h={80} label="Discriminator D" sublabel="vrai ou faux ?" color="amber" />
+
+          {/* Real images from above */}
+          <Box x={500} y={20} w={120} h={40} label="image reelle" sublabel="x ~ p(data)" color="accent" />
+          <Arrow x1={560} y1={60} x2={560} y2={100} label="" color="#10b981" />
+
+          {/* D output */}
+          <Arrow x1={630} y1={140} x2={670} y2={140} color="#f59e0b" />
+          <Label x={685} y={130} text="D(x)→1" size={10} color="#10b981" anchor="start" />
+          <Label x={685} y={150} text="D(G(z))→0" size={10} color="#f43f5e" anchor="start" />
+
+          {/* Loss flows */}
+          <GroupBox x={30} y={210} w={660} h={90} label="Boucles de loss" color="default" />
+
+          {/* D loss arrow */}
+          <Box x={60} y={235} w={280} h={30} label="Loss D : max log D(x) + log(1-D(G(z)))" color="amber" />
+          <Arrow x1={340} y1={250} x2={490} y2={175} color="#f59e0b" dashed />
+          <Label x={430} y={205} text="met a jour D" size={9} color="#f59e0b" />
+
+          {/* G loss arrow */}
+          <Box x={60} y={270} w={280} h={30} label="Loss G : min log(1 - D(G(z)))" color="violet" />
+          <Arrow x1={340} y1={285} x2={225} y2={175} color="#8b5cf6" dashed />
+          <Label x={260} y={220} text="met a jour G" size={9} color="#8b5cf6" />
+        </SvgDiagram>
       </Section>
 
       {/* ===== 5. ENTRAINER UN GAN ===== */}

@@ -17,6 +17,8 @@ import {
   Box,
   Arrow,
   Label,
+  GroupBox,
+  Circle,
 } from "@/components/svg-diagrams";
 import {
   Def,
@@ -193,6 +195,38 @@ export function FinanceQuantitative() {
             </li>
           </ol>
         </Def>
+
+        <SvgDiagram width={700} height={280} title="Trajectoires du mouvement brownien et cone d'incertitude">
+          {/* Y-axis */}
+          <Arrow x1={60} y1={260} x2={60} y2={20} color="#a1a1aa" />
+          <Label x={40} y={20} text="W(t)" size={11} color="#e4e4e7" anchor="end" />
+          {/* X-axis */}
+          <Arrow x1={60} y1={140} x2={680} y2={140} color="#a1a1aa" />
+          <Label x={680} y={155} text="t" size={11} color="#e4e4e7" anchor="end" />
+          <Label x={55} y={155} text="0" size={10} color="#a1a1aa" anchor="end" />
+
+          {/* Cone of uncertainty (std dev grows as sqrt(t)) */}
+          <path d="M60,140 Q370,40 680,20" fill="none" stroke="#10b98133" strokeWidth={1} strokeDasharray="4,4" />
+          <path d="M60,140 Q370,240 680,260" fill="none" stroke="#10b98133" strokeWidth={1} strokeDasharray="4,4" />
+          {/* Filled cone */}
+          <path d="M60,140 Q370,40 680,20 L680,260 Q370,240 60,140 Z" fill="#10b98110" />
+          <Label x={660} y={35} text="+sigma*sqrt(t)" size={9} color="#10b981" anchor="end" />
+          <Label x={660} y={252} text="-sigma*sqrt(t)" size={9} color="#10b981" anchor="end" />
+
+          {/* Trajectory 1 - green */}
+          <polyline points="60,140 100,128 140,115 180,108 220,95 260,82 300,90 340,78 380,70 420,55 460,62 500,48 540,52 580,40 620,45 660,38" fill="none" stroke="#10b981" strokeWidth={1.5} opacity={0.8} />
+          {/* Trajectory 2 - violet */}
+          <polyline points="60,140 100,148 140,155 180,140 220,150 260,162 300,155 340,170 380,180 420,172 460,185 500,178 540,190 580,198 620,205 660,212" fill="none" stroke="#8b5cf6" strokeWidth={1.5} opacity={0.8} />
+          {/* Trajectory 3 - cyan */}
+          <polyline points="60,140 100,135 140,142 180,150 220,138 260,130 300,122 340,130 380,118 420,125 460,110 500,105 540,95 580,88 620,80 660,72" fill="none" stroke="#06b6d4" strokeWidth={1.5} opacity={0.8} />
+          {/* Trajectory 4 - amber */}
+          <polyline points="60,140 100,145 140,138 180,148 220,158 260,152 300,160 340,148 380,155 420,162 460,155 500,162 540,158 580,150 620,148 660,145" fill="none" stroke="#f59e0b" strokeWidth={1.5} opacity={0.8} />
+          {/* Trajectory 5 - rose */}
+          <polyline points="60,140 100,150 140,160 180,172 220,168 260,180 300,192 340,200 380,195 420,205 460,212 500,220 540,228 580,235 620,240 660,248" fill="none" stroke="#f43f5e" strokeWidth={1.5} opacity={0.8} />
+
+          {/* Origin marker */}
+          <Circle cx={60} cy={140} r={4} label="" color="accent" />
+        </SvgDiagram>
 
         <Proposition title="Proprietes essentielles">
           <p>Le mouvement brownien possede des proprietes remarquables :</p>
@@ -504,6 +538,31 @@ prix_call = black_scholes(S, K, T, r, sigma, 'call')
 prix_put = black_scholes(S, K, T, r, sigma, 'put')
 print(f"Prix du call : {prix_call:.4f} EUR")
 print(f"Prix du put  : {prix_put:.4f} EUR")`}</Code>
+
+        <SvgDiagram width={700} height={240} title="Strategie de couverture delta (hedging portfolio)">
+          {/* Portfolio group */}
+          <GroupBox x={20} y={20} w={300} h={100} label="Portefeuille Pi" color="accent" />
+          <Box x={40} y={45} w={120} h={50} label="Option V" sublabel="prix du derive" color="violet" />
+          <Label x={180} y={70} text="  -  " size={16} weight="bold" color="#e4e4e7" />
+          <Box x={200} y={45} w={100} h={50} label="Delta * S" sublabel="couverture" color="cyan" />
+
+          {/* Equals arrow */}
+          <Arrow x1={340} y1={70} x2={400} y2={70} label="Ito + AOA" color="#f59e0b" />
+
+          {/* Risk-free result */}
+          <Box x={410} y={45} w={140} h={50} label="d Pi = r Pi dt" sublabel="sans risque" color="accent" />
+
+          {/* Delta explanation below */}
+          <Arrow x1={250} y1={130} x2={250} y2={155} color="#06b6d4" />
+          <Box x={160} y={155} w={180} h={45} label="Delta = dV/dS" sublabel="delta hedging" color="cyan" />
+
+          {/* Self-financing arrow */}
+          <Arrow x1={480} y1={100} x2={480} y2={155} color="#f59e0b" />
+          <Box x={390} y={155} w={180} h={45} label="Autofinancant" sublabel="pas d'injection de cash" color="amber" />
+
+          {/* Key insight */}
+          <Label x={350} y={225} text="Les termes en dW s'annulent => le portefeuille est deterministe sur dt" size={10} color="#a1a1aa" />
+        </SvgDiagram>
 
         <Remark>
           <p>

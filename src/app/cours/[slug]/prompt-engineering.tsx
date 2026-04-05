@@ -12,7 +12,7 @@ import {
   Step,
   ComparisonTable,
 } from "@/components/course-elements";
-import { SvgDiagram, Box, Arrow, Label } from "@/components/svg-diagrams";
+import { SvgDiagram, Box, Arrow, Label, GroupBox } from "@/components/svg-diagrams";
 
 export function PromptEngineering() {
   return (
@@ -337,6 +337,32 @@ Reponse : L'offre A est la moins chere (1584€/an vs 1776€/an)." ← CORRECT`
             </em>
           </p>
         </KeyConcept>
+
+        <SvgDiagram width={700} height={300} title="Zero-shot vs Chain-of-Thought">
+          {/* Left: Zero-shot */}
+          <GroupBox x={15} y={20} w={280} h={260} label="Zero-shot" color="rose" />
+          <Box x={55} y={55} w={200} h={36} label="Question" color="default" />
+          <Arrow x1={155} y1={91} x2={155} y2={120} color="#a1a1aa" />
+          <Box x={55} y={120} w={200} h={36} label="LLM" sublabel="1 forward pass" color="rose" />
+          <Arrow x1={155} y1={156} x2={155} y2={185} color="#a1a1aa" />
+          <Box x={55} y={185} w={200} h={36} label="Reponse" sublabel="souvent fausse" color="default" />
+          <Label x={155} y={248} text="Pas de raisonnement" size={10} color="#f43f5e" />
+
+          {/* Right: Chain-of-Thought */}
+          <GroupBox x={365} y={20} w={320} h={260} label="Chain-of-Thought" color="accent" />
+          <Box x={405} y={50} w={240} h={32} label="Question" color="default" />
+          <Label x={525} y={72} text="+ 'Raisonne etape par etape'" size={9} color="#10b981" />
+          <Arrow x1={525} y1={82} x2={525} y2={100} color="#a1a1aa" />
+          <Box x={435} y={100} w={180} h={28} label="LLM" color="accent" />
+          <Arrow x1={525} y1={128} x2={525} y2={142} color="#10b981" />
+          <Box x={435} y={142} w={180} h={24} label="Etape 1 : 1440€" color="accent" />
+          <Arrow x1={525} y1={166} x2={525} y2={176} color="#10b981" />
+          <Box x={435} y={176} w={180} h={24} label="Etape 2 : 1776€" color="accent" />
+          <Arrow x1={525} y1={200} x2={525} y2={210} color="#10b981" />
+          <Box x={435} y={210} w={180} h={24} label="Etape 3 : 1440 < 1776" color="accent" />
+          <Arrow x1={525} y1={234} x2={525} y2={244} color="#10b981" />
+          <Box x={435} y={244} w={180} h={28} label="Reponse : Offre A" sublabel="correct" color="accent" />
+        </SvgDiagram>
 
         <Warning>
           <p>

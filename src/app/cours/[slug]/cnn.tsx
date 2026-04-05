@@ -547,6 +547,43 @@ print(f"Parametres : {sum(p.numel() for p in model.parameters()):,}")
           </p>
         </Warning>
 
+        <SvgDiagram width={700} height={320} title="Le probleme de la degradation — pourquoi plus profond ≠ meilleur">
+          {/* Left: without ResNet */}
+          <GroupBox x={15} y={25} w={320} h={280} label="Sans skip connections" color="rose" />
+          {/* Axes */}
+          <Arrow x1={50} y1={260} x2={300} y2={260} color="#a1a1aa" />
+          <Arrow x1={50} y1={260} x2={50} y2={55} color="#a1a1aa" />
+          <Label x={175} y={285} text="Epochs" size={10} color="#a1a1aa" />
+          <Label x={30} y={150} text="Err" size={10} color="#a1a1aa" />
+          {/* 20-layer curve (lower error) */}
+          <polyline points="70,220 110,180 150,155 190,140 230,132 270,128" fill="none" stroke="#10b981" strokeWidth={2} />
+          <Label x={280} y={128} text="20 couches" size={9} color="#10b981" anchor="start" />
+          {/* 56-layer curve (HIGHER error — the paradox) */}
+          <polyline points="70,230 110,200 150,180 190,170 230,165 270,162" fill="none" stroke="#f43f5e" strokeWidth={2} />
+          <Label x={280} y={162} text="56 couches" size={9} color="#f43f5e" anchor="start" />
+          {/* Paradox annotation */}
+          <Arrow x1={240} y1={155} x2={240} y2={135} color="#f43f5e" dashed />
+          <Label x={175} y={75} text="Plus profond = PIRE" size={11} color="#f43f5e" weight="bold" />
+          <Label x={175} y={90} text="(meme en training !)" size={9} color="#f43f5e" />
+
+          {/* Right: with ResNet */}
+          <GroupBox x={365} y={25} w={320} h={280} label="Avec skip connections (ResNet)" color="accent" />
+          {/* Axes */}
+          <Arrow x1={400} y1={260} x2={650} y2={260} color="#a1a1aa" />
+          <Arrow x1={400} y1={260} x2={400} y2={55} color="#a1a1aa" />
+          <Label x={525} y={285} text="Epochs" size={10} color="#a1a1aa" />
+          <Label x={380} y={150} text="Err" size={10} color="#a1a1aa" />
+          {/* 20-layer ResNet */}
+          <polyline points="420,220 460,175 500,148 540,130 580,120 620,115" fill="none" stroke="#06b6d4" strokeWidth={2} />
+          <Label x={628} y={115} text="20" size={9} color="#06b6d4" anchor="start" />
+          {/* 56-layer ResNet (LOWER — correct behavior) */}
+          <polyline points="420,215 460,165 500,130 540,108 580,95 620,88" fill="none" stroke="#10b981" strokeWidth={2} />
+          <Label x={628} y={88} text="56" size={9} color="#10b981" anchor="start" />
+          {/* Correct annotation */}
+          <Arrow x1={590} y1={100} x2={590} y2={82} color="#10b981" dashed />
+          <Label x={525} y={75} text="Plus profond = MIEUX" size={11} color="#10b981" weight="bold" />
+        </SvgDiagram>
+
         <Def title="Connexion residuelle (skip connection)">
           <p>
             Au lieu d&apos;apprendre directement une transformation{" "}

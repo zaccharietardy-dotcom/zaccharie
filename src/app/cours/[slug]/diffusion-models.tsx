@@ -102,6 +102,36 @@ export function DiffusionModels() {
             et la variance <F>1 - alpha_barre_t</F>.
           </p>
         </Proof>
+
+        <SvgDiagram width={750} height={180} title="Forward process : destruction progressive de l'image">
+          {/* x_0 clean image */}
+          <Box x={10} y={50} w={100} h={50} label="x_0" sublabel="image propre" color="accent" />
+          <Arrow x1={110} y1={75} x2={150} y2={75} label="beta_1" color="#10b981" />
+          {/* x_1 */}
+          <Box x={150} y={50} w={80} h={50} label="x_1" sublabel="alpha_bar ~1" color="cyan" />
+          <Arrow x1={230} y1={75} x2={270} y2={75} label="beta_2" color="#06b6d4" />
+          {/* x_t/4 */}
+          <Box x={270} y={50} w={80} h={50} label="x_250" sublabel="alpha_bar ~0.6" color="cyan" />
+          <Arrow x1={350} y1={75} x2={390} y2={75} color="#f59e0b" dashed />
+          {/* x_t/2 */}
+          <Box x={390} y={50} w={80} h={50} label="x_500" sublabel="alpha_bar ~0.15" color="amber" />
+          <Arrow x1={470} y1={75} x2={510} y2={75} color="#f59e0b" dashed />
+          {/* x_3t/4 */}
+          <Box x={510} y={50} w={80} h={50} label="x_750" sublabel="alpha_bar ~0.02" color="rose" />
+          <Arrow x1={590} y1={75} x2={630} y2={75} label="beta_T" color="#f43f5e" />
+          {/* x_T pure noise */}
+          <Box x={630} y={50} w={110} h={50} label="x_T" sublabel="bruit pur" color="rose" />
+
+          {/* alpha_bar decreasing annotation */}
+          <Label x={375} y={135} text="alpha_bar decroit de 1 vers 0" size={11} color="#a1a1aa" />
+          <Arrow x1={140} y1={148} x2={700} y2={148} color="#27272a" dashed />
+          <Label x={115} y={148} text="1.0" size={10} color="#10b981" anchor="end" />
+          <Label x={720} y={148} text="~0" size={10} color="#f43f5e" anchor="start" />
+
+          {/* Beta schedule annotation */}
+          <Label x={375} y={30} text="beta schedule : 1e-4 --> 0.02 (croissant)" size={10} color="#a1a1aa" />
+        </SvgDiagram>
+
         <p>
           Propriete cruciale : on n&apos;a pas besoin de simuler les <F>T</F> etapes.
           On echantillonne un <F>t</F> aleatoire, on calcule <Sub sub="t"><F>x</F></Sub> directement.
@@ -264,6 +294,38 @@ alpha_bar = torch.cumprod(alphas, dim=0)`}</Code>
             amplifie le conditionnement. Defaut typique : <F>s = 7.5</F>.
           </p>
         </Def>
+
+        <SvgDiagram width={700} height={200} title="Effet du guidance scale sur la generation">
+          {/* Background groupings */}
+          <GroupBox x={20} y={40} w={190} h={120} label="diversite elevee" color="cyan" />
+          <GroupBox x={250} y={40} w={190} h={120} label="equilibre" color="amber" />
+          <GroupBox x={480} y={40} w={190} h={120} label="fidelite elevee" color="rose" />
+
+          {/* s=1 */}
+          <Box x={50} y={60} w={130} h={40} label="s = 1" sublabel="inconditionnel" color="cyan" />
+          <Label x={115} y={120} text="Haute diversite" size={10} color="#06b6d4" />
+          <Label x={115} y={136} text="Basse qualite" size={10} color="#a1a1aa" />
+
+          {/* Arrow from s=1 to s=7.5 */}
+          <Arrow x1={210} y1={80} x2={250} y2={80} color="#a1a1aa" dashed />
+
+          {/* s=7.5 */}
+          <Box x={280} y={60} w={130} h={40} label="s = 7.5" sublabel="defaut optimal" color="amber" />
+          <Label x={345} y={120} text="Bon equilibre" size={10} color="#f59e0b" />
+          <Label x={345} y={136} text="Qualite + diversite" size={10} color="#a1a1aa" />
+
+          {/* Arrow from s=7.5 to s=20 */}
+          <Arrow x1={440} y1={80} x2={480} y2={80} color="#a1a1aa" dashed />
+
+          {/* s=20 */}
+          <Box x={510} y={60} w={130} h={40} label="s = 20" sublabel="surcharge" color="rose" />
+          <Label x={575} y={120} text="Tres fidele" size={10} color="#f43f5e" />
+          <Label x={575} y={136} text="Artefacts / sature" size={10} color="#a1a1aa" />
+
+          {/* Scale axis */}
+          <Arrow x1={50} y1={178} x2={650} y2={178} label="guidance scale s croissant" color="#a1a1aa" />
+        </SvgDiagram>
+
         <KeyConcept title="Le compromis qualite/diversite">
           <p>
             Guidance scale eleve (7-15) : images plus fideles au prompt, moins diversifiees.

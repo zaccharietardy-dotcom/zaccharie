@@ -17,6 +17,14 @@ import {
   Remark,
   Hypotheses,
 } from "@/components/math-elements";
+import {
+  SvgDiagram,
+  Box,
+  Circle,
+  Arrow,
+  Label,
+  GroupBox,
+} from "@/components/svg-diagrams";
 
 /* ── Math helper components using pure HTML/CSS ────────── */
 
@@ -701,6 +709,42 @@ export function Optimisation() {
           answer={2}
           explanation="Le pas optimal est μ = 2/(L + α) = 2/(λ_N + λ₁), donnant γ = (L−α)/(L+α)."
         />
+
+        <SvgDiagram width={700} height={320} title="Effet du conditionnement sur la descente de gradient">
+          {/* Left: good conditioning */}
+          <GroupBox x={15} y={25} w={320} h={280} label="Bon conditionnement (κ ≈ 1)" color="accent" />
+          {/* Circular contour lines */}
+          <ellipse cx={175} cy={175} rx={120} ry={110} fill="none" stroke="#10b98133" strokeWidth={1} />
+          <ellipse cx={175} cy={175} rx={80} ry={73} fill="none" stroke="#10b98133" strokeWidth={1} />
+          <ellipse cx={175} cy={175} rx={40} ry={37} fill="none" stroke="#10b98133" strokeWidth={1} />
+          {/* Iterates — direct path */}
+          <Circle cx={65} cy={85} r={8} label="0" color="accent" />
+          <Arrow x1={73} y1={93} x2={108} y2={118} color="#10b981" />
+          <Circle cx={115} cy={125} r={8} label="1" color="accent" />
+          <Arrow x1={123} y1={133} x2={143} y2={148} color="#10b981" />
+          <Circle cx={150} cy={155} r={8} label="2" color="accent" />
+          <Arrow x1={158} y1={163} x2={168} y2={168} color="#10b981" />
+          <Circle cx={175} cy={175} r={8} label="u*" color="accent" />
+          <Label x={175} y={275} text="Convergence rapide, directe" size={10} color="#10b981" />
+
+          {/* Right: bad conditioning */}
+          <GroupBox x={365} y={25} w={320} h={280} label="Mauvais conditionnement (κ >> 1)" color="rose" />
+          {/* Elongated elliptic contours */}
+          <ellipse cx={525} cy={175} rx={135} ry={40} fill="none" stroke="#f43f5e33" strokeWidth={1} transform="rotate(-25 525 175)" />
+          <ellipse cx={525} cy={175} rx={90} ry={27} fill="none" stroke="#f43f5e33" strokeWidth={1} transform="rotate(-25 525 175)" />
+          <ellipse cx={525} cy={175} rx={45} ry={13} fill="none" stroke="#f43f5e33" strokeWidth={1} transform="rotate(-25 525 175)" />
+          {/* Iterates — zigzag path */}
+          <Circle cx={420} cy={110} r={8} label="0" color="rose" />
+          <Arrow x1={428} y1={118} x2={478} y2={218} color="#f43f5e" />
+          <Circle cx={483} cy={225} r={8} label="1" color="rose" />
+          <Arrow x1={491} y1={217} x2={500} y2={148} color="#f43f5e" />
+          <Circle cx={505} cy={140} r={8} label="2" color="rose" />
+          <Arrow x1={513} y1={148} x2={518} y2={198} color="#f43f5e" />
+          <Circle cx={520} cy={205} r={8} label="3" color="rose" />
+          <Arrow x1={525} y1={197} x2={523} y2={183} color="#f43f5e" />
+          <Circle cx={525} cy={175} r={8} label="u*" color="rose" />
+          <Label x={525} y={275} text="Zigzag, convergence lente" size={10} color="#f43f5e" />
+        </SvgDiagram>
       </Section>
 
       {/* ============================================================ */}
@@ -790,6 +834,43 @@ export function Optimisation() {
           answer={1}
           explanation="Newton a une convergence quadratique : ‖uⁿ⁺¹ − u‖ ≤ C‖uⁿ − u‖². Le nombre de chiffres significatifs double a chaque iteration."
         />
+
+        <SvgDiagram width={600} height={380} title="Convergence lineaire (gradient) vs quadratique (Newton)">
+          {/* Left column: Gradient — many iterations */}
+          <GroupBox x={30} y={25} w={220} h={340} label="Gradient (lineaire)" color="violet" />
+          <Label x={140} y={50} text="erreur = 0.5" size={10} color="#a1a1aa" />
+          <Box x={60} y={58} w={160} h={28} label="iter 1" sublabel="err = 0.25" color="violet" />
+          <Arrow x1={140} y1={86} x2={140} y2={95} color="#8b5cf6" />
+          <Box x={60} y={95} w={160} h={28} label="iter 2" sublabel="err = 0.125" color="violet" />
+          <Arrow x1={140} y1={123} x2={140} y2={132} color="#8b5cf6" />
+          <Box x={60} y={132} w={160} h={28} label="iter 3" sublabel="err = 0.063" color="violet" />
+          <Arrow x1={140} y1={160} x2={140} y2={169} color="#8b5cf6" />
+          <Box x={60} y={169} w={160} h={28} label="iter 4" sublabel="err = 0.031" color="violet" />
+          <Arrow x1={140} y1={197} x2={140} y2={206} color="#8b5cf6" />
+          <Box x={60} y={206} w={160} h={28} label="iter 5" sublabel="err = 0.016" color="violet" />
+          <Arrow x1={140} y1={234} x2={140} y2={243} color="#8b5cf6" />
+          <Box x={60} y={243} w={160} h={28} label="iter 6" sublabel="err = 0.008" color="violet" />
+          <Arrow x1={140} y1={271} x2={140} y2={280} color="#8b5cf6" />
+          <Box x={60} y={280} w={160} h={28} label="..." sublabel="encore ~10 iter" color="violet" />
+          <Label x={140} y={325} text="γ = (κ-1)/(κ+1)" size={10} color="#8b5cf6" />
+          <Label x={140} y={340} text="~20 iterations" size={11} color="#8b5cf6" weight="bold" />
+
+          {/* Right column: Newton — few iterations */}
+          <GroupBox x={310} y={25} w={260} h={340} label="Newton (quadratique)" color="accent" />
+          <Label x={440} y={50} text="erreur = 0.5" size={10} color="#a1a1aa" />
+          <Box x={340} y={58} w={200} h={34} label="iter 1" sublabel="err = 0.25" color="accent" />
+          <Arrow x1={440} y1={92} x2={440} y2={105} color="#10b981" />
+          <Box x={340} y={105} w={200} h={34} label="iter 2" sublabel="err = 0.0625" color="accent" />
+          <Arrow x1={440} y1={139} x2={440} y2={152} color="#10b981" />
+          <Box x={340} y={152} w={200} h={34} label="iter 3" sublabel="err = 0.0039" color="accent" />
+          <Arrow x1={440} y1={186} x2={440} y2={199} color="#10b981" />
+          <Box x={340} y={199} w={200} h={34} label="iter 4" sublabel="err = 1.5e-5" color="accent" />
+          <Arrow x1={440} y1={233} x2={440} y2={246} color="#10b981" />
+          <Box x={340} y={246} w={200} h={34} label="iter 5" sublabel="err ≈ 0" color="accent" />
+          <Label x={440} y={310} text="‖e_n+1‖ ≤ C‖e_n‖²" size={10} color="#10b981" />
+          <Label x={440} y={325} text="Chiffres significatifs" size={10} color="#10b981" />
+          <Label x={440} y={340} text="doublent a chaque iter" size={11} color="#10b981" weight="bold" />
+        </SvgDiagram>
       </Section>
 
       {/* ============================================================ */}
@@ -863,6 +944,53 @@ export function Optimisation() {
             ["Newton", "2", "Quadratique", "1 gradient + 1 hessienne + 1 syst. lin."],
           ]}
         />
+
+        <SvgDiagram width={700} height={340} title="Effet du momentum : 3 trajectoires de l'init vers l'optimum">
+          {/* Column labels */}
+          <Label x={120} y={22} text="Gradient simple" size={12} color="#f43f5e" weight="bold" />
+          <Label x={350} y={22} text="Boule pesante" size={12} color="#f59e0b" weight="bold" />
+          <Label x={580} y={22} text="Nesterov" size={12} color="#10b981" weight="bold" />
+
+          {/* Shared start / end labels */}
+          <Label x={30} y={55} text="start" size={10} color="#a1a1aa" anchor="start" />
+          <Label x={30} y={295} text="u*" size={12} color="#e4e4e7" anchor="start" weight="bold" />
+
+          {/* --- Path 1: plain gradient — zigzag --- */}
+          <Circle cx={120} cy={55} r={7} label="" color="rose" />
+          <Arrow x1={120} y1={62} x2={155} y2={95} color="#f43f5e" />
+          <Arrow x1={155} y1={95} x2={90} y2={125} color="#f43f5e" />
+          <Arrow x1={90} y1={125} x2={145} y2={155} color="#f43f5e" />
+          <Arrow x1={145} y1={155} x2={100} y2={185} color="#f43f5e" />
+          <Arrow x1={100} y1={185} x2={135} y2={215} color="#f43f5e" />
+          <Arrow x1={135} y1={215} x2={110} y2={245} color="#f43f5e" />
+          <Arrow x1={110} y1={245} x2={125} y2={275} color="#f43f5e" />
+          <Arrow x1={125} y1={275} x2={120} y2={295} color="#f43f5e" />
+          <Circle cx={120} cy={295} r={7} label="" color="rose" />
+          <Label x={120} y={320} text="Zigzag, lent" size={10} color="#f43f5e" />
+
+          {/* --- Path 2: heavy ball — smoother oscillation --- */}
+          <Circle cx={350} cy={55} r={7} label="" color="amber" />
+          <Arrow x1={350} y1={62} x2={370} y2={105} color="#f59e0b" />
+          <Arrow x1={370} y1={105} x2={338} y2={150} color="#f59e0b" />
+          <Arrow x1={338} y1={150} x2={358} y2={200} color="#f59e0b" />
+          <Arrow x1={358} y1={200} x2={345} y2={250} color="#f59e0b" />
+          <Arrow x1={345} y1={250} x2={350} y2={295} color="#f59e0b" />
+          <Circle cx={350} cy={295} r={7} label="" color="amber" />
+          <Label x={350} y={320} text="Inertie amortit" size={10} color="#f59e0b" />
+
+          {/* --- Path 3: Nesterov — look-ahead, smooth --- */}
+          <Circle cx={580} cy={55} r={7} label="" color="accent" />
+          {/* Look-ahead step (dashed) */}
+          <Arrow x1={580} y1={62} x2={590} y2={110} color="#10b98166" dashed />
+          <Label x={605} y={90} text="look" size={9} color="#10b98199" anchor="start" />
+          <Label x={605} y={102} text="ahead" size={9} color="#10b98199" anchor="start" />
+          {/* Corrected step */}
+          <Arrow x1={590} y1={110} x2={578} y2={165} color="#10b981" />
+          <Arrow x1={578} y1={165} x2={582} y2={225} color="#10b981" />
+          <Arrow x1={582} y1={225} x2={580} y2={295} color="#10b981" />
+          <Circle cx={580} cy={295} r={7} label="" color="accent" />
+          <Label x={580} y={320} text="Direct, rapide" size={10} color="#10b981" />
+        </SvgDiagram>
 
         <Warning>
           <p>

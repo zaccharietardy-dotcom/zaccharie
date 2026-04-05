@@ -201,6 +201,52 @@ class RNNFromScratch(nn.Module):
             Il faut changer l&apos;architecture.
           </p>
         </Warning>
+
+        <SvgDiagram width={700} height={260} title="Magnitude du gradient a travers le temps">
+          {/* Time step boxes */}
+          <Box x={40} y={30} w={80} h={36} label="h_1" color="accent" />
+          <Arrow x1={120} y1={48} x2={145} y2={48} color="#a1a1aa" />
+          <Box x={145} y={30} w={80} h={36} label="h_2" color="accent" />
+          <Arrow x1={225} y1={48} x2={250} y2={48} color="#a1a1aa" />
+          <Box x={250} y={30} w={80} h={36} label="h_3" color="cyan" />
+          <Arrow x1={330} y1={48} x2={355} y2={48} color="#a1a1aa" />
+          <Box x={355} y={30} w={80} h={36} label="..." color="default" />
+          <Arrow x1={435} y1={48} x2={460} y2={48} color="#a1a1aa" />
+          <Box x={460} y={30} w={80} h={36} label="h_T-1" color="default" />
+          <Arrow x1={540} y1={48} x2={565} y2={48} color="#a1a1aa" />
+          <Box x={565} y={30} w={80} h={36} label="h_T" color="rose" />
+
+          {/* Gradient flow arrows (right to left, dashed) */}
+          <Label x={350} y={90} text="← gradient backprop (BPTT)" size={10} color="#f43f5e" />
+          <Arrow x1={605} y1={100} x2={500} y2={100} color="#f43f5e" dashed />
+          <Arrow x1={500} y1={100} x2={395} y2={100} color="#f43f5e" dashed />
+          <Arrow x1={395} y1={100} x2={290} y2={100} color="#f43f5e" dashed />
+          <Arrow x1={290} y1={100} x2={185} y2={100} color="#f43f5e" dashed />
+          <Arrow x1={185} y1={100} x2={80} y2={100} color="#f43f5e" dashed />
+
+          {/* Gradient magnitude bars */}
+          <Label x={350} y={125} text="‖dL/dh_t‖" size={10} color="#a1a1aa" />
+          {/* h_T: full bar */}
+          <rect x={585} y={140} width={40} height={100} rx={4} fill="#f43f5e33" stroke="#f43f5e" strokeWidth={1} />
+          <Label x={605} y={245} text="h_T" size={9} color="#f43f5e" />
+          {/* h_T-1: shorter */}
+          <rect x={480} y={170} width={40} height={70} rx={4} fill="#f43f5e33" stroke="#f43f5e" strokeWidth={1} opacity={0.8} />
+          <Label x={500} y={245} text="T-1" size={9} color="#a1a1aa" />
+          {/* h_3: much shorter */}
+          <rect x={270} y={200} width={40} height={40} rx={4} fill="#06b6d433" stroke="#06b6d4" strokeWidth={1} opacity={0.6} />
+          <Label x={290} y={245} text="h_3" size={9} color="#a1a1aa" />
+          {/* h_2: tiny */}
+          <rect x={165} y={220} width={40} height={20} rx={4} fill="#10b98133" stroke="#10b981" strokeWidth={1} opacity={0.4} />
+          <Label x={185} y={245} text="h_2" size={9} color="#a1a1aa" />
+          {/* h_1: nearly invisible */}
+          <rect x={60} y={233} width={40} height={7} rx={3} fill="#10b98133" stroke="#10b981" strokeWidth={1} opacity={0.3} />
+          <Label x={80} y={245} text="h_1" size={9} color="#a1a1aa" />
+
+          {/* Annotation */}
+          <Arrow x1={130} y1={210} x2={50} y2={230} color="#f43f5e" dashed />
+          <Label x={20} y={210} text="gradient" size={10} color="#f43f5e" anchor="start" />
+          <Label x={20} y={222} text="disparait" size={10} color="#f43f5e" anchor="start" />
+        </SvgDiagram>
       </Section>
 
       {/* ============================================================ */}

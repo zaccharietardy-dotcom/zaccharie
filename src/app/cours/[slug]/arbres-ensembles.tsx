@@ -528,6 +528,44 @@ print(classification_report(y_test, rf.predict(X_test)))`}</Code>
           </Step>
         </Steps>
 
+        <SvgDiagram width={750} height={280} title="Gradient Boosting : construction additive iteration par iteration">
+          {/* Iteration 0 — initialization */}
+          <Box x={10} y={30} w={100} h={44} label="F_0(x)" sublabel="init (moyenne)" color="accent" />
+          <Arrow x1={110} y1={52} x2={145} y2={52} color="#10b981" />
+
+          {/* Iteration 1 */}
+          <GroupBox x={145} y={8} w={180} h={115} label="Iteration 1" color="violet" />
+          <Box x={160} y={30} w={150} h={36} label="Pseudo-residus" sublabel="r_1 = -(dL/dF)" color="violet" />
+          <Arrow x1={235} y1={66} x2={235} y2={78} color="#8b5cf6" />
+          <Box x={160} y={78} w={150} h={36} label="Arbre h_1" sublabel="fit sur r_1" color="violet" />
+
+          {/* Update F_1 */}
+          <Arrow x1={325} y1={96} x2={360} y2={96} color="#8b5cf6" />
+          <Box x={360} y={76} w={120} h={44} label="F_1 = F_0" sublabel="+ eta * h_1" color="accent" />
+          <Arrow x1={480} y1={98} x2={510} y2={98} color="#10b981" />
+
+          {/* Iteration 2 */}
+          <GroupBox x={510} y={8} w={180} h={115} label="Iteration 2" color="cyan" />
+          <Box x={525} y={30} w={150} h={36} label="Pseudo-residus" sublabel="r_2 = -(dL/dF)" color="cyan" />
+          <Arrow x1={600} y1={66} x2={600} y2={78} color="#06b6d4" />
+          <Box x={525} y={78} w={150} h={36} label="Arbre h_2" sublabel="fit sur r_2" color="cyan" />
+
+          {/* F_2 result */}
+          <Arrow x1={600} y1={123} x2={600} y2={150} color="#06b6d4" />
+          <Box x={530} y={150} w={140} h={44} label="F_2 = F_1" sublabel="+ eta * h_2" color="accent" />
+
+          {/* Dots to indicate continuation */}
+          <Arrow x1={600} y1={194} x2={600} y2={220} color="#a1a1aa" dashed />
+          <Label x={600} y={240} text="... continue M iterations" size={11} color="#a1a1aa" />
+
+          {/* Final model */}
+          <Box x={10} y={200} w={320} h={50} label="F_M(x) = F_0 + eta*h_1 + eta*h_2 + ... + eta*h_M" color="amber" />
+          <Label x={170} y={268} text="Chaque arbre corrige l'erreur residuelle du precedent" size={10} color="#a1a1aa" />
+
+          {/* Learning rate annotation */}
+          <Label x={170} y={148} text="eta = learning rate (0.01 - 0.3)" size={10} color="#f59e0b" />
+        </SvgDiagram>
+
         <Remark>
           <p>
             Le <strong>learning rate</strong> <F>η</F> est crucial. Un{" "}
