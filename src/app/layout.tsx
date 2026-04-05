@@ -29,14 +29,9 @@ export default function RootLayout({
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-foreground/5 selection:text-foreground">
         <Nav />
         <main className="flex-1">{children}</main>
-        <footer className="border-t border-border/40 py-6">
-          <p className="text-center text-xs text-muted-foreground">
-            Zaccharie Tardy &middot; 2026
-          </p>
-        </footer>
       </body>
     </html>
   );
