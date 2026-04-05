@@ -86,19 +86,19 @@ export default function CoursIndex() {
                 {section.description}
               </p>
             </div>
-            <div className="grid gap-x-12 gap-y-8 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {section.courses.map((course) => (
                 <Link key={course.slug} href={`/cours/${course.slug}`} className="group block">
-                  <div className="flex flex-col gap-2">
+                  <div className="flex h-full flex-col gap-3 rounded-xl border border-foreground/[0.04] bg-foreground/[0.01] p-6 transition-all duration-300 group-hover:border-foreground/[0.1] group-hover:bg-foreground/[0.02]">
                     <div className="flex items-baseline gap-3">
-                      <span className="font-mono text-[10px] text-muted-foreground/30">
+                      <span className="font-mono text-[9px] text-muted-foreground/30">
                         {course.number}
                       </span>
-                      <h3 className="font-serif text-lg font-medium transition-colors group-hover:text-foreground/70">
+                      <h3 className="font-serif text-lg font-medium transition-colors group-hover:text-foreground">
                         {course.title}
                       </h3>
                     </div>
-                    <p className="pl-8 text-sm leading-relaxed text-muted-foreground/60 transition-colors group-hover:text-muted-foreground/80">
+                    <p className="text-sm leading-relaxed text-muted-foreground/60 transition-colors group-hover:text-muted-foreground/80">
                       {course.description}
                     </p>
                   </div>
