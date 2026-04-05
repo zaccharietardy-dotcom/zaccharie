@@ -30,7 +30,7 @@ export default function Home() {
       {/* Hero */}
       <section className="mb-24">
         <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
-          Zaccharie Tardy
+          Zaccharie Tardy<span className="text-blue-400/70">.</span>
         </h1>
         <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
           Élève ingénieur à l&apos;École Polytechnique, 2e année.
@@ -48,7 +48,7 @@ export default function Home() {
             <Link key={proj.title} href={proj.href} className="group block">
               <div className="flex flex-col gap-3 rounded-xl px-5 py-5 transition-colors hover:bg-foreground/[0.03] sm:flex-row sm:items-center sm:justify-between">
                 <div className="max-w-xl">
-                  <h3 className="mb-1 text-[15px] font-medium">
+                  <h3 className="mb-1 text-[15px] font-medium group-hover:text-blue-400 transition-colors">
                     {proj.title}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground/70">

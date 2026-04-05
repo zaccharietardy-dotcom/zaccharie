@@ -3,6 +3,7 @@ import Link from "next/link";
 const sections = [
   {
     title: "IA Générative",
+    color: "border-blue-400/40",
     courses: [
       { slug: "fondations-llm", number: "01", title: "Fondations LLM", description: "Transformers, tokens, attention, temperature." },
       { slug: "prompt-engineering", number: "02", title: "Prompt Engineering", description: "Few-shot, chain-of-thought, structured output." },
@@ -14,6 +15,7 @@ const sections = [
   },
   {
     title: "Machine Learning & Deep Learning",
+    color: "border-emerald-400/40",
     courses: [
       { slug: "arbres-ensembles", number: "ML-01", title: "Arbres & Ensembles", description: "CART, Random Forests, XGBoost, LightGBM." },
       { slug: "finance-quantitative", number: "ML-02", title: "Finance Quantitative", description: "Brownien, Itô, Black-Scholes, Greeks, Monte Carlo." },
@@ -26,12 +28,14 @@ const sections = [
   },
   {
     title: "Outils",
+    color: "border-amber-400/40",
     courses: [
       { slug: "git-github", number: "DEV", title: "Git, GitHub & GitLab", description: "Branches, merge, rebase, PR, CI/CD." },
     ],
   },
   {
     title: "Polytechnique — P3",
+    color: "border-violet-400/40",
     courses: [
       { slug: "optimisation", number: "P3", title: "Optimisation et Contrôle", description: "Euler, Lagrange, KKT, gradient, Newton." },
       { slug: "optimisation-resume", number: "—", title: "Fiche Résumé — Optimisation", description: "Tous les théorèmes en une page." },
@@ -39,6 +43,7 @@ const sections = [
   },
   {
     title: "Anglais",
+    color: "border-rose-400/40",
     courses: [
       { slug: "loneliness-machine", number: "EN", title: "The Loneliness Machine", description: "AI Companions as Symptom, Not Cure." },
     ],
@@ -55,10 +60,10 @@ export default function CoursIndex() {
         </p>
       </div>
 
-      <div className="space-y-16">
+      <div className="space-y-14">
         {sections.map((section) => (
           <section key={section.title}>
-            <h2 className="mb-6 text-xs font-medium uppercase tracking-widest text-muted-foreground/50">
+            <h2 className={`mb-6 border-l-2 ${section.color} pl-3 text-xs font-medium uppercase tracking-widest text-muted-foreground/60`}>
               {section.title}
             </h2>
             <div className="grid gap-2 sm:grid-cols-2">

@@ -44,7 +44,7 @@ export default async function LoginPage({
         )}
         <button
           type="submit"
-          className="w-full rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background hover:opacity-90 transition-opacity"
+          className="w-full rounded-md bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
         >
           Entrer
         </button>

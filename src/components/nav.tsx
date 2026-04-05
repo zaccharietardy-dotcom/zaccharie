@@ -13,7 +13,7 @@ export function Nav() {
           href="/"
           className="font-serif text-lg font-medium italic tracking-tight"
         >
-          zt<span className="text-muted-foreground/40 font-sans not-italic">.</span>
+          zt<span className="text-blue-400/60 font-sans not-italic">.</span>
         </Link>
         <ul className="flex items-center gap-8">
           {links.map(({ href, label }) => (
