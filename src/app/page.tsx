@@ -32,10 +32,24 @@ export default function Home() {
         <h1 className="mb-6 font-serif text-5xl font-medium tracking-tight sm:text-6xl italic">
           Zaccharie Tardy<span className="text-primary/40">.</span>
         </h1>
-        <p className="max-w-xl text-lg leading-relaxed text-muted-foreground/80 sm:text-xl">
-          Élève ingénieur à l&apos;École Polytechnique.
-          Explorations en deep learning, vision par ordinateur et architectures d&apos;agents.
+        <p className="mb-8 max-w-xl text-lg leading-relaxed text-muted-foreground/80 sm:text-xl">
+          Élève ingénieur à l&apos;École Polytechnique, 2e année.
+          Deep learning, vision par ordinateur, agents LLM.
         </p>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: "Python", color: "border-blue-400/30 text-blue-400/70" },
+            { label: "PyTorch", color: "border-orange-400/30 text-orange-400/70" },
+            { label: "TypeScript", color: "border-sky-400/30 text-sky-400/70" },
+            { label: "Next.js", color: "border-foreground/10 text-foreground/50" },
+            { label: "Computer Vision", color: "border-emerald-400/30 text-emerald-400/70" },
+            { label: "LLMs", color: "border-violet-400/30 text-violet-400/70" },
+          ].map((s) => (
+            <span key={s.label} className={`rounded-full border px-3 py-1 text-xs ${s.color}`}>
+              {s.label}
+            </span>
+          ))}
+        </div>
       </section>
 
       {/* Projets */}
