@@ -9,23 +9,23 @@ import {
 
 const projects = [
   {
-    title: "Prediction de retournement vehiculaire",
+    title: "Prédiction de retournement véhiculaire",
     description:
-      "Predire si un vehicule militaire va se retourner 1 a 8 secondes avant que ca arrive. LSTM, PatchTST, Neural ODE. Projet pour la DGA.",
+      "Prédire le risque de retournement d'un véhicule militaire, 1 à 8 secondes à l'avance. LSTM, PatchTST, Neural ODE. Projet DGA.",
     tags: ["PyTorch", "LSTM", "PatchTST", "XGBoost"],
     href: "/projets/vdsim",
   },
   {
     title: "Deblurring de plaques d'immatriculation",
     description:
-      "Tu uploades une photo de plaque floue, ca te sort l'image nette et les caracteres. YOLO pour detecter, NAFNet pour restaurer, OCR pour lire.",
+      "Restauration d'images de plaques floues : détection YOLO, restauration NAFNet, lecture OCR. En pause.",
     tags: ["Computer Vision", "GAN", "OCR"],
     href: "/projets/deblurring",
   },
   {
     title: "Planificateur de voyage",
     description:
-      "Tu dis ou tu veux aller, ca te genere un planning jour par jour avec transport, hotels, activites. Gemini Flash + Google Places.",
+      "Génération automatique d'itinéraires jour par jour avec transport, hôtels et activités. Gemini Flash + Google Places.",
     tags: ["Next.js", "Gemini", "Pipeline"],
     href: "https://naraevoyage.com",
   },
@@ -40,9 +40,8 @@ export default function Home() {
           Zaccharie Tardy
         </h1>
         <p className="mb-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Polytechnique, 2A. Python, PyTorch, TypeScript.
-          En ce moment je fais surtout du deep learning applique (prediction de series temporelles,
-          vision par ordinateur) et des agents LLM.
+          Élève ingénieur à l&apos;École Polytechnique, 2e année.
+          Deep learning, vision par ordinateur, agents LLM.
         </p>
       </section>
 
@@ -86,7 +85,7 @@ export default function Home() {
             <div>
               <p className="font-medium">Ecole Polytechnique</p>
               <p className="text-sm text-muted-foreground">
-                Cycle ingenieur — mathematiques appliquees, informatique
+                Cycle ingénieur — mathématiques appliquées, informatique
               </p>
             </div>
             <span className="shrink-0 text-sm text-muted-foreground">2024 – 2027</span>
@@ -100,7 +99,7 @@ export default function Home() {
           Cours &amp; Notes
         </h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          Notes de cours perso, protegees par mot de passe.
+          Notes de cours, accès restreint.
         </p>
         <Link
           href="/cours"

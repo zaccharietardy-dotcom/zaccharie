@@ -12,7 +12,7 @@ const projects = [
     slug: "deblurring",
     title: "Deblurring de plaques d'immatriculation",
     description:
-      "Tu uploades une photo de plaque floue, ca te sort l'image nette et les caracteres. YOLO + NAFNet + OCR.",
+      "Restauration d'images de plaques floues : détection YOLO, restauration NAFNet, lecture OCR. En pause.",
     tags: ["PyTorch", "Computer Vision", "GAN", "OCR"],
     status: "demo" as const,
   },
@@ -20,7 +20,7 @@ const projects = [
     slug: "vdsim",
     title: "Prediction de renversement vehiculaire",
     description:
-      "Predire si un vehicule militaire va se retourner, 1 a 8 secondes avant. LSTM + PatchTST + Neural ODE. Projet DGA.",
+      "Prédiction du risque de retournement d'un véhicule militaire, 1 à 8 secondes à l'avance. LSTM, PatchTST, Neural ODE. Projet DGA.",
     tags: ["PyTorch", "LSTM", "PatchTST", "XGBoost"],
     status: "completed" as const,
   },
@@ -38,7 +38,7 @@ export default function ProjetsIndex() {
 
       <h1 className="mb-2 text-3xl font-bold tracking-tight">Projets</h1>
       <p className="mb-10 text-muted-foreground">
-        Des trucs que j&apos;ai construits.
+        Projets de recherche et projets personnels.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2">

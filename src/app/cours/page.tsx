@@ -62,7 +62,7 @@ export default function CoursIndex() {
     <div className="mx-auto max-w-5xl px-6 py-20">
       <h1 className="mb-2 text-3xl font-bold tracking-tight">Cours</h1>
       <p className="mb-12 text-muted-foreground">
-        Ce que j&apos;ai appris, reformule pour que ca rentre.
+        Cours et notes personnelles.
       </p>
 
       {sections.map((section) => (
