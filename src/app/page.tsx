@@ -136,7 +136,7 @@ export default function Home() {
             GitHub
           </a>
           <a
-            href="https://linkedin.com/in/zaccharietardy"
+            href="https://www.linkedin.com/in/zaccharie-tardy/"
             target="_blank"
             rel="noopener noreferrer"
             className="transition-colors hover:text-foreground"
