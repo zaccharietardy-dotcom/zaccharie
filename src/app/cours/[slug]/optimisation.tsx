@@ -1020,6 +1020,377 @@ export function Optimisation() {
           explanation="Pour α/L < 1, √(α/L) > α/L. Donc 1 − c√(α/L) < 1 − c(α/L), γ plus petit. Nesterov n'utilise PAS la hessienne."
         />
       </Section>
+
+      {/* ============================================================ */}
+      {/* AMPHI 5 — ALGORITHMES SOUS CONTRAINTES                      */}
+      {/* ============================================================ */}
+
+      <Section id="gradient-projete" number="11" title="Gradient projeté">
+        <p>
+          On passe maintenant a l&apos;optimisation <strong>sous contraintes</strong>.
+          Soit <F>K</F> un convexe ferme non vide de <F>V</F>. On veut resoudre :
+        </p>
+        <Eq>
+          inf<Sub sub="v ∈ K"><F> </F></Sub> <F>J(v)</F>
+        </Eq>
+
+        <Def title="Projection orthogonale">
+          <p>
+            Soit <F>K ⊂ V</F> convexe ferme non vide. Pour tout <F>x ∈ V</F>, il existe
+            un unique <Sub sub="K"><F>x</F></Sub> ∈ <F>K</F> tel que :
+          </p>
+          <Eq>
+            ‖x − <Sub sub="K"><F>x</F></Sub>‖ = min<Sub sub="y ∈ K"><F> </F></Sub> ‖x − y‖
+          </Eq>
+          <p>
+            On note <Sub sub="K"><F>P</F></Sub>(x) = <Sub sub="K"><F>x</F></Sub> l&apos;operateur
+            de projection orthogonale. Propriete de caracterisation :
+          </p>
+          <Eq>
+            <Sub sub="K"><F>x</F></Sub> ∈ K, ⟨<Sub sub="K"><F>x</F></Sub> − x, <Sub sub="K"><F>x</F></Sub> − y⟩ ≤ 0 ∀y ∈ K
+          </Eq>
+        </Def>
+
+        <p>L&apos;algorithme du gradient projete :</p>
+        <Eq>
+          <Sup sup="n+1"><F>u</F></Sup> = <Sub sub="K"><F>P</F></Sub>(<Sup sup="n"><F>u</F></Sup> − μ J&apos;(<Sup sup="n"><F>u</F></Sup>))
+        </Eq>
+        <p>
+          On fait un pas de gradient classique, puis on projette sur <F>K</F>.
+        </p>
+
+        <SvgDiagram width={600} height={200} title="Gradient projete">
+          <GroupBox x={180} y={30} w={200} h={140} label="K (convexe)" color="accent" />
+          <Circle cx={130} cy={120} r={8} label="" color="default" />
+          <Label x={100} y={120} text="uⁿ − μJ'(uⁿ)" size={10} anchor="end" />
+          <Arrow x1={138} y1={118} x2={228} y2={98} label="projection" />
+          <Circle cx={240} cy={95} r={8} label="" color="accent" />
+          <Label x={260} y={85} text="uⁿ⁺¹ = Pₖ(...)" size={10} anchor="start" color="#10b981" />
+          <Circle cx={300} cy={120} r={6} label="" color="violet" />
+          <Label x={320} y={120} text="u (minimum)" size={10} anchor="start" color="#8b5cf6" />
+        </SvgDiagram>
+
+        <Theorem title="Convergence du gradient projeté">
+          <p>
+            Si <F>J</F> est α-convexe (α &gt; 0) et <F>J&apos;</F> est L-Lipschitz, alors
+            pour 0 &lt; μ &lt; 2α/L², l&apos;algorithme converge.
+          </p>
+          <p>
+            La preuve repose sur le fait que <F>P</F><Sub sub="K"><F> </F></Sub> est
+            faiblement contractant (‖P<Sub sub="K"><F> </F></Sub>v − P<Sub sub="K"><F> </F></Sub>w‖ ≤ ‖v − w‖)
+            et que v → v − μJ&apos;(v) est strictement contractant sous la condition sur μ.
+          </p>
+        </Theorem>
+
+        <Warning>
+          <p>
+            Le gradient projete est un algorithme <strong>faisable</strong> : les iterees <Sup sup="n"><F>u</F></Sup> restent
+            dans <F>K</F> a chaque etape. Mais il faut savoir calculer <Sub sub="K"><F>P</F></Sub>, ce qui
+            peut etre tres difficile en pratique pour des convexes compliques.
+          </p>
+        </Warning>
+
+        <Remark>
+          <p>
+            <strong>Exemples ou P<Sub sub="K"><F> </F></Sub> est facile :</strong> si K est un
+            produit d&apos;intervalles [a<Sub sub="i"><F> </F></Sub>, b<Sub sub="i"><F> </F></Sub>],
+            la projection est un simple clamp coordonnee par coordonnee. Si K = {"{"}x : Bx = c{"}"} (contrainte
+            lineaire d&apos;egalite), P<Sub sub="K"><F> </F></Sub>(x) = x + B*(BB*)⁻¹(c − Bx).
+          </p>
+        </Remark>
+      </Section>
+
+      <Section id="uzawa" number="12" title="Algorithme d'Uzawa">
+        <p>
+          Quand <Sub sub="K"><F>P</F></Sub> est difficile a calculer, on passe a des algorithmes
+          <strong>infaisables</strong> : les iterees ne restent pas dans <F>K</F>, mais convergent
+          vers une limite qui, elle, est dans <F>K</F>.
+        </p>
+
+        <p>
+          L&apos;algorithme d&apos;Uzawa s&apos;applique au probleme :
+        </p>
+        <Eq>
+          min<Sub sub="F(v) ≤ 0"><F> </F></Sub> J(v)
+        </Eq>
+        <p>
+          Il recherche un <strong>point selle</strong> du
+          Lagrangien L(v, q) = J(v) + q · F(v) — c&apos;est-a-dire un point (u, p) ou
+          L(u, q) ≤ L(u, p) ≤ L(v, p) pour tout v et tout q ≥ 0.
+        </p>
+
+        <KeyConcept title="Idee : alterner minimisation et maximisation">
+          <p>
+            A <F>q</F> fixe, on <strong>minimise</strong> en <F>v</F> (descente sur J + qF).
+            A <F>v</F> fixe, on <strong>maximise</strong> en <F>q</F> (montee de gradient sur le dual).
+            On itere.
+          </p>
+        </KeyConcept>
+
+        <Def title="Algorithme d'Uzawa">
+          <p>
+            Initialisation : <Sup sup="0"><F>p</F></Sup> ∈ (ℝ₊)<Sup sup="M"><F> </F></Sup>. Pour n ≥ 0 :
+          </p>
+          <Eq>
+            L(<Sup sup="n"><F>u</F></Sup>, <Sup sup="n"><F>p</F></Sup>) = inf<Sub sub="v ∈ V"><F> </F></Sub> L(v, <Sup sup="n"><F>p</F></Sup>)
+          </Eq>
+          <Eq>
+            <Sup sup="n+1"><F>p</F></Sup> = P<Sub sub="ℝ₊ᴹ"><F> </F></Sub>(<Sup sup="n"><F>p</F></Sup> + μF(<Sup sup="n"><F>u</F></Sup>))
+          </Eq>
+          <p>avec μ &gt; 0 fixe.</p>
+        </Def>
+
+        <SvgDiagram width={650} height={200} title="Algorithme d'Uzawa — alternance min/max">
+          <Box x={20} y={70} w={140} h={55} label="Min en v" sublabel="L(v, pⁿ)" color="accent" />
+          <Arrow x1={160} y1={97} x2={230} y2={97} label="uⁿ" />
+          <Box x={230} y={70} w={180} h={55} label="Max en q" sublabel="pⁿ⁺¹ = P(pⁿ + μF(uⁿ))" color="violet" />
+          <Arrow x1={410} y1={97} x2={480} y2={97} />
+          <Box x={480} y={70} w={140} h={55} label="Convergé ?" sublabel="F(uⁿ) ≤ 0 ?" color="amber" />
+          <Arrow x1={550} y1={125} x2={550} y2={160} label="non" dashed />
+          <Arrow x1={480} y1={160} x2={90} y2={160} />
+          <Arrow x1={90} y1={160} x2={90} y2={125} />
+        </SvgDiagram>
+
+        <Theorem title="Convergence d'Uzawa">
+          <p>
+            Si <F>J</F> est α-convexe differentiable, <F>F</F> convexe et L-Lipschitz,
+            que les contraintes sont qualifiees, et 0 &lt; μ &lt; 2α/L²,
+            alors pour tout <Sup sup="0"><F>p</F></Sup> ∈ (ℝ₊)<Sup sup="M"><F> </F></Sup>,
+            la suite (<Sup sup="n"><F>u</F></Sup>) converge vers le minimum <F>u</F>.
+          </p>
+        </Theorem>
+
+        <Remark>
+          <p>
+            <strong>Lien avec la dualite :</strong> Uzawa est en fait le gradient projete
+            applique au probleme dual ! La fonction duale est G(p) = inf<Sub sub="v"><F> </F></Sub> L(v, p),
+            et la mise a jour de p est exactement p<Sup sup="n+1"><F> </F></Sup> = P<Sub sub="ℝ₊ᴹ"><F> </F></Sub>(p<Sup sup="n"><F> </F></Sup> + μG&apos;(p<Sup sup="n"><F> </F></Sup>)) avec G&apos;(p) = F(v(p)).
+          </p>
+        </Remark>
+
+        <p>
+          <strong>Variante Arrow-Hurwicz :</strong> au lieu de minimiser exactement en <F>v</F>,
+          on fait un seul pas de gradient. Moins precis par iteration, mais beaucoup moins cher.
+        </p>
+      </Section>
+
+      <Section id="penalisation" number="13" title="Pénalisation des contraintes">
+        <p>
+          Idee radicalement differente : au lieu de respecter les contraintes, on les
+          <strong>penalise</strong> dans la fonction objectif.
+        </p>
+
+        <Def title="Penalisation exterieure">
+          <p>On remplace le probleme contraint (P) par le probleme sans contrainte :</p>
+          <Eq>
+            (P<Sub sub="ε"><F> </F></Sub>) : inf<Sub sub="v ∈ ℝᴺ"><F> </F></Sub> J(v) + <Frac n="1" d="ε" /> <Sup sup="M"><F>∑</F></Sup><Sub sub="i=1"><F> </F></Sub> [max(F<Sub sub="i"><F> </F></Sub>(v), 0)]²
+          </Eq>
+          <p>
+            avec ε &gt; 0 petit. La penalite est nulle quand les contraintes sont satisfaites,
+            et explose quand elles sont violees.
+          </p>
+        </Def>
+
+        <Proposition title="Convergence de la penalisation">
+          <p>
+            Si <F>J</F> est continue, strictement convexe, coercive, et <F>F</F> est convexe continue,
+            avec K = {"{"}F(v) ≤ 0{"}"} non vide, alors quand ε → 0, les solutions <Sub sub="ε"><F>u</F></Sub>
+            du probleme penalise convergent vers la solution <F>u</F> du probleme contraint.
+          </p>
+        </Proposition>
+
+        <ComparisonTable
+          headers={["", "Penalisation exterieure", "Penalisation interieure (barriere)"]}
+          rows={[
+            ["Formule", "J(v) + (1/ε) Σ [max(Fᵢ,0)]²", "J(v) − ε Σ 1/Fᵢ(v)"],
+            ["Faisable ?", "Non (iterees hors de K)", "Oui (iterees dans K)"],
+            ["Initialisation", "Quelconque", "Doit verifier F(v⁰) < 0"],
+            ["Avantage", "Tres facile a mettre en oeuvre", "Algorithme faisable"],
+            ["Probleme", "Mauvais conditionnement quand ε → 0", "Doit rester strictement dans K"],
+          ]}
+        />
+
+        <Warning>
+          <p>
+            Le mauvais conditionnement est le defaut principal de la penalisation :
+            quand ε → 0, la hessienne du probleme penalise explose. En pratique,
+            on utilise une <strong>methode de continuation</strong> : on diminue ε progressivement.
+          </p>
+        </Warning>
+      </Section>
+
+      <Section id="lagrangien-augmente" number="14" title="Lagrangien augmenté">
+        <p>
+          Le Lagrangien augmente combine les avantages de la penalisation (facile a implementer)
+          et d&apos;Uzawa (convergence sans ε → 0).
+        </p>
+
+        <Def title="Lagrangien augmente">
+          <p>
+            Pour des contraintes d&apos;egalite F(v) = 0, on definit :
+          </p>
+          <Eq>
+            L<Sub sub="aug"><F> </F></Sub>(v, λ, μ) = J(v) + λ · F(v) + <Frac n="μ" d="2" /> ‖F(v)‖²
+          </Eq>
+          <p>
+            ou λ est un multiplicateur de Lagrange et μ &gt; 0 un parametre de penalisation.
+          </p>
+        </Def>
+
+        <p><strong>Algorithme :</strong></p>
+        <Eq>
+          <Sup sup="n"><F>v</F></Sup> = argmin<Sub sub="v"><F> </F></Sub> L<Sub sub="aug"><F> </F></Sub>(v, <Sup sup="n"><F>λ</F></Sup>, μ)
+        </Eq>
+        <Eq>
+          <Sup sup="n+1"><F>λ</F></Sup> = <Sup sup="n"><F>λ</F></Sup> + μF(<Sup sup="n"><F>v</F></Sup>)
+        </Eq>
+        <p>
+          De temps en temps, on peut augmenter μ pour accelerer la convergence.
+        </p>
+
+        <Remark>
+          <p>
+            Ca ressemble a Uzawa mais avec le terme de penalisation μ/2 ‖F(v)‖² en plus.
+            Ca ressemble a la penalisation mais avec la mise a jour du multiplicateur λ.
+            Le Lagrangien augmente converge <strong>sans avoir besoin de μ → ∞</strong>,
+            ce qui evite les problemes de conditionnement.
+          </p>
+        </Remark>
+      </Section>
+
+      <Section id="sqp" number="15" title="Approximations successives — SLP & SQP">
+        <p>
+          Quand <F>J</F> et <F>F</F> n&apos;ont pas de proprietes particulieres, on les
+          remplace par des approximations de Taylor locales et on itere.
+        </p>
+
+        <KeyConcept title="SLP — Programmation lineaire sequentielle">
+          <p>
+            On linearise <F>J</F> et <F>F</F> (Taylor ordre 1) autour du point courant v<Sup sup="n"><F> </F></Sup> :
+          </p>
+          <Eq>
+            inf {"{"}J(v<Sup sup="n"><F> </F></Sup>) + J&apos;(v<Sup sup="n"><F> </F></Sup>) · (v − v<Sup sup="n"><F> </F></Sup>){"}"} sous F(v<Sup sup="n"><F> </F></Sup>) + F&apos;(v<Sup sup="n"><F> </F></Sup>) · (v − v<Sup sup="n"><F> </F></Sup>) = 0
+          </Eq>
+          <p>
+            C&apos;est un probleme lineaire — on sait le resoudre exactement (AMPL, Knitro, IpOpt).
+            On rajoute une region de confiance ‖v − v<Sup sup="n"><F> </F></Sup>‖ ≤ ε pour que l&apos;approximation reste valide.
+          </p>
+        </KeyConcept>
+
+        <KeyConcept title="SQP — Programmation quadratique sequentielle">
+          <p>
+            On garde l&apos;approximation lineaire pour <F>F</F>, mais on prend une approximation
+            <strong>quadratique</strong> pour <F>J</F> — en utilisant non pas la hessienne de <F>J</F>,
+            mais la <strong>hessienne du Lagrangien</strong> :
+          </p>
+          <Eq>
+            Q<Sup sup="n"><F> </F></Sup> = J&apos;&apos;(v<Sup sup="n"><F> </F></Sup>) + λ<Sup sup="n"><F> </F></Sup> · F&apos;&apos;(v<Sup sup="n"><F> </F></Sup>)
+          </Eq>
+          <p>
+            Pourquoi le Lagrangien ? Parce qu&apos;au point optimal avec F(v*) = 0,
+            la condition d&apos;optimalite d&apos;ordre 2 porte sur J&apos;&apos; + λ*F&apos;&apos;, pas sur J&apos;&apos; seul.
+          </p>
+        </KeyConcept>
+
+        <ComparisonTable
+          headers={["", "SLP", "SQP"]}
+          rows={[
+            ["Approx de J", "Ordre 1 (lineaire)", "Ordre 2 (quadratique)"],
+            ["Approx de F", "Ordre 1", "Ordre 1"],
+            ["Sous-probleme", "Lineaire", "Quadratique"],
+            ["Convergence", "Lineaire", "Superlineaire"],
+            ["Logiciels", "AMPL, simplex", "IpOpt, Knitro, SNOPT"],
+          ]}
+        />
+      </Section>
+
+      <Section id="retropropagation" number="16" title="Rétro-propagation et état adjoint">
+        <p>
+          Ce dernier chapitre montre comment la <strong>structure</strong> d&apos;un probleme
+          permet de developper des algorithmes efficaces. Deux applications :
+          la retro-propagation (deep learning) et la methode de l&apos;etat adjoint (controle optimal).
+        </p>
+
+        <KeyConcept title="Fonctions composees">
+          <p>
+            On minimise J(v) = J<Sub sub="m"><F> </F></Sub> ∘ J<Sub sub="m-1"><F> </F></Sub> ∘ ··· ∘ J<Sub sub="1"><F> </F></Sub>(v)
+            — une composition de <F>m</F> fonctions differentiables. C&apos;est exactement la
+            structure d&apos;un reseau de neurones profond (chaque J<Sub sub="i"><F> </F></Sub> est une couche).
+          </p>
+        </KeyConcept>
+
+        <p>
+          Par la regle de la chaine, la derivee directionnelle J&apos;(v) · h se calcule dans
+          le <strong>meme sens</strong> que J(v) — de la premiere a la derniere couche. Cout :
+          N multiplications pour <strong>une seule composante</strong> de J&apos;(v).
+        </p>
+        <p>
+          Pour le gradient <strong>complet</strong>, il faudrait N passages — trop cher.
+        </p>
+
+        <Theorem title="Retro-propagation">
+          <p>Le gradient complet se calcule par :</p>
+          <Eq>
+            J&apos;(v) = J&apos;<Sub sub="1"><F> </F></Sub>(v<Sub sub="1"><F> </F></Sub>)* · J&apos;<Sub sub="2"><F> </F></Sub>(v<Sub sub="2"><F> </F></Sub>)* · ··· · J&apos;<Sub sub="m"><F> </F></Sub>(v<Sub sub="m"><F> </F></Sub>)
+          </Eq>
+          <p>
+            en partant de la <strong>derniere couche</strong> et en remontant. Comme J<Sub sub="m"><F> </F></Sub>
+            arrive dans ℝ (scalaire), J&apos;<Sub sub="m"><F> </F></Sub>(v<Sub sub="m"><F> </F></Sub>) est un vecteur ligne.
+            On multiplie par les transposees des jacobiennes dans l&apos;ordre decroissant.
+          </p>
+          <p>
+            <strong>Cout : le meme que le calcul de J(v)</strong> — un seul passage arriere suffit.
+          </p>
+        </Theorem>
+
+        <SvgDiagram width={650} height={180} title="Forward pass vs Backpropagation">
+          <GroupBox x={20} y={15} w={290} h={70} label="Forward (calcul de J)" color="accent" />
+          <Box x={40} y={35} w={50} h={35} label="J₁" color="accent" />
+          <Arrow x1={90} y1={52} x2={110} y2={52} />
+          <Box x={110} y={35} w={50} h={35} label="J₂" color="accent" />
+          <Arrow x1={160} y1={52} x2={180} y2={52} />
+          <Box x={180} y={35} w={50} h={35} label="..." color="accent" />
+          <Arrow x1={230} y1={52} x2={250} y2={52} />
+          <Box x={250} y={35} w={50} h={35} label="Jₘ" color="accent" />
+
+          <GroupBox x={340} y={15} w={290} h={70} label="Backward (gradient)" color="rose" />
+          <Box x={560} y={35} w={50} h={35} label="J'ₘ" color="rose" />
+          <Arrow x1={560} y1={52} x2={540} y2={52} />
+          <Box x={490} y={35} w={50} h={35} label="..." color="rose" />
+          <Arrow x1={490} y1={52} x2={470} y2={52} />
+          <Box x={420} y={35} w={50} h={35} label="J'₂" color="rose" />
+          <Arrow x1={420} y1={52} x2={400} y2={52} />
+          <Box x={350} y={35} w={50} h={35} label="J'₁" color="rose" />
+
+          <Label x={170} y={120} text="v → J₁(v) → J₂(...) → J(v)" size={10} color="#10b981" />
+          <Label x={500} y={120} text="J'ₘ* ← ... ← J'₁* = J'(v)" size={10} color="#f43f5e" />
+          <Label x={325} y={155} text="Meme cout de calcul !" size={11} weight="bold" />
+        </SvgDiagram>
+
+        <KeyConcept title="Methode de l'etat adjoint">
+          <p>
+            Pour un probleme d&apos;optimisation sous contrainte de modele Ay = b(v)
+            (par ex. en controle optimal, EDP), calculer le gradient par elimination
+            necessite de resoudre N systemes lineaires — un par composante de v.
+          </p>
+          <p>
+            L&apos;etat adjoint <F>p</F> solution de A*p = ∂J/∂y permet de calculer le gradient
+            complet avec <strong>un seul systeme lineaire</strong> supplementaire.
+          </p>
+        </KeyConcept>
+
+        <Quiz
+          question="La retro-propagation calcule le gradient en..."
+          options={[
+            "O(N²) ou N est la dimension",
+            "Le meme cout qu'un forward pass (calcul de J)",
+            "O(1) quelle que soit la taille",
+            "Plus cher que le forward pass d'un facteur m (nombre de couches)",
+          ]}
+          answer={1}
+          explanation="C'est le resultat fondamental : le backward pass a le meme cout de calcul que le forward pass. C'est pour ca que le deep learning est possible — sinon entrainer un reseau de millions de parametres serait inabordable."
+        />
+      </Section>
     </>
   );
 }
