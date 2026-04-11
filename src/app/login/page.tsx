@@ -1,18 +1,25 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { createHash } from "crypto";
+
+function hashPassword(pw: string): string {
+  return createHash("sha256").update(pw).digest("hex");
+}
 
 async function login(formData: FormData) {
   "use server";
   const password = formData.get("password") as string;
   if (password === process.env.SITE_PASSWORD) {
-    (await cookies()).set("site-auth", password, {
+    (await cookies()).set("site-auth", hashPassword(password), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 90, // 90 days
     });
+    // Validate redirect target — only allow relative paths
     const from = (formData.get("from") as string) || "/cours";
-    redirect(from);
+    const safe = from.startsWith("/") && !from.startsWith("//") ? from : "/cours";
+    redirect(safe);
   }
   redirect("/login?error=1");
 }
