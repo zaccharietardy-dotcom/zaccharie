@@ -16,6 +16,7 @@ import { TransformersDeep } from "./transformers-deep";
 import { GenerationImages } from "./generation-images";
 import { DiffusionModels } from "./diffusion-models";
 import { GitGithub } from "./git-github";
+import { DataScience } from "./data-science";
 
 const courses: Record<
   string,
@@ -335,6 +336,25 @@ const courses: Record<
       { id: "quiz", title: "Quiz final" },
     ],
     Component: GitGithub,
+  },
+  "data-science": {
+    module: "P3",
+    title: "Algorithms for Data Analysis",
+    description:
+      "Recherche de voisins, k-Means, clustering hierarchique, estimation de densite, k-NN, evaluation. Cours de Steve Oudot, Ecole Polytechnique (CSC_43042_EP).",
+    sections: [
+      { id: "introduction", title: "Introduction a la data science" },
+      { id: "nn-search", title: "Recherche de plus proches voisins" },
+      { id: "k-means", title: "k-Means" },
+      { id: "hierarchical", title: "Clustering hierarchique" },
+      { id: "density", title: "Estimation de densite" },
+      { id: "supervised", title: "Apprentissage supervise — fondements" },
+      { id: "knn-prediction", title: "k-NN en prediction" },
+      { id: "evaluation", title: "Evaluation d'un classifieur" },
+      { id: "complexity", title: "Complexite et malediction de la dimension" },
+      { id: "quiz", title: "Quiz final" },
+    ],
+    Component: DataScience,
   },
 };
 
