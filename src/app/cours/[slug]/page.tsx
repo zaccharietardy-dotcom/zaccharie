@@ -17,6 +17,7 @@ import { GenerationImages } from "./generation-images";
 import { DiffusionModels } from "./diffusion-models";
 import { GitGithub } from "./git-github";
 import { DataScience } from "./data-science";
+import { Modal } from "./modal";
 
 const courses: Record<
   string,
@@ -355,6 +356,26 @@ const courses: Record<
       { id: "quiz", title: "Quiz final" },
     ],
     Component: DataScience,
+  },
+  modal: {
+    module: "P3",
+    title: "Simulation Numerique Aleatoire pour Evenements Rares",
+    description:
+      "Monte Carlo, intervalles de confiance, splitting, MCMC, processus de Poisson, echantillonnage d'importance. Cours de Gersende Fort, Ecole Polytechnique (APM_43M02).",
+    sections: [
+      { id: "evenements-rares", title: "La problematique des evenements rares" },
+      { id: "monte-carlo", title: "Monte Carlo : principes de base" },
+      { id: "intervalles-confiance", title: "Intervalles de confiance" },
+      { id: "mc-evenements-rares", title: "Monte Carlo naif pour evenements rares" },
+      { id: "simulation", title: "Simulation de variables aleatoires" },
+      { id: "estimation-quantiles", title: "Estimation de quantiles" },
+      { id: "splitting", title: "Methode de splitting" },
+      { id: "mcmc", title: "Monte Carlo par chaines de Markov" },
+      { id: "poisson", title: "Processus de Poisson" },
+      { id: "importance-sampling", title: "Echantillonnage d'importance" },
+      { id: "quiz", title: "Quiz final" },
+    ],
+    Component: Modal,
   },
 };
 
