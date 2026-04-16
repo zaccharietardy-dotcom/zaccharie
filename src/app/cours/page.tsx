@@ -41,6 +41,7 @@ const sections = [
       { slug: "optimisation-resume", number: "—", title: "Fiche Résumé — Optimisation", description: "Tous les théorèmes en une page." },
       { slug: "data-science", number: "P3", title: "Algorithms for Data Analysis", description: "k-NN, k-Means, clustering, KDE, EM, évaluation." },
       { slug: "modal", number: "P3", title: "Simulation & Événements Rares", description: "Monte Carlo, splitting, MCMC, Poisson, importance sampling." },
+      { slug: "mie", number: "P3", title: "Fondamentaux des Organisations", description: "Structure, culture, pouvoir, incitations. Methode etude de cas." },
     ],
   },
   {

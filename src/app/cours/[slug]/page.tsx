@@ -18,6 +18,7 @@ import { DiffusionModels } from "./diffusion-models";
 import { GitGithub } from "./git-github";
 import { DataScience } from "./data-science";
 import { Modal } from "./modal";
+import { MIE } from "./mie";
 
 const courses: Record<
   string,
@@ -376,6 +377,22 @@ const courses: Record<
       { id: "quiz", title: "Quiz final" },
     ],
     Component: Modal,
+  },
+  mie: {
+    module: "P3",
+    title: "Fondamentaux des Organisations",
+    description:
+      "Structure (Mintzberg), culture (Schein), pouvoir (Crozier-Friedberg), incitations (Herzberg, Etzioni, Hirschman, Ouchi). Methode pour reussir l'etude de cas.",
+    sections: [
+      { id: "introduction", title: "Qu'est-ce qu'une organisation ?" },
+      { id: "structure", title: "Structure organisationnelle" },
+      { id: "culture", title: "Culture organisationnelle" },
+      { id: "pouvoir", title: "Pouvoir et jeux politiques" },
+      { id: "incitations", title: "Incitations et motivation" },
+      { id: "methode", title: "Methode — Reussir l'etude de cas" },
+      { id: "quiz", title: "Quiz final" },
+    ],
+    Component: MIE,
   },
 };
 
