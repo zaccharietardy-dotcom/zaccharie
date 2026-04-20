@@ -4,6 +4,33 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+/* ── Amphi / lecture divider ─────────────────────────── */
+
+export function AmphiHeader({
+  label,
+  title,
+}: {
+  label: string;
+  title: string;
+}) {
+  return (
+    <div className="my-20 first:mt-0">
+      <div className="relative flex items-center">
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-400/40 to-indigo-400/40" />
+        <div className="px-6">
+          <p className="text-center font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-indigo-300/70">
+            {label}
+          </p>
+        </div>
+        <div className="h-px flex-1 bg-gradient-to-l from-transparent via-indigo-400/40 to-indigo-400/40" />
+      </div>
+      <h2 className="mt-3 text-center text-2xl font-bold tracking-tight text-foreground/90">
+        {title}
+      </h2>
+    </div>
+  );
+}
+
 /* ── Section heading ─────────────────────────────────── */
 
 export function Section({

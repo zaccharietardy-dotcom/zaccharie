@@ -26,7 +26,7 @@ const courses: Record<
     module: string;
     title: string;
     description: string;
-    sections: { id: string; title: string }[];
+    sections: { id: string; title: string; group?: string }[];
     Component: React.ComponentType;
   }
 > = {
@@ -343,17 +343,23 @@ const courses: Record<
     module: "P3",
     title: "Algorithms for Data Analysis",
     description:
-      "Recherche de voisins, k-Means, clustering hierarchique, estimation de densite, k-NN, evaluation. Cours de Steve Oudot, Ecole Polytechnique (CSC_43042_EP).",
+      "Recherche de voisins, k-Means, clustering hierarchique, densite, k-NN, regression lineaire, Ridge / Lasso, kernels et RKHS. Cours de Steve Oudot, Ecole Polytechnique (CSC_43042_EP).",
     sections: [
-      { id: "introduction", title: "Introduction a la data science" },
-      { id: "nn-search", title: "Recherche de plus proches voisins" },
-      { id: "k-means", title: "k-Means" },
-      { id: "hierarchical", title: "Clustering hierarchique" },
-      { id: "density", title: "Estimation de densite" },
-      { id: "supervised", title: "Apprentissage supervise — fondements" },
-      { id: "knn-prediction", title: "k-NN en prediction" },
-      { id: "evaluation", title: "Evaluation d'un classifieur" },
-      { id: "complexity", title: "Complexite et malediction de la dimension" },
+      { id: "introduction", title: "Introduction a la data science", group: "Amphi 1 — Intro & recherche de voisins" },
+      { id: "nn-search", title: "Recherche de plus proches voisins", group: "Amphi 1 — Intro & recherche de voisins" },
+      { id: "k-means", title: "k-Means", group: "Amphi 2 — k-Means" },
+      { id: "hierarchical", title: "Clustering hierarchique", group: "Amphi 3 — Clustering hierarchique" },
+      { id: "density", title: "Estimation de densite", group: "Amphi 4 — Estimation de densite" },
+      { id: "supervised", title: "Apprentissage supervise — fondements", group: "Amphi 5 — Supervise & k-NN predictor" },
+      { id: "knn-prediction", title: "k-NN en prediction", group: "Amphi 5 — Supervise & k-NN predictor" },
+      { id: "evaluation", title: "Evaluation d'un classifieur", group: "Amphi 5 — Supervise & k-NN predictor" },
+      { id: "complexity", title: "Complexite et malediction de la dimension", group: "Amphi 5 — Supervise & k-NN predictor" },
+      { id: "regression-rappel", title: "Regression supervisee — rappel", group: "Amphi 6 — Linear Models for Regression" },
+      { id: "ols", title: "Modele lineaire et estimateur OLS", group: "Amphi 6 — Linear Models for Regression" },
+      { id: "gauss-markov", title: "Optimalite (Gauss-Markov) et R²", group: "Amphi 6 — Linear Models for Regression" },
+      { id: "regularisation", title: "Cadres degeneres et regularisation", group: "Amphi 6 — Linear Models for Regression" },
+      { id: "basis-functions", title: "Non-lineaire : fonctions de base", group: "Amphi 6 — Linear Models for Regression" },
+      { id: "kernels", title: "Non-lineaire : kernels et RKHS", group: "Amphi 6 — Linear Models for Regression" },
       { id: "quiz", title: "Quiz final" },
     ],
     Component: DataScience,

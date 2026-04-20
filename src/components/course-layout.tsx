@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 interface Section {
   id: string;
   title: string;
+  group?: string;
 }
 
 interface CourseLayoutProps {
@@ -47,19 +48,30 @@ export function CourseLayout({
           Sommaire
         </h2>
         <ol className="space-y-1.5">
-          {sections.map((s, i) => (
-            <li key={s.id}>
-              <a
-                href={`#${s.id}`}
-                className="flex items-baseline gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <span className="font-mono text-xs tabular-nums text-muted-foreground/50">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                {s.title}
-              </a>
-            </li>
-          ))}
+          {sections.map((s, i) => {
+            const prevGroup = i > 0 ? sections[i - 1].group : undefined;
+            const showGroupHeader = s.group && s.group !== prevGroup;
+            return (
+              <li key={s.id}>
+                {showGroupHeader && (
+                  <div
+                    className={`${i > 0 ? "mt-5" : ""} mb-2 border-l-2 border-indigo-400/40 pl-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-indigo-300/70`}
+                  >
+                    {s.group}
+                  </div>
+                )}
+                <a
+                  href={`#${s.id}`}
+                  className={`flex items-baseline gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground ${s.group ? "pl-4" : ""}`}
+                >
+                  <span className="font-mono text-xs tabular-nums text-muted-foreground/50">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {s.title}
+                </a>
+              </li>
+            );
+          })}
         </ol>
       </nav>
 

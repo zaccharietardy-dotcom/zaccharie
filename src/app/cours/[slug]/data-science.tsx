@@ -11,6 +11,7 @@ import {
   Steps,
   Step,
   ComparisonTable,
+  AmphiHeader,
 } from "@/components/course-elements";
 import {
   SvgDiagram,
@@ -86,6 +87,8 @@ function Sup({ children, sup }: { children: React.ReactNode; sup: React.ReactNod
 export function DataScience() {
   return (
     <>
+      <AmphiHeader label="Amphi 1" title="Introduction & Recherche de voisins" />
+
       {/* ============================================================ */}
       {/* 1. INTRODUCTION A LA DATA SCIENCE                            */}
       {/* ============================================================ */}
@@ -297,6 +300,8 @@ nn_hd.fit(X_hd)`}</Code>
         />
       </Section>
 
+      <AmphiHeader label="Amphi 2" title="k-Means" />
+
       {/* ============================================================ */}
       {/* 3. K-MEANS                                                   */}
       {/* ============================================================ */}
@@ -473,6 +478,8 @@ for k in range(1, 10):
         />
       </Section>
 
+      <AmphiHeader label="Amphi 3" title="Clustering hierarchique" />
+
       {/* ============================================================ */}
       {/* 4. CLUSTERING HIERARCHIQUE                                   */}
       {/* ============================================================ */}
@@ -642,6 +649,8 @@ for method in ["single", "complete", "average", "ward"]:
     ahc = AgglomerativeClustering(n_clusters=2, linkage=method)
     print(f"{method:10s} : {ahc.fit_predict(X)}")`}</Code>
       </Section>
+
+      <AmphiHeader label="Amphi 4" title="Estimation de densite" />
 
       {/* ============================================================ */}
       {/* 5. ESTIMATION DE DENSITE                                     */}
@@ -833,6 +842,8 @@ print(f"Variances : {gmm.covariances_.flatten().round(3)}")`}</Code>
           explanation="Le taux optimal est O(n^{-4/(d+4)}). Pour d=10, on obtient O(n^{-4/14}) = O(n^{-2/7}) ≈ O(n^{-0.286}). C'est beaucoup plus lent que O(n^{-4/5}) en 1D."
         />
       </Section>
+
+      <AmphiHeader label="Amphi 5" title="Supervise & k-NN predictor" />
 
       {/* ============================================================ */}
       {/* 6. APPRENTISSAGE SUPERVISE — FONDEMENTS                      */}
@@ -1309,10 +1320,714 @@ print(f"\\nRegression k-NN : R2 = {scores_reg.mean():.3f}")`}</Code>
         </Remark>
       </Section>
 
+      <AmphiHeader label="Amphi 6" title="Linear Models for Regression" />
+
       {/* ============================================================ */}
-      {/* 10. QUIZ FINAL                                               */}
+      {/* 10. REGRESSION SUPERVISEE — RAPPEL                           */}
       {/* ============================================================ */}
-      <Section id="quiz" number="10" title="Quiz final">
+      <Section id="regression-rappel" number="10" title="Regression supervisee — rappel">
+        <p>
+          Changement de sujet : on quitte le clustering pour entrer dans la{" "}
+          <Term def="Apprentissage supervise ou la variable cible Y prend ses valeurs dans un ensemble continu (typiquement R), par opposition a la classification (Y discret).">
+            regression
+          </Term>
+          . Les observations restent <F>(x<Sub sub="i"><F> </F></Sub>, y<Sub sub="i"><F> </F></Sub>)</F> avec
+          <F> x<Sub sub="i"><F> </F></Sub> ∈ ℝ<Sup sup="d"><F> </F></Sup></F>, mais maintenant{" "}
+          <F>y<Sub sub="i"><F> </F></Sub> ∈ ℝ</F> (continue).
+        </p>
+
+        <KeyConcept title="Cadre statistique">
+          <p>
+            On suppose <F>(x<Sub sub="i"><F> </F></Sub>, y<Sub sub="i"><F> </F></Sub>)</F> iid selon une loi jointe <F>(X, Y)</F>.
+            La distribution <F>Pr(X, Y)</F> encode toute la complexite du probleme :
+            si elle est deterministe, un predicteur parfait existe ; sinon, on doit accepter une
+            erreur residuelle irreductible (le bruit).
+          </p>
+        </KeyConcept>
+
+        <Def title="Risque et fonction de perte">
+          <p>
+            Une <strong>fonction de perte</strong> <F>L : ℝ × ℝ → ℝ</F> mesure l&apos;ecart entre la
+            prediction <F>f(X)</F> et la reponse <F>Y</F>. Le <strong>risque</strong> est l&apos;erreur
+            de prediction esperee :
+          </p>
+          <Eq>
+            R(f) = 𝔼<Sub sub="(X,Y)"><F> </F></Sub> L(Y, f(X))
+          </Eq>
+          <p>
+            On ne peut pas l&apos;evaluer (loi inconnue), donc en pratique on minimise le
+            <strong> risque empirique</strong> <Frac n="1" d="n" /> Σ L(y<Sub sub="i"><F> </F></Sub>, f(x<Sub sub="i"><F> </F></Sub>)).
+          </p>
+        </Def>
+
+        <ComparisonTable
+          headers={["Perte", "Formule", "Avantage", "Inconvenient"]}
+          rows={[
+            ["MSE (L2)", "(y − ŷ)²", "Differentiable, forme close", "Sensible aux outliers"],
+            ["MAE (L1)", "|y − ŷ|", "Robuste aux outliers", "Non differentiable en 0"],
+            ["Huber", "MSE si petit, MAE si grand", "Compromis robustesse/lisse", "Parametre δ a regler"],
+          ]}
+        />
+
+        <Theorem title="Minimiseur du risque quadratique">
+          <p>
+            Pour la perte quadratique <F>L(y, ŷ) = (y − ŷ)²</F>, le minimiseur ponctuel du risque
+            est la <strong>fonction de regression</strong> :
+          </p>
+          <Eq>
+            f*(x) = 𝔼<Sub sub="Y|X"><F> </F></Sub>[Y | X = x]
+          </Eq>
+          <p>
+            La meilleure prediction au point <F>x</F> est la <strong>moyenne conditionnelle</strong> de <F>Y</F> sachant{" "}
+            <F>X = x</F>. C&apos;est l&apos;oracle que tous les estimateurs cherchent a approcher.
+          </p>
+        </Theorem>
+
+        <Proof>
+          <p>
+            On conditionne : <F>R(f) = 𝔼<Sub sub="X"><F> </F></Sub>[𝔼<Sub sub="Y|X"><F> </F></Sub>((Y − f(X))² | X)]</F>. On minimise
+            l&apos;esperance interieure pour chaque <F>x</F> : le minimiseur d&apos;une fonction quadratique{" "}
+            <F>y → 𝔼[(Y − y)² | X = x]</F> est la moyenne de <F>Y | X = x</F>. CQFD.
+          </p>
+        </Proof>
+
+        <Remark>
+          <p>
+            Le <F>k</F>-NN en prediction (section 07) estime <F>f*(x)</F> par une moyenne locale.
+            La regression lineaire, elle, fait une hypothese <strong>globale</strong> sur la forme de
+            <F> f*</F> : on va supposer qu&apos;elle est affine.
+          </p>
+        </Remark>
+      </Section>
+
+      {/* ============================================================ */}
+      {/* 11. MODELE LINEAIRE ET OLS                                   */}
+      {/* ============================================================ */}
+      <Section id="ols" number="11" title="Modele lineaire et estimateur OLS">
+        <Def title="Modele lineaire">
+          <p>
+            On fait l&apos;hypothese que <F>Y</F> depend <strong>lineairement</strong> de <F>X</F>
+            plus un bruit independant centre :
+          </p>
+          <Eq>
+            Y = β<Sub sub="0"><F> </F></Sub> + <Sup sup="d"><F>∑</F></Sup><Sub sub="j=1"><F> </F></Sub> X<Sub sub="j"><F> </F></Sub> β<Sub sub="j"><F> </F></Sub> + ε
+          </Eq>
+          <p>
+            avec <F>𝔼[ε] = 0</F> et <F>Var(ε) &lt; +∞</F>. En notation compacte avec la colonne de 1 pour l&apos;intercept :
+          </p>
+          <Eq>
+            Y = [1 X<Sup sup="T"><F> </F></Sup>] β + ε, &nbsp; β ∈ ℝ<Sup sup="d+1"><F> </F></Sup>
+          </Eq>
+        </Def>
+
+        <p>
+          Inconnue : le vecteur <F>β</F>, a estimer a partir de <F>n</F> observations{" "}
+          <F>(x<Sub sub="i"><F> </F></Sub>, y<Sub sub="i"><F> </F></Sub>)</F>. On empile les donnees dans :
+        </p>
+        <Eq>
+          X = <span className="inline-flex flex-col text-[0.85em]"><span>(1 x<Sub sub="1"><F>T</F></Sub>)</span><span>⋮</span><span>(1 x<Sub sub="n"><F>T</F></Sub>)</span></span> ∈ ℝ<Sup sup="n×(d+1)"><F> </F></Sup>,
+          &nbsp; y = (y<Sub sub="1"><F> </F></Sub>, ..., y<Sub sub="n"><F> </F></Sub>)<Sup sup="T"><F> </F></Sup> ∈ ℝ<Sup sup="n"><F> </F></Sup>
+        </Eq>
+
+        <Def title="Estimateur des moindres carres (OLS)">
+          <p>
+            <strong>Ordinary Least Squares</strong> : on choisit <F>β̂</F> qui minimise la somme des
+            carres des residus <Term def="Residual Sum of Squares : somme des carres des ecarts entre predictions et observations. RSS = ||y − Xβ||².">RSS</Term> :
+          </p>
+          <Eq>
+            β̂ := argmin<Sub sub="β ∈ ℝᵈ⁺¹"><F> </F></Sub> <Frac n="1" d="n" /> <Sup sup="n"><F>∑</F></Sup><Sub sub="i=1"><F> </F></Sub> (y<Sub sub="i"><F> </F></Sub> − [1 x<Sub sub="i"><F>T</F></Sub>] β)² = argmin ‖y − X β‖<Sub sub="2"><F> </F></Sub><Sup sup="2"><F> </F></Sup>
+          </Eq>
+        </Def>
+
+        <Proposition title="Gradient et convexite">
+          <p>
+            La fonctionnelle <F>β → ‖y − X β‖²</F> est <strong>convexe quadratique</strong> :
+          </p>
+          <Eq>
+            ∇ RSS(β) = −2 X<Sup sup="T"><F> </F></Sup>(y − X β), &nbsp;&nbsp; ∇² RSS(β) = 2 X<Sup sup="T"><F> </F></Sup>X ≽ 0
+          </Eq>
+          <p>
+            Les minimiseurs satisfont l&apos;equation normale{" "}
+            <strong>X<Sup sup="T"><F> </F></Sup>(y − X β) = 0</strong>.
+          </p>
+        </Proposition>
+
+        <Theorem title="Solution OLS (cas non-degenere)">
+          <p>
+            Sous l&apos;hypothese de <strong>non-degenerescence</strong> (<F>X</F> de rang colonne plein,
+            ce qui impose <F>n ≥ d + 1</F>), la matrice <F>X<Sup sup="T"><F> </F></Sup>X</F> est definie positive,
+            donc inversible. L&apos;unique minimiseur est :
+          </p>
+          <Eq>
+            β̂ = (X<Sup sup="T"><F> </F></Sup>X)<Sup sup="−1"><F> </F></Sup> X<Sup sup="T"><F> </F></Sup> y
+          </Eq>
+          <p>
+            Le predicteur est <F>f<Sub sub="β̂"><F> </F></Sub>(x) = [1 x<Sup sup="T"><F> </F></Sup>] β̂</F>, et les
+            valeurs ajustees <F>ŷ = X β̂ = X (X<Sup sup="T"><F> </F></Sup>X)<Sup sup="−1"><F> </F></Sup> X<Sup sup="T"><F> </F></Sup> y</F>.
+          </p>
+        </Theorem>
+
+        <KeyConcept title="Interpretation geometrique : projection orthogonale">
+          <p>
+            La matrice <F>H = X (X<Sup sup="T"><F> </F></Sup>X)<Sup sup="−1"><F> </F></Sup> X<Sup sup="T"><F> </F></Sup></F> (dite <strong>hat matrix</strong>)
+            est le projecteur orthogonal sur <F>col(X) ⊂ ℝ<Sup sup="n"><F> </F></Sup></F>.
+            <strong> ŷ est la projection orthogonale de y sur l&apos;espace des variables d&apos;entree.</strong>
+          </p>
+        </KeyConcept>
+
+        <SvgDiagram width={640} height={260} title="OLS = projection orthogonale de y sur col(X)">
+          <GroupBox x={60} y={40} w={500} h={180} label="ℝⁿ" color="default" />
+          {/* Yellow plane (col X) */}
+          <polygon points="140,180 420,200 520,150 240,130" fill="#f59e0b33" stroke="#f59e0b" strokeWidth="1.2" />
+          <Label x={500} y={145} text="col X" size={11} color="#f59e0b" anchor="end" weight="bold" />
+          {/* Origin */}
+          <Circle cx={180} cy={170} r={3} label="" color="default" />
+          <Label x={175} y={185} text="0" size={10} anchor="end" />
+          {/* y vector */}
+          <Arrow x1={180} y1={170} x2={380} y2={70} color="#f43f5e" />
+          <Label x={395} y={60} text="y" size={13} color="#f43f5e" weight="bold" anchor="start" />
+          {/* ŷ projection */}
+          <Arrow x1={180} y1={170} x2={370} y2={160} color="#10b981" />
+          <Label x={385} y={170} text="ŷ = H y" size={11} color="#10b981" weight="bold" anchor="start" />
+          {/* residual */}
+          <line x1={370} y1={160} x2={380} y2={70} stroke="#a1a1aa" strokeWidth="1.2" strokeDasharray="4,3" />
+          <Label x={400} y={115} text="y − ŷ ⊥ col X" size={10} color="#a1a1aa" anchor="start" />
+          {/* Right angle marker */}
+          <polyline points="360,155 363,160 368,157" fill="none" stroke="#a1a1aa" strokeWidth="1" />
+          {/* Basis vectors */}
+          <Arrow x1={180} y1={170} x2={260} y2={145} color="#06b6d4" />
+          <Label x={268} y={140} text="v₁" size={10} color="#06b6d4" anchor="start" />
+          <Arrow x1={180} y1={170} x2={220} y2={190} color="#06b6d4" />
+          <Label x={230} y={198} text="v₀ = 1" size={10} color="#06b6d4" anchor="start" />
+        </SvgDiagram>
+
+        <Analogy>
+          <p>
+            Imaginez <F>y</F> comme une ombre qu&apos;on projette sur un mur (le sous-espace <F>col(X)</F>).
+            <F>ŷ</F> est l&apos;ombre, et <F>y − ŷ</F> est perpendiculaire au mur — c&apos;est la part de <F>y</F>
+            qu&apos;aucune combinaison lineaire des predicteurs ne peut expliquer.
+          </p>
+        </Analogy>
+
+        <Code language="python">{`import numpy as np
+
+# Donnees : n observations, d features (+ 1 pour l'intercept)
+n, d = 100, 3
+X_raw = np.random.randn(n, d)
+beta_true = np.array([1.0, 2.0, -0.5, 3.0])   # [β0, β1, β2, β3]
+y = beta_true[0] + X_raw @ beta_true[1:] + 0.1 * np.random.randn(n)
+
+# Forme canonique avec colonne de 1
+X = np.c_[np.ones(n), X_raw]
+
+# Equation normale (eviter l'inversion explicite → np.linalg.solve)
+beta_hat = np.linalg.solve(X.T @ X, X.T @ y)
+print("beta estime :", beta_hat.round(3))
+
+# Valeurs ajustees et residus
+y_hat = X @ beta_hat
+residus = y - y_hat`}</Code>
+
+        <Warning>
+          <p>
+            En pratique, on n&apos;inverse <strong>jamais</strong> <F>X<Sup sup="T"><F> </F></Sup>X</F> explicitement
+            (numeriquement instable). On utilise <F>np.linalg.solve</F> (qui fait une decomposition LU/Cholesky)
+            ou mieux la decomposition QR de <F>X</F>.
+          </p>
+        </Warning>
+      </Section>
+
+      {/* ============================================================ */}
+      {/* 12. OPTIMALITE ET EVALUATION                                 */}
+      {/* ============================================================ */}
+      <Section id="gauss-markov" number="12" title="Optimalite (Gauss-Markov) et evaluation (R²)">
+        <Theorem title="Gauss-Markov" name="BLUE">
+          <p>Sous les hypotheses :</p>
+          <ul className="list-disc pl-6 space-y-1">
+            <li><F>(x<Sub sub="i"><F> </F></Sub>, y<Sub sub="i"><F> </F></Sub>)</F> iid de meme loi que <F>(X, Y)</F></li>
+            <li>Modele lineaire : <F>Y = [1 X<Sup sup="T"><F> </F></Sup>] β + ε</F></li>
+            <li><F>𝔼[ε] = 0</F> et <F>Var(ε) &lt; +∞</F> (bruit centre, variance finie)</li>
+          </ul>
+          <p>Alors l&apos;estimateur OLS <F>β̂</F> :</p>
+          <ul className="list-disc pl-6 space-y-1">
+            <li>est <strong>sans biais</strong> : <F>𝔼[β̂] = β</F></li>
+            <li>
+              minimise la MSE parmi <strong>tous les estimateurs lineaires sans biais</strong> :
+              <F> Var(β̃) − Var(β̂)</F> est semi-definie positive pour tout <F>β̃</F> lineaire sans biais
+            </li>
+          </ul>
+          <p>
+            On dit que OLS est <strong>BLUE</strong> (<em>Best Linear Unbiased Estimator</em>).
+          </p>
+        </Theorem>
+
+        <Remark>
+          <p>
+            Gauss-Markov ne suppose <strong>pas</strong> la normalite du bruit, juste sa variance finie.
+            Si de plus <F>ε ∼ 𝒩(0, σ²)</F>, OLS coincide avec l&apos;estimateur du maximum de vraisemblance
+            et devient optimal parmi <strong>tous</strong> les estimateurs sans biais (pas seulement lineaires).
+          </p>
+        </Remark>
+
+        <Def title="Decomposition de la variance">
+          <p>
+            Notons <F>ȳ = <Frac n="1" d="n" /> Σ y<Sub sub="i"><F> </F></Sub></F> la moyenne empirique.
+            On definit trois sommes de carres :
+          </p>
+          <ul className="list-none pl-0 space-y-2">
+            <li><strong>TSS</strong> (<em>Total Sum of Squares</em>) : Σ (y<Sub sub="i"><F> </F></Sub> − ȳ)² &nbsp; — variance totale de y</li>
+            <li><strong>ESS</strong> (<em>Explained Sum of Squares</em>) : Σ (ŷ<Sub sub="i"><F> </F></Sub> − ȳ)² &nbsp; — variance expliquee par le modele</li>
+            <li><strong>RSS</strong> (<em>Residual Sum of Squares</em>) : Σ (ŷ<Sub sub="i"><F> </F></Sub> − y<Sub sub="i"><F> </F></Sub>)² &nbsp; — variance residuelle</li>
+          </ul>
+        </Def>
+
+        <Proposition title="Theoreme de Pythagore pour la regression">
+          <Eq>
+            <strong>TSS = ESS + RSS</strong>
+          </Eq>
+          <p>
+            C&apos;est une consequence directe du fait que <F>ŷ − ȳ 1</F> et <F>y − ŷ</F> sont
+            orthogonaux (la projection OLS est orthogonale).
+          </p>
+        </Proposition>
+
+        <SvgDiagram width={600} height={260} title="Decomposition orthogonale : TSS = ESS + RSS">
+          <GroupBox x={60} y={30} w={460} h={200} label="ℝⁿ" color="default" />
+          {/* Plane col X */}
+          <polygon points="110,190 380,210 480,160 210,140" fill="#f59e0b33" stroke="#f59e0b" strokeWidth="1" />
+          <Label x={460} y={155} text="col X" size={10} color="#f59e0b" anchor="end" />
+          {/* origin ȳ 1 */}
+          <Circle cx={170} cy={178} r={3} label="" color="default" />
+          <Label x={160} y={195} text="ȳ 1" size={10} anchor="end" />
+          {/* y vector (TSS) */}
+          <Arrow x1={170} y1={178} x2={360} y2={70} color="#f43f5e" />
+          <Label x={255} y={115} text="√TSS" size={12} color="#f43f5e" weight="bold" />
+          {/* ŷ projection (ESS) */}
+          <Arrow x1={170} y1={178} x2={355} y2={170} color="#10b981" />
+          <Label x={260} y={185} text="√ESS" size={12} color="#10b981" weight="bold" />
+          {/* residual (RSS) */}
+          <line x1={355} y1={170} x2={360} y2={70} stroke="#a1a1aa" strokeWidth="1.5" />
+          <Label x={395} y={120} text="√RSS" size={12} color="#a1a1aa" weight="bold" anchor="start" />
+          {/* Right angle */}
+          <polyline points="345,165 350,170 355,167" fill="none" stroke="#a1a1aa" strokeWidth="1" />
+          {/* y label */}
+          <Label x={370} y={60} text="y" size={12} color="#f43f5e" weight="bold" anchor="start" />
+          <Label x={365} y={175} text="ŷ" size={12} color="#10b981" weight="bold" anchor="start" />
+        </SvgDiagram>
+
+        <Def title="Coefficient de determination R²">
+          <Eq>
+            R² := <Frac n="ESS" d="TSS" /> = 1 − <Frac n="RSS" d="TSS" /> ∈ [0, 1]
+          </Eq>
+          <p>
+            <F>R²</F> proche de 1 : le modele explique presque toute la variance de <F>y</F> — bon fit.
+            <br />
+            <F>R²</F> proche de 0 : le modele n&apos;explique presque rien — aussi bien predire la moyenne <F>ȳ</F>.
+          </p>
+          <p>
+            On appelle aussi <F>FVU := RSS/TSS</F> (<em>Fraction of Variance Unexplained</em>) = <F>1 − R²</F>.
+          </p>
+        </Def>
+
+        <Code language="python">{`from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+
+# Fit OLS (sklearn ≥ 1.6.1)
+reg = LinearRegression(fit_intercept=True)
+reg.fit(X_train, y_train)
+
+# Predictions et R² sur le test set
+y_pred = reg.predict(X_test)
+print("R² =", r2_score(y_test, y_pred))
+print("Coefficients :", reg.coef_)
+print("Intercept :", reg.intercept_)`}</Code>
+
+        <Warning>
+          <p>
+            Attention : <F>R²</F> <strong>augmente mecaniquement</strong> quand on ajoute des variables,
+            meme si elles sont du pur bruit. Utiliser <F>R²</F> ajuste ou la validation croisee pour
+            comparer des modeles de complexites differentes.
+          </p>
+        </Warning>
+      </Section>
+
+      {/* ============================================================ */}
+      {/* 13. REGULARISATION                                           */}
+      {/* ============================================================ */}
+      <Section id="regularisation" number="13" title="Cadres degeneres et regularisation">
+        <p>
+          La formule <F>β̂ = (X<Sup sup="T"><F> </F></Sup>X)<Sup sup="−1"><F> </F></Sup> X<Sup sup="T"><F> </F></Sup> y</F> suppose{" "}
+          <F>X</F> de rang plein. Deux situations frequentes cassent cette hypothese :
+        </p>
+        <ul className="list-disc pl-6 space-y-1">
+          <li><strong>Variables colineaires</strong> (redondantes) : <F>rang(X) &lt; d + 1</F></li>
+          <li><strong>Plus de variables que d&apos;observations</strong> : <F>n &lt; d + 1</F> (tres frequent en genomique, NLP, imagerie)</li>
+        </ul>
+        <p>
+          Dans ces cas, il existe tout un <strong>sous-espace affine de minimiseurs</strong> <F>β̂</F> — OLS n&apos;est plus unique.
+        </p>
+
+        <KeyConcept title="Deux solutions classiques">
+          <p><strong>1. Reduction de dimension</strong> : PCA / selection de variables avant OLS (cf. futur cours).</p>
+          <p><strong>2. Regression regularisee</strong> : ajouter un terme de penalite <F>λ ‖β‖</F> pour favoriser les solutions de petite norme.</p>
+        </KeyConcept>
+
+        <Def title="Trois regressions regularisees">
+          <p><strong>Ridge (ℓ₂)</strong> :</p>
+          <Eq>
+            β̂ = argmin ‖y − X β‖² + λ ‖β‖<Sub sub="2"><F> </F></Sub><Sup sup="2"><F> </F></Sup>
+          </Eq>
+          <p><strong>Lasso (ℓ₁)</strong> :</p>
+          <Eq>
+            β̂ = argmin ‖y − X β‖² + λ ‖β‖<Sub sub="1"><F> </F></Sub>
+          </Eq>
+          <p><strong>Elastic Net</strong> (compromis) :</p>
+          <Eq>
+            β̂ = argmin ‖y − X β‖² + λ (α ‖β‖<Sub sub="2"><F> </F></Sub><Sup sup="2"><F> </F></Sup> + (1 − α) ‖β‖<Sub sub="1"><F> </F></Sub>)
+          </Eq>
+        </Def>
+
+        <Theorem title="Solution de Ridge">
+          <p>
+            Le gradient vaut <F>−2 X<Sup sup="T"><F> </F></Sup>(y − X β) + 2λ β</F>, la hessienne{" "}
+            <F>2 X<Sup sup="T"><F> </F></Sup>X + 2λ I<Sub sub="d+1"><F> </F></Sub></F>.
+            Pour <F>λ &gt; 0</F>, la hessienne est <strong>definie positive</strong> meme si <F>X</F> est degeneree
+            — le probleme devient strictement convexe. Solution fermee unique :
+          </p>
+          <Eq>
+            β̂<Sub sub="ridge"><F> </F></Sub> = (X<Sup sup="T"><F> </F></Sup>X + λ I<Sub sub="d+1"><F> </F></Sub>)<Sup sup="−1"><F> </F></Sup> X<Sup sup="T"><F> </F></Sup> y
+          </Eq>
+        </Theorem>
+
+        <SvgDiagram width={640} height={280} title="Ridge (ℓ₂) vs Lasso (ℓ₁) : geometrie des boules de contrainte">
+          {/* Ridge panel */}
+          <GroupBox x={40} y={30} w={260} h={220} label="Ridge : boule ℓ₂" color="rose" />
+          <Label x={170} y={50} text="β₂" size={10} anchor="middle" />
+          {/* axes */}
+          <Arrow x1={170} y1={230} x2={170} y2={60} color="#52525b" />
+          <Arrow x1={60} y1={160} x2={285} y2={160} color="#52525b" />
+          <Label x={280} y={175} text="β₁" size={10} anchor="end" />
+          {/* L2 ball */}
+          <circle cx={170} cy={160} r={50} fill="#f43f5e33" stroke="#f43f5e" strokeWidth="1.5" />
+          {/* RSS contours (ellipses) */}
+          <ellipse cx={220} cy={120} rx={65} ry={40} fill="none" stroke="#a1a1aa" strokeWidth="1" strokeDasharray="3,3" />
+          <ellipse cx={220} cy={120} rx={40} ry={25} fill="none" stroke="#a1a1aa" strokeWidth="1" strokeDasharray="3,3" />
+          {/* OLS optimum */}
+          <Circle cx={220} cy={120} r={3} label="" color="default" />
+          <Label x={235} y={115} text="β̂ OLS" size={10} anchor="start" />
+          {/* Ridge solution */}
+          <Circle cx={205} cy={145} r={4} label="" color="rose" />
+          <Label x={218} y={155} text="β̂ ridge" size={10} color="#f43f5e" anchor="start" />
+
+          {/* Lasso panel */}
+          <GroupBox x={340} y={30} w={260} h={220} label="Lasso : boule ℓ₁ (losange)" color="accent" />
+          <Label x={470} y={50} text="β₂" size={10} anchor="middle" />
+          <Arrow x1={470} y1={230} x2={470} y2={60} color="#52525b" />
+          <Arrow x1={360} y1={160} x2={585} y2={160} color="#52525b" />
+          <Label x={580} y={175} text="β₁" size={10} anchor="end" />
+          {/* L1 diamond */}
+          <polygon points="470,110 520,160 470,210 420,160" fill="#10b98133" stroke="#10b981" strokeWidth="1.5" />
+          {/* RSS contours */}
+          <ellipse cx={520} cy={120} rx={65} ry={40} fill="none" stroke="#a1a1aa" strokeWidth="1" strokeDasharray="3,3" />
+          <ellipse cx={520} cy={120} rx={40} ry={25} fill="none" stroke="#a1a1aa" strokeWidth="1" strokeDasharray="3,3" />
+          <Circle cx={520} cy={120} r={3} label="" color="default" />
+          <Label x={535} y={115} text="β̂ OLS" size={10} anchor="start" />
+          {/* Lasso solution touches corner → sparse */}
+          <Circle cx={470} cy={110} r={4} label="" color="accent" />
+          <Label x={455} y={100} text="β̂ lasso (β₁=0)" size={10} color="#10b981" anchor="end" />
+        </SvgDiagram>
+
+        <ComparisonTable
+          headers={["", "Ridge (ℓ₂)", "Lasso (ℓ₁)", "Elastic Net"]}
+          rows={[
+            ["Forme close ?", "Oui : (XᵀX + λI)⁻¹ Xᵀy", "Non (coord. descent)", "Non (proximal)"],
+            ["Parcimonie (β = 0) ?", "Non (coefficients petits)", "Oui (selection de variables)", "Oui, partielle"],
+            ["Groupes correles", "Repartit le poids", "Choisit un seul du groupe", "Choisit le groupe entier"],
+            ["Hyper-parametre", "λ", "λ", "λ, α"],
+            ["Sklearn class", "Ridge", "Lasso", "ElasticNet"],
+          ]}
+        />
+
+        <Code language="python">{`from sklearn.linear_model import Ridge, Lasso, ElasticNet
+from sklearn.model_selection import GridSearchCV
+
+# Ridge : forme close, lambda via CV
+ridge = Ridge()
+grid = GridSearchCV(ridge, {"alpha": [0.01, 0.1, 1, 10, 100]}, cv=5)
+grid.fit(X_train, y_train)
+print("Meilleur lambda :", grid.best_params_["alpha"])
+
+# Lasso : selection de variables automatique
+lasso = Lasso(alpha=0.1).fit(X_train, y_train)
+print("Nombre de coefficients non-nuls :", (lasso.coef_ != 0).sum())`}</Code>
+
+        <Remark>
+          <p>
+            <strong>Connexion bayesienne</strong> : Ridge = MAP avec prior gaussien sur <F>β</F>.
+            Lasso = MAP avec prior Laplace. La regularisation est donc une facon d&apos;injecter
+            un a priori (&quot;les coefficients sont petits / parcimonieux&quot;) dans l&apos;estimation.
+          </p>
+        </Remark>
+      </Section>
+
+      {/* ============================================================ */}
+      {/* 14. FONCTIONS DE BASE                                        */}
+      {/* ============================================================ */}
+      <Section id="basis-functions" number="14" title="Regression non-lineaire : fonctions de base">
+        <p>
+          Et si la relation entre <F>X</F> et <F>Y</F> est franchement non-lineaire ?
+          L&apos;idee-cle : <strong>transformer les variables d&apos;entree</strong> pour rendre le probleme lineaire
+          dans un nouvel espace.
+        </p>
+
+        <KeyConcept title="Exemple : Y = X² + X + 1">
+          <p>
+            Avec la feature map <F>Φ(X) = (X, X²)</F>, on a <F>Y = Φ(X)<Sub sub="1"><F> </F></Sub> + Φ(X)<Sub sub="2"><F> </F></Sub> + 1</F>
+            — c&apos;est lineaire dans <F>Φ(X)</F> ! On applique OLS sur les features transformees.
+          </p>
+        </KeyConcept>
+
+        <SvgDiagram width={640} height={240} title="Transformation par fonctions de base : non-lineaire devient lineaire">
+          {/* Left : non-linear in X */}
+          <GroupBox x={30} y={30} w={250} h={180} label="Espace original" color="rose" />
+          <Arrow x1={50} y1={180} x2={260} y2={180} color="#52525b" />
+          <Arrow x1={155} y1={200} x2={155} y2={45} color="#52525b" />
+          <Label x={260} y={195} text="X" size={10} anchor="end" />
+          <Label x={165} y={50} text="Y" size={10} anchor="start" />
+          {/* parabola Y = X² + X + 1 */}
+          <path d="M 60 60 Q 155 220 250 60" fill="none" stroke="#f43f5e" strokeWidth="2" />
+          <Label x={150} y={90} text="Y = X² + X + 1" size={11} color="#f43f5e" weight="bold" anchor="middle" />
+
+          {/* Middle : Φ */}
+          <Arrow x1={290} y1={120} x2={360} y2={120} color="#8b5cf6" />
+          <Label x={325} y={105} text="Φ(X) = (X, X²)" size={10} color="#8b5cf6" weight="bold" />
+
+          {/* Right : linear in Φ */}
+          <GroupBox x={370} y={30} w={240} h={180} label="Espace des features" color="accent" />
+          <Arrow x1={390} y1={180} x2={595} y2={180} color="#52525b" />
+          <Arrow x1={490} y1={200} x2={490} y2={45} color="#52525b" />
+          <Label x={595} y={195} text="X₁'=X" size={10} anchor="end" />
+          <Label x={500} y={50} text="X₂'=X²" size={10} anchor="start" />
+          {/* Plane in 3D (pseudo) → line */}
+          <line x1={400} y1={170} x2={580} y2={60} stroke="#10b981" strokeWidth="2" />
+          <Label x={540} y={85} text="lineaire !" size={11} color="#10b981" weight="bold" anchor="start" />
+        </SvgDiagram>
+
+        <Def title="Regression avec fonctions de base">
+          <p>
+            On choisit une famille de <F>M</F> fonctions de base <F>φ<Sub sub="1"><F> </F></Sub>, ..., φ<Sub sub="M"><F> </F></Sub></F>
+            et on ajuste :
+          </p>
+          <Eq>
+            f<Sub sub="β"><F> </F></Sub>(x) = β<Sub sub="0"><F> </F></Sub> + <Sup sup="M"><F>∑</F></Sup><Sub sub="m=1"><F> </F></Sub> β<Sub sub="m"><F> </F></Sub> φ<Sub sub="m"><F> </F></Sub>(x)
+          </Eq>
+          <p>
+            On remplace <F>X</F> par <F>X&apos; = [φ<Sub sub="1"><F> </F></Sub>(X) ... φ<Sub sub="M"><F> </F></Sub>(X)]</F> dans la matrice de design,
+            et on applique OLS (ou Ridge) comme d&apos;habitude.
+          </p>
+        </Def>
+
+        <ComparisonTable
+          headers={["Famille", "φₘ(x)", "Utilite"]}
+          rows={[
+            ["Polynomiale", "1, x, x², ..., x^M", "Lisse, global, explose aux bords"],
+            ["Splines", "Morceaux polynomiaux raccordes", "Local, stable, tres utilise"],
+            ["RBF (Radial Basis Functions)", "exp(−‖x − cₘ‖² / 2σ²)", "Local, non-parametrique"],
+            ["Fourier", "sin(m x), cos(m x)", "Donnees periodiques, signal"],
+          ]}
+        />
+
+        <Warning>
+          <p>
+            Plus <F>M</F> est grand, plus le modele est flexible — mais plus il <strong>surapprend</strong>.
+            On combine typiquement fonctions de base + regularisation Ridge pour obtenir un bon compromis biais/variance.
+            Le reglage de <F>M</F> et <F>λ</F> se fait par validation croisee.
+          </p>
+        </Warning>
+
+        <Code language="python">{`from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
+from sklearn.linear_model import Ridge
+
+# Regression polynomiale de degre 3 avec regularisation Ridge
+model = make_pipeline(
+    PolynomialFeatures(degree=3, include_bias=False),
+    Ridge(alpha=1.0),
+)
+model.fit(X_train, y_train)
+print("R² test :", model.score(X_test, y_test))`}</Code>
+      </Section>
+
+      {/* ============================================================ */}
+      {/* 15. KERNELS ET RKHS                                          */}
+      {/* ============================================================ */}
+      <Section id="kernels" number="15" title="Regression non-parametrique : kernels et RKHS">
+        <p>
+          Les fonctions de base imposent de choisir <F>M</F> features a l&apos;avance.
+          Les methodes a noyaux offrent une alternative : <strong>travailler implicitement</strong> dans un
+          espace de features de tres grande dimension (parfois infinie) via un noyau <F>k(x, y)</F>.
+        </p>
+
+        <Def title="RKHS — Reproducing Kernel Hilbert Space">
+          <p>
+            Un espace de Hilbert <F>ℋ</F> de fonctions <F>ℝ<Sup sup="d"><F> </F></Sup> → ℝ</F> est un{" "}
+            <strong>RKHS</strong> s&apos;il existe une feature map <F>Φ : ℝ<Sup sup="d"><F> </F></Sup> → ℋ</F> telle que :
+          </p>
+          <Eq>
+            ∀ x ∈ ℝ<Sup sup="d"><F> </F></Sup>, ∀ f ∈ ℋ, &nbsp; f(x) = ⟨f, Φ(x)⟩<Sub sub="ℋ"><F> </F></Sub>
+          </Eq>
+          <p>
+            (<strong>propriete de reproduction</strong>). Le <strong>noyau</strong> associe est{" "}
+            <F>k(x, y) := ⟨Φ(x), Φ(y)⟩<Sub sub="ℋ"><F> </F></Sub></F>, et on a <F>Φ(x) = k(x, ·)</F>.
+          </p>
+        </Def>
+
+        <Theorem title="Moore" name="1950">
+          <p>
+            Une fonction <F>k : ℝ<Sup sup="d"><F> </F></Sup> × ℝ<Sup sup="d"><F> </F></Sup> → ℝ</F> est le noyau
+            d&apos;un RKHS si et seulement si elle est <strong>semi-definie positive</strong> :
+            pour tout <F>n ∈ ℕ</F>, tout <F>x<Sub sub="1"><F> </F></Sub>, ..., x<Sub sub="n"><F> </F></Sub></F>,
+            la matrice de Gram <F>K<Sub sub="ij"><F> </F></Sub> = k(x<Sub sub="i"><F> </F></Sub>, x<Sub sub="j"><F> </F></Sub>)</F> est semi-definie positive.
+          </p>
+          <p>
+            De plus le RKHS associe a <F>k</F> est <strong>unique</strong>.
+          </p>
+        </Theorem>
+
+        <ComparisonTable
+          headers={["Noyau", "k(x, y)", "Feature map / Remarque"]}
+          rows={[
+            ["Lineaire", "⟨x, y⟩", "Φ(x) = x ; retrouve la regression lineaire"],
+            ["Polynomial", "(1 + ⟨x, y⟩)^N", "Tous les monomes de degre ≤ N"],
+            ["Gaussien (RBF)", "exp(−‖x−y‖² / 2σ²)", "Feature map de dimension infinie ; ℋ ⊂ L²(ℝᵈ)"],
+            ["Laplacien", "exp(−‖x−y‖ / σ)", "Moins lisse que le gaussien"],
+          ]}
+        />
+
+        <Theorem title="Representer" name="Kimeldorf-Wahba 1971">
+          <p>
+            Soit <F>ℋ</F> un RKHS de noyau <F>k</F>. Toute fonction <F>f*</F> minimisant :
+          </p>
+          <Eq>
+            <Frac n="1" d="n" /> <Sup sup="n"><F>∑</F></Sup><Sub sub="i=1"><F> </F></Sub> L(y<Sub sub="i"><F> </F></Sub>, f(x<Sub sub="i"><F> </F></Sub>)) + λ ‖f‖<Sub sub="ℋ"><F> </F></Sub><Sup sup="2"><F> </F></Sup>
+          </Eq>
+          <p>
+            est de la forme :
+          </p>
+          <Eq>
+            f*(·) = <Sup sup="n"><F>∑</F></Sup><Sub sub="j=1"><F> </F></Sub> α<Sub sub="j"><F> </F></Sub> k(x<Sub sub="j"><F> </F></Sub>, ·)
+          </Eq>
+          <p>
+            avec <F>α ∈ ℝ<Sup sup="n"><F> </F></Sup></F>. <strong>La solution vit dans le sous-espace de dimension n engendre par les observations</strong>,
+            meme si <F>ℋ</F> est de dimension infinie.
+          </p>
+        </Theorem>
+
+        <KeyConcept title="Le kernel trick">
+          <p>
+            Consequence : pour minimiser la fonctionnelle, il suffit de connaitre les{" "}
+            <F>k(x<Sub sub="i"><F> </F></Sub>, x<Sub sub="j"><F> </F></Sub>)</F> — <strong>on ne manipule jamais les features <F>Φ(x)</F> explicitement</strong>.
+            On peut donc travailler dans des espaces de dimension infinie en complexite <F>O(n²)</F>.
+          </p>
+        </KeyConcept>
+
+        <SvgDiagram width={640} height={240} title="Kernel trick : separation non-lineaire via espace de features">
+          {/* Input space — cercles concentriques */}
+          <GroupBox x={30} y={30} w={240} h={180} label="Espace d'entree ℝ²" color="rose" />
+          <circle cx={150} cy={120} r={25} fill="none" stroke="#f43f5e" strokeWidth="1.2" />
+          <circle cx={150} cy={120} r={60} fill="none" stroke="#a1a1aa" strokeWidth="1.2" strokeDasharray="3,3" />
+          {/* Points inner */}
+          <Circle cx={145} cy={115} r={3} label="" color="rose" />
+          <Circle cx={160} cy={130} r={3} label="" color="rose" />
+          <Circle cx={140} cy={135} r={3} label="" color="rose" />
+          <Circle cx={155} cy={105} r={3} label="" color="rose" />
+          {/* Points outer */}
+          <Circle cx={110} cy={90} r={3} label="" color="accent" />
+          <Circle cx={195} cy={90} r={3} label="" color="accent" />
+          <Circle cx={210} cy={145} r={3} label="" color="accent" />
+          <Circle cx={100} cy={155} r={3} label="" color="accent" />
+          <Label x={150} y={200} text="non separable lineairement" size={10} anchor="middle" color="#a1a1aa" />
+
+          {/* Arrow Φ */}
+          <Arrow x1={280} y1={120} x2={360} y2={120} color="#8b5cf6" />
+          <Label x={320} y={105} text="Φ" size={14} color="#8b5cf6" weight="bold" />
+          <Label x={320} y={140} text="RBF kernel" size={9} color="#8b5cf6" />
+
+          {/* Feature space */}
+          <GroupBox x={370} y={30} w={240} h={180} label="RKHS ℋ (dim ∞)" color="violet" />
+          <line x1={390} y1={110} x2={600} y2={130} stroke="#8b5cf6" strokeWidth="2" />
+          <Label x={595} y={95} text="hyperplan" size={10} anchor="end" color="#8b5cf6" weight="bold" />
+          {/* Points separes */}
+          <Circle cx={440} cy={160} r={3} label="" color="rose" />
+          <Circle cx={470} cy={170} r={3} label="" color="rose" />
+          <Circle cx={490} cy={165} r={3} label="" color="rose" />
+          <Circle cx={520} cy={180} r={3} label="" color="rose" />
+          <Circle cx={450} cy={80} r={3} label="" color="accent" />
+          <Circle cx={500} cy={75} r={3} label="" color="accent" />
+          <Circle cx={540} cy={85} r={3} label="" color="accent" />
+          <Circle cx={570} cy={95} r={3} label="" color="accent" />
+          <Label x={490} y={205} text="separable lineairement" size={10} anchor="middle" color="#a1a1aa" />
+        </SvgDiagram>
+
+        <Theorem title="Kernel Ridge Regression">
+          <p>
+            Pour la perte quadratique avec regularisation, le probleme du theoreme de representation devient :
+          </p>
+          <Eq>
+            argmin<Sub sub="α"><F> </F></Sub> ‖y − K α‖² + λ α<Sup sup="T"><F> </F></Sup> K α, &nbsp; K<Sub sub="ij"><F> </F></Sub> = k(x<Sub sub="i"><F> </F></Sub>, x<Sub sub="j"><F> </F></Sub>)
+          </Eq>
+          <p>Solution fermee :</p>
+          <Eq>
+            α̂ = (K + λ I<Sub sub="n"><F> </F></Sub>)<Sup sup="−1"><F> </F></Sup> y, &nbsp;&nbsp; f̂(x) = <Sup sup="n"><F>∑</F></Sup><Sub sub="j=1"><F> </F></Sub> α̂<Sub sub="j"><F> </F></Sub> k(x<Sub sub="j"><F> </F></Sub>, x)
+          </Eq>
+        </Theorem>
+
+        <Remark>
+          <p>
+            Complexite : <F>O(n³)</F> pour inverser <F>K + λ I<Sub sub="n"><F> </F></Sub></F>, <F>O(n²)</F> en memoire.
+            Ca passe pour <F>n ~ 10<Sup sup="4"><F> </F></Sup></F>, mais au-dela on doit approximer : Nystrom,
+            random Fourier features, KeOps, etc.
+          </p>
+        </Remark>
+
+        <Code language="python">{`from sklearn.kernel_ridge import KernelRidge
+import numpy as np
+
+# Kernel ridge avec noyau gaussien (RBF)
+sigma = 5.0
+reg = KernelRidge(
+    kernel="rbf",
+    gamma=1 / (2 * sigma**2),   # convention sklearn : exp(-gamma * ||x-y||²)
+    alpha=1e-3,                   # parametre de regularisation lambda
+)
+reg.fit(X_train, y_train)
+print("R² test :", reg.score(X_test, y_test))
+
+# Autres noyaux disponibles :
+# "linear", "polynomial", "rbf", "laplacian", "sigmoid", "chi2"`}</Code>
+
+        <Analogy>
+          <p>
+            Pensez au RBF comme une regle qui dit : &quot;au point <F>x</F>, la prediction est une
+            moyenne ponderee des <F>y<Sub sub="j"><F> </F></Sub></F>, ou le poids d&apos;une observation diminue
+            exponentiellement avec sa distance a <F>x</F>&quot;. Plus <F>σ</F> est grand, plus l&apos;influence
+            des voisins lointains compte — modele lisse. Plus <F>σ</F> est petit, plus on sur-apprend les details.
+          </p>
+        </Analogy>
+
+        <Warning>
+          <p>
+            Trois hyperparametres a regler par validation croisee : le noyau (type), sa largeur (<F>σ</F>, <F>γ</F>)
+            et la regularisation <F>λ</F> (<F>alpha</F> dans sklearn). Sur le dataset sin(x)/x vu en amphi,
+            <F> σ = 5</F> donne <F>R² ≈ 0.9994</F> ; <F>σ = 50</F> sous-ajuste (<F>R² ≈ 0.21</F>) ; <F>σ = 0.5</F> sur-ajuste le bruit.
+          </p>
+        </Warning>
+      </Section>
+
+      {/* ============================================================ */}
+      {/* 16. QUIZ FINAL                                               */}
+      {/* ============================================================ */}
+      <Section id="quiz" number="16" title="Quiz final">
         <p>
           Cinq questions pour tester la comprehension globale du cours.
         </p>
